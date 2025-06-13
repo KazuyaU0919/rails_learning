@@ -251,7 +251,6 @@ MVCの理解補助：擬似的なMVC操作が可能
 - お問い合わせフォーム（Googleフォーム埋め込み）
 - 利用規約ページ
 - プライバシーポリシーページ
-- モーダルによる使い方ガイド
 - ログインモーダル（未ログイン時の補助）
 
 **F. 管理画面（最低限）**
@@ -333,3 +332,12 @@ MVCの理解補助：擬似的なMVC操作が可能
 - アイコン表示：heroicons を使用（いいねや編集ボタンなど）
 - パンくず表示：Stimulus + Tailwindベースで独自実装予定
 - ユーザー毎の「初期データ」利用履歴：UsedCodeモデルを活用し、記録＋集計に利用
+
+## 画面遷移図
+画面遷移図を作成しました。  
+draw.ioで作成した図をPNG化し、Figmaに取り込んでおります。  
+以下のURLから確認可能です：  
+
+https://www.figma.com/design/mLlXDdEfRMsSgkObZekH96/%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3%EF%BC%88draw.io%E3%81%8B%E3%82%89%E8%B2%BC%E3%82%8A%E4%BB%98%E3%81%91%EF%BC%89?node-id=1-2&t=hUsDVDInjdBGZvXB-1
+
+よろしくお願いします
