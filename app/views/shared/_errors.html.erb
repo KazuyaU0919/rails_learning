@@ -1,0 +1,13 @@
+<%# 使い方: render "shared/errors", model: @user %>
+<% if model && model.errors.any? %>
+  <div class="mb-4 rounded-xl bg-red-50 ring-1 ring-red-200 p-4">
+    <p class="font-semibold text-red-800 mb-2">
+      入力内容に <%= model.errors.count %> 件のエラーがあります
+    </p>
+    <ul class="list-disc pl-5 text-sm text-red-700 space-y-1">
+      <% model.errors.full_messages.each do |m| %>
+        <li><%= m %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
