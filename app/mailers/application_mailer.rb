@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: ENV.fetch("MAIL_FROM", "railslearning.developer0919@gmail.com")
   layout "mailer"
 end
