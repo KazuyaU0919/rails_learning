@@ -32,6 +32,8 @@ RSpec.configure do |config|
 
   # --- FactoryBot を短縮呼び出し（create, build など）
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
+  config.include ActiveJob::TestHelper
 end
 
 # --- shoulda-matchers（モデル/バリデーションの定番: 任意）

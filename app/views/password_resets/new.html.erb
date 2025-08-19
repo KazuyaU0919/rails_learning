@@ -1,1 +1,8 @@
-<h1>Password reset</h1>
+<h1>パスワード再設定</h1>
+<%= form_with url: password_resets_path, method: :post, local: true do |f| %>
+  <div>
+    <label>登録メールアドレス</label>
+    <%= email_field_tag :email, params[:email], required: true, autocomplete: 'email' %>
+  </div>
+  <%= submit_tag 'メールを送信' %>
+<% end %>
