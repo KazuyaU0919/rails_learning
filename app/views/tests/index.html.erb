@@ -1,3 +1,18 @@
+<h1 class="text-xl font-bold">Home</h1>
+
+<% if logged_in? %>
+  <p>こんにちは、<%= current_user.name %> さん</p>
+  <%= button_to 'ログアウト', session_path, method: :delete, class: 'btn' %>
+<% else %>
+  <%= link_to '新規登録', new_user_path, class: 'btn' %>
+  <%= link_to 'ログイン', new_session_path, class: 'btn' %>
+
+  <div class="mt-4">
+    <%= link_to 'Google でログイン', auth_path('google_oauth2'), class: 'btn' %>
+    <%= link_to 'GitHub でログイン',  auth_path('github'),      class: 'btn' %>
+  </div>
+<% end %>
+
 <div class="w-full max-w-md bg-white p-4 mx-auto border rounded shadow">
   <h2 class="text-xl font-bold text-center mb-4">幅・高さテスト</h2>
 

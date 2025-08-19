@@ -1,0 +1,12 @@
+<!-- app/views/sessions/new.html.erb -->
+<h1>ログイン</h1>
+<%= form_with url: session_path, scope: nil, class: "space-y-3" do |f| %>
+  <div><%= label_tag :email %><%= email_field_tag :email %></div>
+  <div><%= label_tag :password %><%= password_field_tag :password %></div>
+  <%= submit_tag 'ログイン' %>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to 'Google でログイン', auth_path('google_oauth2'), class: 'btn' %>
+  <%= link_to 'GitHub でログイン',  auth_path('github'),      class: 'btn' %>
+</div>
