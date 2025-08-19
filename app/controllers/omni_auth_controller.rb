@@ -11,6 +11,7 @@ class OmniAuthController < ApplicationController
   def callback
     auth = request.env["omniauth.auth"]
     user = User.find_or_create_from_omniauth(auth)  # ← Userモデルに用意済みメソッド
+    reset_session
     session[:user_id] = user.id
 
     provider_name = auth.provider.to_s.titleize
