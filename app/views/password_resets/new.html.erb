@@ -1,8 +1,15 @@
-<h1>パスワード再設定</h1>
-<%= form_with url: password_resets_path, method: :post, local: true do |f| %>
+<% content_for :title, "パスワード再設定" %>
+<h1 class="text-xl font-semibold mb-4">パスワード再設定メールを送る</h1>
+
+<%= form_with url: password_resets_path, scope: nil, class: "space-y-4" do |f| %>
   <div>
-    <label>登録メールアドレス</label>
-    <%= email_field_tag :email, params[:email], required: true, autocomplete: 'email' %>
+    <label class="block text-sm mb-1" for="email">登録メールアドレス</label>
+    <input
+      type="email" name="email" id="email"
+      class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
+      placeholder="you@example.com" />
   </div>
-  <%= submit_tag 'メールを送信' %>
+
+  <%= f.submit "送信する",
+        class: "rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" %>
 <% end %>
