@@ -8,7 +8,7 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 
 # --- support配下の読み込み（必要なものを小分けにしたい場合は有効化）
-# Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 # --- DBスキーマをテストDBに反映（ActiveRecordを使わないなら削除可）
 begin
