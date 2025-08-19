@@ -1,5 +1,7 @@
 # app/controllers/password_resets_controller.rb
 class PasswordResetsController < ApplicationController
+  before_action :require_guest!, only: %i[new create edit update]
+
   def new; end
 
   def create

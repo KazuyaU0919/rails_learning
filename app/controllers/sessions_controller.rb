@@ -1,5 +1,8 @@
 # app/controllers/sessions_controller.rb
 class SessionsController < ApplicationController
+  before_action :require_guest!,  only: %i[new create]
+  before_action :require_login!,  only: %i[destroy]
+
   def new; end
 
   def create
@@ -7,6 +10,7 @@ class SessionsController < ApplicationController
 
     # 通常ログイン（外部ログイン行は password を持たないので弾く）
     if user&.provider.blank? && user&.authenticate(params[:password])
+      reset_session
       session[:user_id] = user.id
       redirect_to root_path, notice: "ログインしました"
     else
