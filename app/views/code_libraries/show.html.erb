@@ -1,4 +1,12 @@
-<div>
-  <h1 class="font-bold text-4xl">CodeLibraries#show</h1>
-  <p>Find me in app/views/code_libraries/show.html.erb</p>
+<!-- app/views/code_libraries/show.html.erb -->
+<h1 class="text-xl font-semibold mb-2"><%= @pre_code.title %></h1>
+<p class="text-slate-600 mb-6"><%= simple_format @pre_code.description %></p>
+
+<pre class="bg-slate-50 p-4 rounded-xl overflow-x-auto">
+  <code><%= @pre_code.body %></code>
+</pre>
+
+<div class="mt-6">
+  <% current_like = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id) : nil %>
+  <%= render "actions", pre_code: @pre_code, current_like: current_like %>
 </div>
