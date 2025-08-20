@@ -1,4 +1,14 @@
-<div>
-  <h1 class="font-bold text-4xl">PreCodes#show</h1>
-  <p>Find me in app/views/pre_codes/show.html.erb</p>
+<% content_for :title, @pre_code.title %>
+
+<h1 class="text-xl font-semibold mb-2"><%= @pre_code.title %></h1>
+<p class="text-slate-600 mb-6"><%= simple_format @pre_code.description %></p>
+
+<pre class="bg-slate-50 p-4 rounded-xl overflow-x-auto"><code><%= @pre_code.body %></code></pre>
+
+<div class="mt-6 space-x-2">
+  <%= link_to "編集", edit_pre_code_path(@pre_code),
+              class: "rounded-lg bg-slate-900 text-white px-3 py-2 hover:bg-slate-800" %>
+  <%= link_to "削除", @pre_code,
+              data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+              class: "rounded-lg bg-red-600 text-white px-3 py-2 hover:bg-red-500" %>
 </div>
