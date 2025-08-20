@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_20_103111) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_20_233339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "pre_code_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pre_code_id"], name: "index_likes_on_pre_code_id"
+    t.index ["user_id", "pre_code_id"], name: "index_likes_on_user_id_and_pre_code_id", unique: true
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
 
   create_table "pre_codes", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -26,6 +36,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_103111) do
     t.index ["title"], name: "index_pre_codes_on_title"
     t.index ["user_id", "created_at"], name: "index_pre_codes_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_pre_codes_on_user_id"
+  end
+
+  create_table "used_codes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "pre_code_id", null: false
+    t.datetime "used_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pre_code_id"], name: "index_used_codes_on_pre_code_id"
+    t.index ["user_id", "pre_code_id"], name: "index_used_codes_on_user_id_and_pre_code_id", unique: true
+    t.index ["user_id"], name: "index_used_codes_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -44,5 +65,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_103111) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token_unique", unique: true
   end
 
+  add_foreign_key "likes", "pre_codes"
+  add_foreign_key "likes", "users"
   add_foreign_key "pre_codes", "users"
+  add_foreign_key "used_codes", "pre_codes"
+  add_foreign_key "used_codes", "users"
 end
