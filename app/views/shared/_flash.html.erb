@@ -1,7 +1,12 @@
+<%# レイアウト(application.html.erb等)で `render "shared/flash"` を呼ぶ想定 %>
 <% flash.each do |key, msg| %>
-  <% base = { notice: "bg-green-50 text-green-800 ring-green-200",
-              alert:  "bg-red-50 text-red-800 ring-red-200" }[key.to_sym] || "bg-slate-50 text-slate-800 ring-slate-200" %>
-  <div class="my-4 rounded-xl px-4 py-3 ring-1 <%= base %>">
+  <% base = {
+       notice: "bg-green-50 text-green-800 ring-green-200",
+       success:"bg-green-50 text-green-800 ring-green-200",
+       alert:  "bg-red-50 text-red-800 ring-red-200",
+       error:  "bg-red-50 text-red-800 ring-red-200"
+     } %>
+  <div class="my-4 rounded-xl px-4 py-3 ring-1 <%= base[key.to_sym] || 'bg-slate-50 text-slate-800 ring-slate-200' %>">
     <%= msg %>
   </div>
 <% end %>
