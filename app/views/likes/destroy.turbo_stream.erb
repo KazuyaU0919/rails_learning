@@ -1,0 +1,6 @@
+<!-- app/views/likes/destroy.turbo_stream.erb -->
+<%= turbo_stream.replace dom_id(@pre_code, :actions) do %>
+  <%= render "code_libraries/actions",
+        pre_code: @pre_code,
+        current_like: current_user.likes.find_by(pre_code_id: @pre_code.id) %>
+<% end %>

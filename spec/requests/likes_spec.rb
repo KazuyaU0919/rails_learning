@@ -5,18 +5,47 @@ RSpec.describe "Likes", type: :request do
   let(:user)     { create(:user, password: "secret123", password_confirmation: "secret123") }
   let(:pre_code) { create(:pre_code) }
 
-  before { sign_in(user) }
-
-  it "POST /likes 作成できる" do
-    expect {
+  describe "認可" do
+    it "未ログインは作成にアクセスできずリダイレクト" do
       post likes_path, params: { pre_code_id: pre_code.id }
-    }.to change(Like, :count).by(1)
+      expect(response).to have_http_status(:found)
+    end
   end
 
-  it "DELETE /likes/:id 削除できる" do
-    like = user.likes.create!(pre_code: pre_code)
-    expect {
-      delete like_path(like)
-    }.to change(Like, :count).by(-1)
+  describe "ログイン後" do
+    before { sign_in(user) }
+
+    it "POST /likes で Like と like_count が1増える" do
+      expect {
+        post likes_path, params: { pre_code_id: pre_code.id }
+      }.to change(Like, :count).by(1)
+       .and change { pre_code.reload.like_count }.by(1)
+
+      # Turbo Stream or リダイレクトのどちらでも許容
+      expect(response).to have_http_status(:ok).or have_http_status(:found)
+    end
+
+    it "同じユーザーは重複Likeできない（件数増えない）" do
+      create(:like, user: user, pre_code: pre_code)
+      expect {
+        post likes_path, params: { pre_code_id: pre_code.id }
+      }.not_to change(Like, :count)
+      expect(pre_code.reload.like_count).to eq(1)
+    end
+
+    it "DELETE /likes/:id で自分の Like を削除でき、like_count が1減る" do
+      like = user.likes.create!(pre_code: pre_code)
+      expect {
+        delete like_path(like)
+      }.to change(Like, :count).by(-1)
+       .and change { pre_code.reload.like_count }.by(-1)
+      expect(response).to have_http_status(:ok).or have_http_status(:found)
+    end
+
+    it "他人の Like は削除できず 404（RecordNotFound → 404 rescue）" do
+      other_like = create(:like, pre_code: pre_code) # 別ユーザー
+      delete like_path(other_like)
+      expect(response).to have_http_status(:not_found)
+    end
   end
 end

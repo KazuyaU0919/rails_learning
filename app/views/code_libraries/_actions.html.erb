@@ -1,0 +1,25 @@
+<!-- app/views/code_libraries/_actions.html.erb -->
+<%# locals: pre_code:, current_like: %>
+<div id="<%= dom_id(pre_code, :actions) %>" class="flex gap-2">
+  <% if logged_in? %>
+    <% if current_like %>
+      <%= button_to "♥ #{pre_code.like_count}",
+            like_path(current_like),
+            method: :delete,
+            form: { data: { turbo_stream: true } },
+            class: "px-3 py-1 rounded bg-rose-600 text-white" %>
+    <% else %>
+      <%= button_to "♡ #{pre_code.like_count}",
+            likes_path(pre_code_id: pre_code.id),
+            method: :post,
+            form: { data: { turbo_stream: true } },
+            class: "px-3 py-1 rounded ring-1 ring-slate-300" %>
+    <% end %>
+
+    <%= button_to "使った(#{pre_code.use_count})",
+          used_codes_path(pre_code_id: pre_code.id),
+          method: :post,
+          form: { data: { turbo_stream: true } },
+          class: "px-3 py-1 rounded bg-slate-900 text-white" %>
+  <% end %>
+</div>
