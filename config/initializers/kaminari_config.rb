@@ -1,14 +1,7 @@
-# frozen_string_literal: true
-
+# config/initializers/kaminari_config.rb
 Kaminari.configure do |config|
-  # config.default_per_page = 25
-  # config.max_per_page = nil
-  # config.window = 4
-  # config.outer_window = 0
-  # config.left = 0
-  # config.right = 0
-  # config.page_method_name = :page
-  # config.param_name = :page
-  # config.max_pages = nil
-  # config.params_on_first_page = false
+  config.default_per_page = 10   # 既定件数
+  config.window = 1              # 現在ページ左右に出すページ数
+  config.outer_window = 1        # 先頭/末尾側に出すページ数
+  # config.param_name = :page    # パラメータ名を変えたいとき
 end

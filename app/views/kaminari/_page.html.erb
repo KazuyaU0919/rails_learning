@@ -1,0 +1,8 @@
+<!-- app/views/kaminari/_page.html.erb -->
+<%# active なら強調 %>
+<%= link_to page, url, rel: page.rel,
+  class: [
+    "px-3 py-1 rounded",
+    (page.current? ? "bg-slate-900 text-white" : "ring-1 ring-slate-300 hover:bg-slate-50")
+  ].join(" ")
+%>
