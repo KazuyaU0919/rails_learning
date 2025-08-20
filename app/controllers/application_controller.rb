@@ -3,6 +3,11 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   helper_method :current_user, :logged_in?
 
+  rescue_from ActiveRecord::RecordNotFound do
+    # 本番は既定で 404 HTML を返します。開発でも同じにしたいなら:
+    render file: Rails.public_path.join("404.html"), status: :not_found, layout: false
+  end
+
   private
 
   def current_user
