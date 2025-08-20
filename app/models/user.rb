@@ -5,6 +5,8 @@ class User < ApplicationRecord
 
   # ---------- アソシエーション ----------
   has_many :pre_codes, dependent: :destroy
+  has_many :likes,      dependent: :destroy
+  has_many :used_codes, dependent: :destroy
 
   # ---------- 正規化 ----------
   before_validation :normalize_email
