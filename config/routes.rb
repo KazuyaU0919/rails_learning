@@ -17,10 +17,11 @@ Rails.application.routes.draw do
   end
 
   resources :pre_codes, concerns: :paginatable
-  # 将来的に使うルート
-  # resources :code_libraries, only: %i[index show]
-  # resources :likes,        only: %i[create destroy]
-  # resources :used_codes,   only: %i[create]
+
+  # === Code Library ===
+  resources :code_libraries, only: %i[index show], concerns: :paginatable
+  resources :likes,      only: %i[create destroy]
+  resources :used_codes, only: %i[create]
 
   # OmniAuth
   get "/auth/:provider", to: "omni_auth#passthru", as: :auth,
