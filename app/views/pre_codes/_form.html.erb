@@ -1,0 +1,35 @@
+<%# エラー表示 %>
+<% if @pre_code.errors.any? %>
+  <div id="error_explanation" class="mb-4 rounded bg-red-50 p-3 text-red-700">
+    <h2 class="font-semibold">
+      <%= t('errors.template.header.other',
+            model: PreCode.model_name.human,
+            count: @pre_code.errors.count,
+            default: "入力にエラーがあります（%{count}件）") %>
+    </h2>
+    <ul class="list-disc pl-5">
+      <% @pre_code.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @pre_code do |f| %>
+  <div class="mb-3">
+    <%= f.label :title, class: "block font-medium" %>
+    <%= f.text_field :title, class: "w-full rounded border px-3 py-2" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :description, class: "block font-medium" %>
+    <%= f.text_area :description, rows: 3, class: "w-full rounded border px-3 py-2" %>
+  </div>
+
+  <div class="mb-6">
+    <%= f.label :body, class: "block font-medium" %>
+    <%= f.text_area :body, rows: 8, class: "w-full rounded border px-3 py-2" %>
+  </div>
+
+  <%= f.submit class: "rounded bg-indigo-600 px-4 py-2 font-semibold text-white" %>
+<% end %>
