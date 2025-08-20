@@ -11,7 +11,12 @@ Rails.application.routes.draw do
   resources :password_resets, only: %i[new create edit update]  # パス再設定用
 
   # PreCode機能
-  resources :pre_codes
+  concern :paginatable do
+    # /pre_codes/page/2 → index の2ページ目に到達
+    get "(page/:page)", action: :index, on: :collection, as: "", constraints: { page: /\d+/ }
+  end
+
+  resources :pre_codes, concerns: :paginatable
   # 将来的に使うルート
   # resources :code_libraries, only: %i[index show]
   # resources :likes,        only: %i[create destroy]

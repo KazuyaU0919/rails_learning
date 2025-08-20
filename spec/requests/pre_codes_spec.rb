@@ -51,4 +51,23 @@ RSpec.describe "PreCodes", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe "ページネーション" do
+    before { sign_in(user) }
+
+    it "index はページネーションされる" do
+      # 1ページ=25件がデフォルトなので、26件作って2ページ目を発生させる
+      create_list(:pre_code, 26, user: user, title: "p")
+
+      # 1ページ目には「次へ」が出るはず
+      get pre_codes_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('rel="next"')   # Kaminari の next リンク
+
+      # 2ページ目には「前へ」が出るはず
+      get pre_codes_path(page: 2)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('rel="prev"')   # Kaminari の prev リンク
+    end
+  end
 end
