@@ -3,6 +3,9 @@ class User < ApplicationRecord
   # bcrypt
   has_secure_password validations: false
 
+  # ---------- アソシエーション ----------
+  has_many :pre_codes, dependent: :destroy
+
   # ---------- 正規化 ----------
   before_validation :normalize_email
 
