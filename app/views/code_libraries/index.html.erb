@@ -1,25 +1,33 @@
-<%# app/views/code_libraries/index.html.erb %>
+<!-- app/views/code_libraries/index.html.erb -->
 <% content_for :title, "コードライブラリ" %>
 
-<!-- 見出し → フォームを縦に並べる -->
 <div class="mb-4 space-y-3">
+  <!-- 見出し -->
   <div>
     <h1 class="text-xl font-semibold"><%= yield :title %></h1>
   </div>
 
+  <!-- 検索フォーム（Ransack） -->
   <div>
-    <%= form_with url: code_libraries_path, method: :get, class: "flex gap-2" do %>
-      <%= text_field_tag :q, params[:q], placeholder: "キーワード",
+    <%= search_form_for @q, url: code_libraries_path, method: :get, html: { class: "flex gap-2" } do |f| %>
+      <%= f.search_field :title_or_description_cont,
+            value: @q.title_or_description_cont,
+            placeholder: "キーワード",
             class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64 md:w-80" %>
+
       <%= select_tag :sort,
-            options_for_select([["人気順","popular"],["利用数順","used"]], params[:sort]),
+            options_for_select(
+              [["人気順", "popular"], ["利用数順", "used"], ["新着順", "newest"]],
+              params[:sort].presence || "popular"
+            ),
             class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
-      <%= submit_tag "検索", class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+
+      <%= f.submit "検索", class: "px-3 py-2 rounded bg-slate-900 text-white" %>
     <% end %>
   </div>
 </div>
 
-<%# ---- 一覧 ---- %>
+<!-- 一覧 -->
 <% if @pre_codes.blank? %>
   <p class="text-slate-500">該当するデータがありません。</p>
 <% else %>
@@ -32,9 +40,10 @@
             <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 100) %></p>
           </div>
           <div class="text-sm text-slate-500">
-            👍 <%= pc.like_count %>・🧰 <%= pc.use_count %>
+            👍 <%= pc.like_count %> ・ 🧰 <%= pc.use_count %>
           </div>
         </div>
+
         <div class="mt-3">
           <% current_like = logged_in? ? pc.likes.find_by(user_id: current_user.id) : nil %>
           <%= render "actions", pre_code: pc, current_like: current_like %>
@@ -43,5 +52,8 @@
     <% end %>
   </ul>
 
-  <div class="mt-6"><%= paginate @pre_codes %></div>
+  <!-- ページネーション（検索条件を保持して遷移） -->
+  <div class="mt-6">
+    <%= paginate @pre_codes, params: request.query_parameters %>
+  </div>
 <% end %>
