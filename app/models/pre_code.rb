@@ -15,8 +15,13 @@ class PreCode < ApplicationRecord
   scope :except_user, ->(user_id) { user_id.present? ? where.not(user_id: user_id) : all }
   scope :popular,     -> { order(like_count: :desc, id: :desc) }
   scope :most_used,   -> { order(use_count: :desc,   id: :desc) }
-  scope :keyword,     ->(kw) {
-    next all if kw.blank?
-    where("title ILIKE :q OR description ILIKE :q", q: "%#{kw}%")
-  }
+
+  # === Ransack 4 (Rails 7+) 許可リスト ===
+  def self.ransackable_attributes(_auth = nil)
+    %w[title description like_count use_count created_at user_id]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[user]
+  end
 end
