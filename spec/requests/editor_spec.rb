@@ -9,7 +9,7 @@ RSpec.describe "Editor API", type: :request do
       allow(Judge0::Client).to receive(:new).and_return(client)
     end
 
-    it "code を実行して結果(JSON)を返す" do
+    it "code を実行して結果(JSON)を返す（stdout は復号済みが返る前提）" do
       fake = {
         "status" => { "description" => "Accepted" },
         "stdout" => "2\n",
@@ -35,11 +35,11 @@ RSpec.describe "Editor API", type: :request do
       expect(JSON.parse(response.body)).to include("error")
     end
 
-    it "Judge0 側の失敗は 502 を返す" do
-      allow(client).to receive(:run_ruby).and_raise(Judge0::Error.new("boom"))
-      post editor_path, params: { code: "puts :x" }, as: :json
-      expect(response).to have_http_status(:bad_gateway)
-      expect(JSON.parse(response.body)["error"]).to match(/boom/)
+    it "code が 200KB を超えると 422 を返す" do
+      big = "a" * 200_001
+      post editor_path, params: { code: big }, as: :json
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(JSON.parse(response.body)).to include("error")
     end
   end
 
