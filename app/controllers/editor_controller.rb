@@ -1,5 +1,8 @@
 # app/controllers/editor_controller.rb
 class EditorController < ApplicationController
+  # JSON以外は弾く（明示的に 406 を返す）
+  before_action :ensure_json!, only: [ :create, :pre_code_body ]
+
   # MVP: axios で JSON を投げる想定（CSRF トークンを付ける版に切替予定なら後で外す）
   protect_from_forgery with: :null_session, only: :create
 
@@ -58,5 +61,10 @@ class EditorController < ApplicationController
 
   def judge0
     @judge0 ||= Judge0::Client.new
+  end
+
+  def ensure_json!
+    return if request.format.json?
+    head :not_acceptable # 406
   end
 end
