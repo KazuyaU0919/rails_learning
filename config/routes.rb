@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
+  get "editor/index"
   get "tests/index"
-  root "tests#index"
 
   # Render のヘルスチェック用
   get "up" => "rails/health#show", as: :rails_health_check
@@ -22,6 +22,15 @@ Rails.application.routes.draw do
   resources :code_libraries, only: %i[index show], concerns: :paginatable
   resources :likes,      only: %i[create destroy]
   resources :used_codes, only: %i[create]
+
+  # Code Editor
+  root "editor#index"
+  get  "/editor", to: "editor#index",  as: :editor
+  post "/editor", to: "editor#create"
+  get "/pre_codes/:id/body",
+      to: "editor#pre_code_body",
+      as: :pre_code_body,
+      constraints: { id: /\d+/ }
 
   # OmniAuth
   get "/auth/:provider", to: "omni_auth#passthru", as: :auth,
