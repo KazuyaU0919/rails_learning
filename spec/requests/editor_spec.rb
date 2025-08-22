@@ -48,7 +48,7 @@ RSpec.describe "Editor API", type: :request do
     let!(:pc)  { create(:pre_code, user:, title: "t", body: "p 'hi'") }
 
     it "対象の body を返す" do
-      get pre_code_body_path(pc.id)
+      get pre_code_body_path(pc.id), as: :json
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json["id"]).to eq(pc.id)
@@ -57,7 +57,7 @@ RSpec.describe "Editor API", type: :request do
     end
 
     it "存在しない id は 404" do
-      get pre_code_body_path(999_999)
+      get pre_code_body_path(999_999), as: :json
       expect(response).to have_http_status(:not_found)
       expect(JSON.parse(response.body)).to include("error")
     end
