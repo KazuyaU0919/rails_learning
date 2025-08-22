@@ -1,4 +1,53 @@
-<div>
-  <h1 class="font-bold text-4xl">Editor#index</h1>
-  <p>Find me in app/views/editor/index.html.erb</p>
+<!-- app/views/editor/index.html.erb -->
+<% content_for :title, "コードエディタ" %>
+
+<div class="mx-auto max-w-4xl px-4 py-6 space-y-4" data-controller="editor">
+  <!-- 見出し -->
+  <h1 class="text-2xl font-semibold"><%= yield :title %></h1>
+
+  <!-- 操作バー：初期データ選択 / テーマ切替 / 実行 -->
+  <div class="flex flex-wrap items-center gap-2">
+    <label class="text-sm" for="precode-select">初期データ</label>
+    <select id="precode-select"
+            data-editor-target="select"
+            data-action="change->editor#changeSelect"
+            class="px-3 py-2 rounded ring-1 ring-slate-300">
+      <option value="">（選択）</option>
+      <% @my_pre_codes.each do |pc| %>
+        <option value="<%= pc.id %>">[自分] <%= pc.title %></option>
+      <% end %>
+      <% @popular_public.each do |pc| %>
+        <option value="<%= pc.id %>">[人気] <%= pc.title %></option>
+      <% end %>
+    </select>
+
+    <button type="button"
+            data-action="editor#toggleTheme"
+            class="px-3 py-2 rounded ring-1 ring-slate-300">
+      テーマ切替
+    </button>
+
+    <button type="button"
+            data-action="editor#run"
+            class="px-3 py-2 rounded bg-slate-900 text-white">
+      実行 ▶
+    </button>
+  </div>
+
+  <!-- CodeMirror を差し込む領域 -->
+  <div data-editor-target="mount"
+       class="min-h-[420px] border rounded"></div>
+
+  <!-- 実行結果の出力領域 -->
+  <pre data-editor-target="output"
+       class="mt-4 p-3 rounded bg-slate-50 ring-1 ring-slate-200 text-sm whitespace-pre-wrap">
+    <!-- 実行結果がここに表示されます -->
+  </pre>
+
+  <!-- JS無効時のフォールバック（任意） -->
+  <noscript>
+    <div class="p-3 rounded bg-amber-50 ring-1 ring-amber-200 text-sm">
+      JavaScript を有効にするとエディタを利用できます。
+    </div>
+  </noscript>
 </div>
