@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get "editor/index"
   get "tests/index"
 
   # Render のヘルスチェック用
