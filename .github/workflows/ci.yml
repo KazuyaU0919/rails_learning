@@ -69,8 +69,10 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USER: postgres
       DB_PASSWORD: postgres
-      # DATABASE_URL を使う場合は上の PG* を消してこちらを使ってもOK
-      # DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      # Judge0 API 環境変数
+      JUDGE0_BASE_URL: https://judge0-ce.p.rapidapi.com
+      JUDGE0_RAPIDAPI_KEY: ${{ secrets.JUDGE0_RAPIDAPI_KEY }}
+      JUDGE0_HOST_HEADER: judge0-ce.p.rapidapi.com
 
     steps:
       - name: Install system packages
