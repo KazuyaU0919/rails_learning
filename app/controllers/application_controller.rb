@@ -4,8 +4,12 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
   rescue_from ActiveRecord::RecordNotFound do
-    # 本番は既定で 404 HTML を返します。開発でも同じにしたいなら:
-    render file: Rails.public_path.join("404.html"), status: :not_found, layout: false
+    respond_to do |f|
+      # HTMLアクセス時 → public/404.html を返す
+      f.html { render file: Rails.public_path.join("404.html"), status: :not_found, layout: false }
+      # JSONアクセス時 → JSONエラーメッセージを返す
+      f.json { render json: { error: "not found" }, status: :not_found }
+    end
   end
 
   private

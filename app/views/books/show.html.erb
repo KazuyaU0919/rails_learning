@@ -1,0 +1,13 @@
+<!-- app/views/books/show.html.erb -->
+<h1 class="text-xl font-bold mb-4"><%= @book.title %></h1>
+<p class="mb-6 text-slate-600"><%= @book.description %></p>
+
+<h2 class="font-semibold mb-2">目次</h2>
+<ol class="list-decimal pl-6 space-y-1">
+  <% @sections.each do |s| %>
+    <li>
+      <%= link_to s.heading, book_section_path(@book, s), class: "text-blue-600 underline" %>
+      <% if s.is_free %><span class="ml-2 rounded bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs">FREE</span><% end %>
+    </li>
+  <% end %>
+</ol>

@@ -1,0 +1,13 @@
+<!-- app/views/books/index.html.erb -->
+<h1 class="text-xl font-bold mb-4">Books</h1>
+<ul class="space-y-2">
+  <% @books.each do |book| %>
+    <li>
+      <a class="text-blue-600 underline" href="<%= book_path(book) %>"><%= book.title %></a>
+      <span class="text-sm text-slate-500">( <%= book.book_sections.size %> sections )</span>
+      <p class="text-slate-700 text-sm mt-1">
+        <%= truncate(strip_tags(book.description), length: 80) %>
+      </p>
+    </li>
+  <% end %>
+</ul>
