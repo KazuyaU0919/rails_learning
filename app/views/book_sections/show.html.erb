@@ -1,0 +1,29 @@
+<!-- app/views/book_sections/show.html.erb -->
+
+<h1 class="text-xl font-bold mb-4"><%= @book.title %></h1>
+<h2 class="text-lg font-semibold mb-4"><%= @section.heading %></h2>
+
+<div class="prose max-w-none mb-8">
+  <%= sanitize(@section.content, tags: %w[p pre code h1 h2 h3 h4 h5 h6 strong em a ul ol li br], attributes: %w[href class]) %>
+</div>
+
+<% if @section.images.attached? %>
+  <div class="grid md:grid-cols-2 gap-4 mb-8">
+    <% @section.images.each do |img| %>
+      <%= image_tag img, class: "rounded shadow" %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="flex justify-between">
+  <div>
+    <% if @prev %>
+      <%= link_to "◀ 前へ: #{@prev.heading}", book_section_path(@book, @prev), class: "text-blue-600 underline" %>
+    <% end %>
+  </div>
+  <div>
+    <% if @next %>
+      <%= link_to "次へ: #{@next.heading} ▶", book_section_path(@book, @next), class: "text-blue-600 underline" %>
+    <% end %>
+  </div>
+</div>
