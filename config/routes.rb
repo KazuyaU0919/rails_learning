@@ -31,6 +31,11 @@ Rails.application.routes.draw do
       as: :pre_code_body,
       constraints: { id: /\d+/ }
 
+  # Rails Books
+  resources :books, only: %i[index show] do
+    resources :sections, only: :show, controller: :book_sections
+  end
+
   # OmniAuth
   get "/auth/:provider", to: "omni_auth#passthru", as: :auth,
                          constraints: { provider: /(google_oauth2|github)/ }
