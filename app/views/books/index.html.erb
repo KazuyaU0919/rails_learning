@@ -1,14 +1,6 @@
 <!-- app/views/books/index.html.erb -->
 <h1 class="text-2xl font-semibold mb-6">教本一覧</h1>
 
-<ul class="space-y-4">
-  <% @books.each do |book| %>
-    <li class="p-4 border rounded-lg bg-white shadow-sm">
-      <h2 class="text-xl font-bold">
-        <%= link_to book.title, book_path(book), class: "hover:underline" %>
-      </h2>
-      <p class="text-slate-600 mt-1"><%= book.description %></p>
-      <p class="text-sm text-slate-500 mt-2">全 <%= book.book_sections.size %> セクション</p>
-    </li>
-  <% end %>
+<ul class="divide-y divide-slate-200 rounded-lg border bg-white">
+  <%= render partial: "book", collection: @books, as: :book %>
 </ul>

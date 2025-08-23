@@ -2,6 +2,11 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.after_initialize do
+    Bullet.enable = true        # Bullet を有効化
+    Bullet.alert  = true        # 画面上にアラート表示
+    Bullet.rails_logger = true  # Rails のログに出力
+  end
 
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true

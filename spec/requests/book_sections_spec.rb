@@ -9,7 +9,6 @@ RSpec.describe "BookSections", type: :request do
       s2 = create(:book_section, book:, heading: "第2章", content: "<p>two</p>",  position: 2)
       s3 = create(:book_section, book:, heading: "第3章", content: "<p>three</p>", position: 3)
 
-      # 中間（s2）を表示
       get book_section_path(book, s2)
       expect(response).to have_http_status(:ok)
 
@@ -29,14 +28,14 @@ RSpec.describe "BookSections", type: :request do
       # 先頭ページ
       get book_section_path(book, first)
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include("前へ") # 文言ベース
+      expect(response.body).not_to include("前へ")
       expect(response.body).to include(book_section_path(book, last)) # 次リンクはある
 
       # 末尾ページ
       get book_section_path(book, last)
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(book_section_path(book, first)) # 前リンクはある
-      expect(response.body).not_to include("次へ") # 次リンクは無い
+      expect(response.body).not_to include("次へ")
     end
 
     it "FREE バッジ（is_free: true のセクション）を教本トップで表示できる" do
@@ -44,9 +43,11 @@ RSpec.describe "BookSections", type: :request do
       create(:book_section, book:, is_free: true,  position: 1, heading: "Free")
       create(:book_section, book:, is_free: false, position: 2, heading: "Paid")
 
+      # counter_cache を使っているなら一応 reload（なくても通常OK）
+      book.reload
+
       get book_path(book)
       expect(response).to have_http_status(:ok)
-      # books/show.html.erb の FREE バッジ（クラス/文言のどちらかで緩くチェック）
       expect(response.body).to include("FREE")
     end
 

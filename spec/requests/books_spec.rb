@@ -2,18 +2,24 @@
 require "rails_helper"
 
 RSpec.describe "Books", type: :request do
+  include ActionView::Helpers::NumberHelper # number_with_delimiter 相当を使うため
+
   describe "GET /books" do
-    it "200 OK & 各教本のタイトル/説明/セクション数が見える" do
+    it "200 OK & 各教本のタイトル/説明/セクション数（counter_cache）が見える" do
       book = create(:book, title: "Rails Book", description: "Rails入門")
       create_list(:book_section, 3, book:)
+
+      # counter_cache の更新を反映
+      book.reload
 
       get books_path
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Rails Book")
       expect(response.body).to include("Rails入門")
-      # index ビューの文言「全 X セクション」に合わせる
-      expect(response.body).to include("全 3 セクション")
+
+      # 一覧では数値のみが表示される想定（桁区切り対応）
+      expect(response.body).to include(number_with_delimiter(book.book_sections_count))
     end
   end
 
@@ -38,7 +44,7 @@ RSpec.describe "Books", type: :request do
       headings = doc.css('ul li a').map(&:text)
       expect(headings).to eq(%w[A B C])
 
-      # ついでにリンクが存在することも確認（あなたの既存アサートでもOK）
+      # リンクが存在することの確認
       expect(response.body).to include(book_section_path(book, s1))
       expect(response.body).to include(book_section_path(book, s2))
       expect(response.body).to include(book_section_path(book, s3))
@@ -47,7 +53,6 @@ RSpec.describe "Books", type: :request do
     it "存在しないIDなら404" do
       get book_path(9_999_999)
       expect(response).to have_http_status(:not_found)
-      # ApplicationController の 404 ハンドラは public/404.html を返す想定
       expect(response.body).to include("404")
     end
   end

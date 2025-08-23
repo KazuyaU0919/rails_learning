@@ -13,7 +13,8 @@
 <% if @section.images.attached? %>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
     <% @section.images.each do |img| %>
-      <%= image_tag img.variant(resize_to_limit: [1200, 1200]), class: "rounded-lg shadow" %>
+      <%= image_tag img.variant(resize_to_limit: [1200, 1200]).processed,
+                    class: "rounded-lg shadow" %>
     <% end %>
   </div>
 <% end %>
