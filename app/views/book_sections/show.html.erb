@@ -1,29 +1,36 @@
-<!-- app/views/book_sections/show.html.erb -->
+<nav class="mb-6 text-sm">
+  <%= link_to "← #{@book.title} に戻る", book_path(@book), class: "text-slate-600 hover:underline" %>
+</nav>
 
-<h1 class="text-xl font-bold mb-4"><%= @book.title %></h1>
-<h2 class="text-lg font-semibold mb-4"><%= @section.heading %></h2>
+<h1 class="text-2xl font-bold mb-3">
+  <%= @section.position %>. <%= @section.heading %>
+</h1>
 
-<div class="prose max-w-none mb-8">
-  <%= sanitize(@section.content, tags: %w[p pre code h1 h2 h3 h4 h5 h6 strong em a ul ol li br], attributes: %w[href class]) %>
-</div>
+<article class="prose prose-slate max-w-none">
+  <%= render_section_content(@section) %>
+</article>
 
 <% if @section.images.attached? %>
-  <div class="grid md:grid-cols-2 gap-4 mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
     <% @section.images.each do |img| %>
-      <%= image_tag img, class: "rounded shadow" %>
+      <%= image_tag img.variant(resize_to_limit: [1200, 1200]), class: "rounded-lg shadow" %>
     <% end %>
   </div>
 <% end %>
 
-<div class="flex justify-between">
+<div class="flex items-center justify-between mt-10 pt-6 border-t">
   <div>
     <% if @prev %>
-      <%= link_to "◀ 前へ: #{@prev.heading}", book_section_path(@book, @prev), class: "text-blue-600 underline" %>
+      <%= link_to "◀ 前へ：#{@prev.heading}",
+          book_section_path(@book, @prev),
+          class: "text-slate-700 hover:underline" %>
     <% end %>
   </div>
   <div>
     <% if @next %>
-      <%= link_to "次へ: #{@next.heading} ▶", book_section_path(@book, @next), class: "text-blue-600 underline" %>
+      <%= link_to "次へ ▶：#{@next.heading}",
+          book_section_path(@book, @next),
+          class: "text-slate-700 hover:underline" %>
     <% end %>
   </div>
 </div>
