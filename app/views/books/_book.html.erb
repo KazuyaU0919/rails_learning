@@ -1,0 +1,16 @@
+<% cache(book) do %>
+  <li class="px-4 py-3 hover:bg-slate-50 flex items-center justify-between">
+    <div>
+      <h3 class="font-semibold text-slate-900">
+        <%= link_to book.title, book_path(book), class: "hover:underline" %>
+      </h3>
+      <p class="text-slate-500 text-sm"><%= truncate(book.description, length: 80) %></p>
+    </div>
+
+    <div class="text-xs text-slate-500">
+      <span class="inline-flex items-center gap-1">
+        📄 <%= number_with_delimiter(book.book_sections_count || 0) %>
+      </span>
+    </div>
+  </li>
+<% end %>
