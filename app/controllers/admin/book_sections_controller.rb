@@ -1,4 +1,4 @@
-class Admin::BookSectionsController < ApplicationController
+class Admin::BookSectionsController < Admin::BaseController
   def index
     head :ok
   end
