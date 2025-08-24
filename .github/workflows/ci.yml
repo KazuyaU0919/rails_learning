@@ -78,15 +78,22 @@ jobs:
       - name: Install system packages
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config
+          sudo apt-get install --no-install-recommends -y \
+            build-essential git pkg-config libpq-dev libyaml-dev \
+            libvips libvips-dev
+          ldconfig -p | grep libvips || true
+
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
       - name: Prepare DB
         run: bin/rails db:prepare
+
       - name: Run RSpec
         run: bundle exec rspec
