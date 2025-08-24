@@ -1,4 +1,16 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Sessions#new</h1>
-  <p>Find me in app/views/admin/sessions/new.html.erb</p>
-</div>
+<!-- app/views/admin/sessions/new.html.erb -->
+<h1 class="text-xl font-bold mb-4">Admin Login</h1>
+
+<%= form_with url: admin_session_path, method: :post, class: "space-y-4" do %>
+  <div>
+    <%= label_tag :email, "メールアドレス", class: "block text-sm mb-1" %>
+    <%= email_field_tag :email, params[:email], class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= label_tag :password, "パスワード", class: "block text-sm mb-1" %>
+    <%= password_field_tag :password, nil, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <%= submit_tag "ログイン", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+<% end %>
