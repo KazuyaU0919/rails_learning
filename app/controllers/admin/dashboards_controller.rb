@@ -1,5 +1,9 @@
 class Admin::DashboardsController < Admin::BaseController
+  layout "admin"
+
   def index
-    head :ok
+    @books_count = Book.count
+    @sections_count = BookSection.count
+    # 余力があれば最近更新されたレコードなども追加できる
   end
 end
