@@ -25,25 +25,41 @@ RSpec.describe "Admin::BookSections", type: :request do
   end
 
   it "PATCH updates with sanitized content" do
-    # 先にレコードを作成（健全な内容）
     s = create(:book_section, book:, heading: "H", position: 1, content: "<p>ok</p>")
-
-    # 悪意ある属性（onerror など）を含む HTML を更新として送る
     dirty = %(<img src=x onerror='alert(1)'>good)
 
-    patch admin_book_section_path(s), params: {
-      book_section: { content: dirty }
-    }
+    patch admin_book_section_path(s), params: { book_section: { content: dirty } }
 
     s.reload
-    expect(s.content).to include("good")         # 中身は残る
-    expect(s.content).not_to include("onerror")  # 危険な属性は除去される
-    expect(s.content).not_to include("alert(")   # スクリプト片もない
+    expect(s.content).to include("good")
+    expect(s.content).not_to include("onerror")
+    expect(s.content).not_to include("alert(")
+  end
+
+  # content 内の signed_id <img> を自動 attach できること
+  it "attaches blobs referenced in content to section.images" do
+    # 1x1 PNG を作って ActiveStorage に直接アップロード（DirectUpload 相当）
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: File.open(Rails.root.join("spec/fixtures/files/sample.png")),
+      filename: "sample.png",
+      content_type: "image/png"
+    )
+
+    # <img src="/rails/active_storage/blobs/redirect/:signed_id/:filename">
+    img_src = rails_blob_path(blob, only_path: true) # redirect 付きの /rails/... を返す
+    html    = %(<p>img</p><img src="#{img_src}">)
+
+    post admin_book_sections_path, params: {
+      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
+    }
+
+    section = BookSection.last
+    expect(section.images).to be_attached
+    expect(section.images.first.blob_id).to eq(blob.id)
   end
 
   # 画像添付 → 一般ユーザー向け詳細ページに <img> が出ること
   it "attaches images and shows them on public show page" do
-    # 画像を1枚添付して作成
     post admin_book_sections_path, params: {
       book_section: {
         book_id:  book.id,
@@ -57,14 +73,8 @@ RSpec.describe "Admin::BookSections", type: :request do
     section = BookSection.last
     expect(section.images).to be_attached
 
-    # 一般側の詳細ページで表示されるか
     get book_section_path(book, section)
     expect(response).to have_http_status(:ok)
-
-    # ActiveStorage の画像URL（blob/representations どちらでも）をざっくり検出
-    # 相対 (/rails/...) でも絶対 (http[s]://xxx/rails/...) でも OK
-    expect(response.body).to match(
-      %r{<img[^>]+src="(?:https?://[^"]+)?/rails/active_storage/[^"]+"}
-    )
+    expect(response.body).to match(%r{<img[^>]+src="(?:https?://[^"]+)?/rails/active_storage/[^"]+"})
   end
 end
