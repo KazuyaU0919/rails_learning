@@ -1,4 +1,3 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Books#edit</h1>
-  <p>Find me in app/views/admin/books/edit.html.erb</p>
-</div>
+<% content_for :title, "Books / 編集" %>
+<h1 class="text-xl font-semibold mb-4">Book を編集</h1>
+<%= render "form", book: @book %>

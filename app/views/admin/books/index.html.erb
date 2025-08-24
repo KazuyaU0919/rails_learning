@@ -1,4 +1,35 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Books#index</h1>
-  <p>Find me in app/views/admin/books/index.html.erb</p>
+<% content_for :title, "Books" %>
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-2xl font-semibold">Books</h1>
+  <%= link_to "＋ 新規作成", new_admin_book_path, class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+</div>
+
+<table class="w-full text-left border rounded bg-white">
+  <thead>
+    <tr class="border-b bg-slate-50">
+      <th class="px-3 py-2">ID</th>
+      <th class="px-3 py-2">タイトル</th>
+      <th class="px-3 py-2">説明</th>
+      <th class="px-3 py-2">更新日</th>
+      <th class="px-3 py-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @books.each do |b| %>
+      <tr class="border-b">
+        <td class="px-3 py-2"><%= b.id %></td>
+        <td class="px-3 py-2"><%= b.title %></td>
+        <td class="px-3 py-2 text-slate-600"><%= truncate(b.description, length: 80) %></td>
+        <td class="px-3 py-2 text-slate-500"><%= l b.updated_at, format: :short %></td>
+        <td class="px-3 py-2 text-right">
+          <%= link_to "編集", edit_admin_book_path(b), class: "mr-2 text-sky-700 hover:underline" %>
+          <%= link_to "削除", admin_book_path(b), data: { turbo_method: :delete, turbo_confirm: "削除しますか？" }, class: "text-red-700 hover:underline" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="mt-4">
+  <%= paginate @books if defined?(paginate) %>
 </div>

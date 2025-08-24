@@ -1,0 +1,31 @@
+<%= form_with model: @book, url: (@book.new_record? ? admin_books_path : admin_book_path(@book)),
+              method: (@book.new_record? ? :post : :patch),
+              class: "space-y-4" do |f| %>
+
+  <% if @book.errors.any? %>
+    <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+      <p><strong><%= @book.errors.count %></strong> 件のエラーがあります：</p>
+      <ul class="list-disc pl-5 mt-1">
+        <% @book.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm text-slate-600" %>
+    <%= f.text_field :title, class: "w-full rounded border px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.label :description, class: "block text-sm text-slate-600" %>
+    <%= f.text_area :description, rows: 5, class: "w-full rounded border px-3 py-2" %>
+  </div>
+
+  <div class="flex gap-2">
+    <%= f.submit (@book.new_record? ? "作成する" : "更新する"),
+        class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "一覧に戻る", admin_books_path, class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
+  </div>
+<% end %>

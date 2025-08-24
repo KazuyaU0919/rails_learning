@@ -7,20 +7,20 @@
       <!-- だれでも表示 -->
       <%= link_to "Code Editor", editor_path,
           class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-
-      <!-- だれでも表示：Rails Books -->
       <%= link_to "Rails Books", books_path,
           class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
 
       <% if logged_in? %>
         <%= link_to "PreCode", pre_codes_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-
         <%= link_to "Code Library", code_libraries_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
 
-        <%= link_to "新規作成", new_pre_code_path,
-            class: "px-3 py-1 rounded-lg bg-slate-900 text-white hover:bg-slate-800" %>
+        <!-- ★ 管理者だけに表示 -->
+        <% if current_user&.admin? %>
+          <%= link_to "管理画面", admin_root_path,
+              class: "px-3 py-1 rounded-lg bg-slate-900 text-white hover:bg-slate-800" %>
+        <% end %>
 
         <%= link_to "ログアウト", session_path,
             data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
@@ -28,10 +28,8 @@
       <% else %>
         <%= link_to "Code Library", code_libraries_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-
         <%= link_to "ログイン", new_session_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-
         <%= link_to "新規登録", new_user_path,
             class: "px-3 py-1 rounded-lg bg-slate-900 text-white hover:bg-slate-800" %>
       <% end %>
