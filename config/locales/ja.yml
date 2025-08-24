@@ -10,3 +10,17 @@ ja:
       default: "%Y/%m/%d %H:%M"
       short:   "%m/%d %H:%M"
       long:    "%Y年%-m月%-d日 %H:%M"
+  activerecord:
+    attributes:
+      book_section:
+        book_id: "対象の教本"
+        position: "表示順"
+        is_free: "無料公開"
+        heading: "見出し"
+        content: "本文"
+        images: "画像（複数可）"
+  helpers:
+    submit:
+      book_section:
+        create: "作成する"
+        update: "更新する"
