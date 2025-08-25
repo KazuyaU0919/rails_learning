@@ -44,27 +44,8 @@
       <%= f.hidden_field :content, id: "content_field", autocomplete: "off" %>
     </div>
 
-    <!-- 画像 -->
-    <div class="mt-20 space-y-2">
-      <%= f.label :images, class: "block font-semibold text-slate-800" %>
-      <%= f.file_field :images, multiple: true, direct_upload: true,
-            class: "block w-full max-w-md text-sm text-slate-600
-                    file:mr-4 file:px-4 file:py-2
-                    file:rounded-lg file:border file:border-slate-300
-                    file:bg-white file:font-medium
-                    file:text-slate-700 hover:file:bg-slate-50" %>
-
-      <% if @section.images.attached? %>
-        <ul class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <% @section.images.each do |img| %>
-            <li><%= image_tag img.variant(resize_to_limit: [400, 400]).processed, class: "rounded" %></li>
-          <% end %>
-        </ul>
-      <% end %>
-    </div>
-
     <!-- 送信ボタン -->
-    <div class="pt-2">
+    <div class="mt-20 pt-2">
       <%= f.submit(@section.new_record? ? "作成する" : "更新する",
             class: "inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5
                     text-white hover:bg-slate-800 disabled:opacity-50") %>

@@ -58,21 +58,29 @@ RSpec.describe "Admin::BookSections", type: :request do
     expect(section.images.first.blob_id).to eq(blob.id)
   end
 
-  # 画像添付 → 一般ユーザー向け詳細ページに <img> が出ること
-  it "attaches images and shows them on public show page" do
+  # 画像が本文に埋め込まれていれば、一般の詳細ページで <img> が描画されること
+  it "shows inline <img> in public show page when content includes a blob URL" do
+    # 1x1 PNG を ActiveStorage に作って（DirectUpload 相当）
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: File.open(Rails.root.join("spec/fixtures/files/sample.png")),
+      filename: "sample.png",
+      content_type: "image/png"
+    )
+    # /rails/active_storage/blobs/redirect/:signed_id/:filename （only_path: true で相対パス）
+    img_src = rails_blob_path(blob, only_path: true)
+
+    html = %(<p>img</p><img src="#{img_src}">)
+
     post admin_book_sections_path, params: {
-      book_section: {
-        book_id:  book.id,
-        heading:  "H",
-        position: 1,
-        content:  "<p>img</p>",
-        images:   [ uploaded_image("sample.png") ] # spec/fixtures/files/sample.png
-      }
+      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
     }
 
     section = BookSection.last
+    # attach_images_from_content! の副作用（本文に出てくる blob が attach 済みに）
     expect(section.images).to be_attached
+    expect(section.images.first.blob_id).to eq(blob.id)
 
+    # 一般側詳細で <img> が出ること（相対/絶対どちらも許容）
     get book_section_path(book, section)
     expect(response).to have_http_status(:ok)
     expect(response.body).to match(%r{<img[^>]+src="(?:https?://[^"]+)?/rails/active_storage/[^"]+"})
