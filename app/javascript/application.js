@@ -1,6 +1,11 @@
 // app/javascript/application.js
 
 import "@hotwired/turbo-rails"
+
+// Active Storage（DirectUpload 等を有効化）
+import * as ActiveStorage from "@rails/activestorage"
+ActiveStorage.start()
+
 import "controllers"
 
 // HTTP 通信ライブラリ axios を利用
