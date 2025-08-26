@@ -2,31 +2,25 @@
 require "rails_helper"
 
 RSpec.describe "Books", type: :request do
-  include ActionView::Helpers::NumberHelper # number_with_delimiter 相当を使うため
+  include ActionView::Helpers::NumberHelper
 
   describe "GET /books" do
-    it "200 OK & 各教本のタイトル/説明/セクション数（counter_cache）が見える" do
+    it "200 OK & 各教本のタイトル/説明/セクション数(counter_cache) が見える" do
       book = create(:book, title: "Rails Book", description: "Rails入門")
       create_list(:book_section, 3, book:)
-
-      # counter_cache の更新を反映
       book.reload
 
       get books_path
-
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Rails Book")
       expect(response.body).to include("Rails入門")
-
-      # 一覧では数値のみが表示される想定（桁区切り対応）
       expect(response.body).to include(number_with_delimiter(book.book_sections_count))
     end
   end
 
   describe "GET /books/:id" do
-    it "200 OK & 目次（position昇順）が並ぶ" do
+    it "200 OK & 目次(position昇順) が並ぶ" do
       book = create(:book, title: "順序テスト")
-      # position: 1,2,3 の並びで出ることを確認（本文は最小限）
       s3 = create(:book_section, book:, heading: "C", position: 3)
       s1 = create(:book_section, book:, heading: "A", position: 1)
       s2 = create(:book_section, book:, heading: "B", position: 2)
@@ -36,12 +30,15 @@ RSpec.describe "Books", type: :request do
 
       doc = Nokogiri::HTML.parse(response.body)
 
-      # 位置（1., 2., 3.）の並びを検証
-      positions = doc.css('ul li span.text-slate-400').map { |n| n.text.strip }
+      # 目次の <li> を「番号用の span があるもの」に限定
+      toc_lis = doc.css('ul li').select { |li| li.at_css('span.text-slate-400') }
+
+      # 位置 (1., 2., 3.) の並び
+      positions = toc_lis.map { |li| li.at_css('span.text-slate-400').text.strip }
       expect(positions).to eq(%w[1. 2. 3.])
 
-      # 見出し（A, B, C）の並びを検証
-      headings = doc.css('ul li a').map(&:text)
+      # 見出し (A, B, C) の並び
+      headings = toc_lis.map { |li| li.at_css('a')&.text&.strip }.compact
       expect(headings).to eq(%w[A B C])
 
       # リンクが存在することの確認
