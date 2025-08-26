@@ -1,4 +1,7 @@
 <!-- app/views/editor/index.html.erb -->
+<% breadcrumb :editor %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "コードエディタ" %>
 
 <div class="mx-auto max-w-4xl px-4 py-6 space-y-4" data-controller="editor">

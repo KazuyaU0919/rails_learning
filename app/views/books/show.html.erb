@@ -1,4 +1,8 @@
 <!-- app/views/books/show.html.erb -->
+<% breadcrumb :books %>
+<% breadcrumb :book, @book %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-3xl font-bold mb-3"><%= @book.title %></h1>
 <p class="text-slate-600 mb-6"><%= @book.description %></p>
 

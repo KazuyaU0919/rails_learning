@@ -1,3 +1,8 @@
+<% @pre_code ||= @code %>
+<% breadcrumb :pre_codes %>
+<% breadcrumb :pre_code, @pre_code %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, @pre_code.title %>
 
 <h1 class="text-xl font-semibold mb-2"><%= @pre_code.title %></h1>
