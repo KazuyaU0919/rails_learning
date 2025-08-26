@@ -1,0 +1,19 @@
+<!-- app/views/static_pages/contact.html.erb -->
+<%# パンくず %>
+<% breadcrumb :root %>
+<% breadcrumb :contact %>
+<%= render "shared/breadcrumbs" %>
+
+<% content_for :title, "お問い合わせ" %>
+<h1 class="text-2xl font-bold mb-4">お問い合わせ</h1>
+
+<div class="bg-white rounded-xl shadow p-4 overflow-hidden">
+  <iframe
+    src="<%= ENV.fetch('GOOGLE_FORM_URL', 'https://example.com/dummy-form') %>"
+    class="w-full border-0"
+    style="min-height: 1750px; height: 95vh;"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    allowfullscreen>
+  </iframe>
+</div>
