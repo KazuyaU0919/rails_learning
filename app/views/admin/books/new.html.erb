@@ -1,3 +1,6 @@
+<% breadcrumb :admin_books %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "Books / 新規作成" %>
 <h1 class="text-xl font-semibold mb-4">Book を新規作成</h1>
 <%= render "form", book: @book %>

@@ -1,0 +1,23 @@
+<%# app/views/shared/_breadcrumbs.html.erb %>
+<% if breadcrumbs.any? %>
+  <nav class="mb-4 text-sm text-slate-500" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap gap-1 items-center">
+      <% breadcrumbs.each_with_index do |crumb, i| %>
+        <li class="inline-flex items-center">
+          <% if crumb.url.present? %>
+            <%# 現在ページだけリンクにしない場合はこちら %>
+            <%= link_to_unless_current crumb.text, crumb.url, class: "hover:underline" do %>
+              <span class="text-slate-700"><%= crumb.text %></span>
+            <% end %>
+          <% else %>
+            <span class="text-slate-700"><%= crumb.text %></span>
+          <% end %>
+
+          <% unless i == breadcrumbs.size - 1 %>
+            <span class="px-1 select-none">›</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+<% end %>

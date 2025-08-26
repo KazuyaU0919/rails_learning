@@ -1,3 +1,9 @@
+<% breadcrumb :root %>
+<% breadcrumb :admin_root %>
+<% breadcrumb :admin_books %>
+<% breadcrumb :admin_book_edit, @book %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "Books / 編集" %>
 <h1 class="text-xl font-semibold mb-4">Book を編集</h1>
 <%= render "form", book: @book %>

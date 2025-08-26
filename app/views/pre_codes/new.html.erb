@@ -1,3 +1,8 @@
+<% breadcrumb :root %>
+<% breadcrumb :pre_codes %>
+<% breadcrumb :pre_code_new %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "PreCode新規作成" %>
 <h1 class="text-xl font-semibold mb-4"><%= yield :title %></h1>
 <%= render "form", pre_code: @pre_code %>

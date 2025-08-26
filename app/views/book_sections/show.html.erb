@@ -1,3 +1,8 @@
+<% breadcrumb :books %>
+<% breadcrumb :book, @book %>
+<% breadcrumb :book_section, @book, @section %>
+<%= render "shared/breadcrumbs" %>
+
 <nav class="mb-6 text-sm">
   <%= link_to "← #{@book.title} に戻る", book_path(@book), class: "text-slate-600 hover:underline" %>
 </nav>
