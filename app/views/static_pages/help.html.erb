@@ -1,0 +1,19 @@
+<!-- app/views/static_pages/help.html.erb -->
+<% breadcrumb :root %>
+<% breadcrumb :help %>
+<%= render "shared/breadcrumbs" %>
+
+<% content_for :title, "ヘルプ" %>
+<h1 class="text-2xl font-bold mb-4">ヘルプ</h1>
+<section class="prose max-w-none">
+  <h2>使い方</h2>
+  <p>このサービスの基本操作や各機能の説明をまとめます。</p>
+
+  <h3>主な機能</h3>
+  <ul>
+    <li>Code Editor（実行・テーマ切替・初期データ）</li>
+    <li>Rails Books（目次・前後ページ）</li>
+    <li>PreCode / CodeLibrary（ランキング・いいね）</li>
+    <li>…など</li>
+  </ul>
+</section>

@@ -68,6 +68,27 @@ crumb :code_library do |lib|
   link lib.title, code_library_path(lib)
 end
 
+# --- Static pages ---
+crumb :help do
+  parent :root
+  link "ヘルプ", help_path
+end
+
+crumb :terms do
+  parent :root
+  link "利用規約", terms_path
+end
+
+crumb :privacy do
+  parent :root
+  link "プライバシーポリシー", privacy_path
+end
+
+crumb :contact do
+  parent :root
+  link "お問い合わせ", contact_path
+end
+
 
 # ============================================================
 # 管理（Admin）エリア
