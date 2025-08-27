@@ -7,7 +7,6 @@ class PreCodesController < ApplicationController
     @pre_codes = current_user.pre_codes
                              .order(id: :desc)
                              .page(params[:page])
-                             .per(5)
   end
 
   # GET /pre_codes/:id

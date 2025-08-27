@@ -38,7 +38,8 @@ RSpec.describe "Books", type: :request do
       expect(positions).to eq(%w[1. 2. 3.])
 
       # 見出し (A, B, C) の並び
-      headings = toc_lis.map { |li| li.at_css('a')&.text&.strip }.compact
+      # 行全体リンク化後は、見出しテキストは span.text-slate-900 に入る
+      headings = toc_lis.map { |li| li.at_css('a span.text-slate-900')&.text&.strip }.compact
       expect(headings).to eq(%w[A B C])
 
       # リンクが存在することの確認

@@ -8,7 +8,7 @@ class PreCode < ApplicationRecord
             length: { maximum: 50 },
             format: { without: /\A\s*\z/, message: "を空白だけにはできません" }
 
-  validates :description, length: { maximum: 500 }, allow_blank: true
+  validates :description, length: { maximum: 2000 }, allow_blank: true
   validates :body, presence: true
 
   # === 一覧向けスコープ ===

@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<!-- 一覧 -->
+<%# --- 一覧 --- %>
 <% if @pre_codes.blank? %>
   <p class="text-slate-500">該当するデータがありません。</p>
 <% else %>
@@ -38,11 +38,14 @@
     <% @pre_codes.each do |pc| %>
       <li class="border rounded-xl p-4">
         <div class="flex justify-between">
-          <div>
-            <div class="font-semibold"><%= link_to pc.title, code_library_path(pc) %></div>
+          <!-- ← カードの“本文側”を丸ごとリンク化 -->
+          <%= link_to code_library_path(pc), class: "block flex-1 pr-4 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 rounded-lg" do %>
+            <div class="font-semibold"><%= pc.title %></div>
             <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 100) %></p>
-          </div>
-          <div class="text-sm text-slate-500">
+          <% end %>
+
+          <!-- 右側：メトリクスやボタン（リンクの外） -->
+          <div class="text-sm text-slate-500 shrink-0">
             <span class="inline-flex items-center gap-1 mr-4 align-middle">
               <%= heroicon "heart", variant: :solid, options: { class: "w-4 h-4" } %>
               <%= pc.like_count %>

@@ -1,17 +1,22 @@
+<%# app/views/books/_book.html.erb %>
 <% cache(book) do %>
-  <li class="px-4 py-3 hover:bg-slate-50 flex items-center justify-between">
-    <div>
-      <h3 class="font-semibold text-slate-900">
-        <%= link_to book.title, book_path(book), class: "hover:underline" %>
-      </h3>
-      <p class="text-slate-500 text-sm"><%= truncate(book.description, length: 80) %></p>
-    </div>
+  <li>
+    <%= link_to book_path(book),
+      class: "block px-4 py-3 rounded-lg border bg-white hover:bg-slate-50 focus:bg-slate-50
+              flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-slate-300" do %>
 
-    <div class="text-xs text-slate-500">
-      <span class="inline-flex items-center gap-1">
-        <%= heroicon "document-text", variant: :outline, options: { class: "w-4 h-4" } %>
-        <%= number_with_delimiter(book.book_sections_count || 0) %>
-      </span>
-    </div>
+      <div>
+        <h3 class="font-semibold text-slate-900"><%= book.title %></h3>
+        <p class="text-slate-500 text-sm"><%= truncate(book.description, length: 80) %></p>
+      </div>
+
+      <div class="text-xs text-slate-500">
+        <span class="inline-flex items-center gap-1">
+          <%= heroicon "document-text", variant: :outline, options: { class: "w-4 h-4" } %>
+          <%= number_with_delimiter(book.book_sections_count || 0) %>
+        </span>
+      </div>
+
+    <% end %>
   </li>
 <% end %>

@@ -3,21 +3,38 @@
 
 <%= form_with model: @pre_code, class: "space-y-4" do |f| %>
   <div>
-    <%= f.label :title, class: "block text-sm mb-1" %>
+    <%= f.label :title, "タイトル", class: "block text-sm mb-1" %>
     <%= f.text_field :title,
           class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
   </div>
 
   <div>
-    <%= f.label :description, class: "block text-sm mb-1" %>
-    <%= f.text_area :description, rows: 3,
-          class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+    <%= f.label :description, "コードの説明", class: "block text-sm mb-1" %>
+
+    <div
+      data-controller="autosize"
+      data-autosize-min-rows-value="3"
+      data-autosize-max-length-value="2000">
+      <%= f.text_area :description,
+            rows: 3,
+            maxlength: 2000,
+            data: { autosize_target: "field" },
+            class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+
+      <div class="mt-1 text-xs text-slate-500">
+        残り <span data-autosize-target="counter">2000</span> 文字
+      </div>
+    </div>
   </div>
 
   <div>
-    <%= f.label :body, class: "block text-sm mb-1" %>
-    <%= f.text_area :body, rows: 10,
-          class: "w-full font-mono rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+    <%= f.label :body, "コード", class: "block text-sm mb-1" %>
+    <div data-controller="autosize" data-autosize-min-rows-value="10">
+      <%= f.text_area :body,
+            rows: 10,
+            data: { autosize_target: "field" },
+            class: "w-full font-mono rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+    </div>
   </div>
 
   <%= f.submit (@pre_code.new_record? ? "作成する" : "更新する"),

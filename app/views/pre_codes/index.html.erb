@@ -1,13 +1,11 @@
-<%# app/views/pre_codes/index.html.erb %>
 <% breadcrumb :pre_codes %>
 <%= render "shared/breadcrumbs" %>
-
 <% content_for :title, "My PreCodes" %>
 
 <div class="flex justify-between items-center mb-4">
   <h1 class="text-xl font-semibold"><%= yield :title %></h1>
   <%= link_to "新規作成", new_pre_code_path,
-              class: "rounded-xl bg-slate-900 text-white px-3 py-2 hover:bg-slate-800" %>
+        class: "rounded-xl bg-slate-900 text-white px-3 py-2 hover:bg-slate-800" %>
 </div>
 
 <% if @pre_codes.blank? %>
@@ -15,18 +13,14 @@
 <% else %>
   <ul class="space-y-3">
     <% @pre_codes.each do |pc| %>
-      <li class="border rounded-xl p-4">
-        <div class="font-semibold">
-          <%= link_to pc.title, pc %>
-        </div>
-        <p class="text-sm text-slate-500 mt-1">
-          <%= truncate(pc.description, length: 120) %>
-        </p>
+      <li>
+        <%= link_to pc, class: "block border rounded-xl p-4 ring-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300" do %>
+          <div class="font-semibold"><%= pc.title %></div>
+          <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 120) %></p>
+        <% end %>
       </li>
     <% end %>
   </ul>
 
-  <div class="mt-6">
-    <%= paginate @pre_codes %>
-  </div>
+  <div class="mt-6"><%= paginate @pre_codes %></div>
 <% end %>
