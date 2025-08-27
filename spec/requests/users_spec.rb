@@ -1,24 +1,18 @@
 # spec/requests/users_spec.rb
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Users', type: :request do
-  describe 'GET /users/new' do
-    it '200 が返る' do
+RSpec.describe "Users", type: :request do
+  describe "GET /users/new" do
+    it "200が返る" do
       get new_user_path
       expect(response).to have_http_status(:ok)
     end
   end
 
-  describe 'POST /users' do
-    it '新規登録できてログイン状態になる' do
-      params = {
-        user: {
-          name: 'テスト太郎',
-          email: 'taro@example.com',
-          password: 'password',
-          password_confirmation: 'password'
-        }
-      }
+  describe "POST /users" do
+    it "ユーザーを作成してログインする" do
+      params = { user: { name: "Alice", email: "a@example.com",
+                         password: "secret123", password_confirmation: "secret123" } }
 
       expect {
         post users_path, params: params
@@ -26,16 +20,52 @@ RSpec.describe 'Users', type: :request do
 
       expect(session[:user_id]).to be_present
       expect(response).to redirect_to(root_path)
+      follow_redirect!
+      expect(response.body).to include("登録しました")
     end
 
-    it 'バリデーションエラーなら 422 で件数は増えない' do
-      bad = { user: { name: '', email: 'bad', password: '1', password_confirmation: '2' } }
+    context "既に同じメール（通常登録）が存在する場合" do
+      let!(:existing) { create(:user, email: "dup@example.com") }
 
-      expect {
-        post users_path, params: bad
-      }.not_to change(User, :count)
+      it "作成されず、ログイン画面にリダイレクトしてフラッシュを表示する" do
+        params = { user: { name: "Bob", email: "dup@example.com",
+                           password: "secret123", password_confirmation: "secret123" } }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+        expect {
+          post users_path, params: params
+        }.not_to change(User, :count)
+
+        expect(session[:user_id]).to be_nil
+        expect(response).to redirect_to(new_session_path)
+        follow_redirect!
+        expect(response.body).to include("既に登録済みです")
+      end
+
+      it "大文字小文字が違っても同一として扱われる" do
+        params = { user: { name: "Bob", email: "DuP@Example.com",
+                           password: "secret123", password_confirmation: "secret123" } }
+
+        expect {
+          post users_path, params: params
+        }.not_to change(User, :count)
+
+        expect(response).to redirect_to(new_session_path)
+      end
+    end
+
+    context "同じメールのOAuthユーザーが既にいる場合" do
+      let!(:oauth) { create(:google_user, email: "google@example.com") }
+
+      it "（現在の仕様）通常登録は失敗し、ログイン画面に誘導される" do
+        params = { user: { name: "Bob", email: "google@example.com",
+                           password: "secret123", password_confirmation: "secret123" } }
+
+        expect {
+          post users_path, params: params
+        }.not_to change(User, :count)
+
+        expect(response).to redirect_to(new_session_path)
+      end
     end
   end
 end

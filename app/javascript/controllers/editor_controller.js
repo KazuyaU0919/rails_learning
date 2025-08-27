@@ -63,17 +63,19 @@ export default class extends Controller {
     const btn = event?.currentTarget || this.element.querySelector('[data-action*="editor#run"]')
     btn?.setAttribute("disabled", "disabled")
     this.outputTarget.textContent = "実行中…"
+
     try {
       const code = this.view.state.doc.toString()
-      const res  = await axios.post("/editor", { code })
-      const { status, stdout, stderr, time, memory } = res.data
-      this.outputTarget.textContent =
-        `Status: ${status}\n` +
-        (stdout ? `\n=== stdout ===\n${stdout}` : "") +
-        (stderr ? `\n=== stderr ===\n${stderr}` : "") +
-        (time || memory ? `\n(time: ${time ?? "-"}s, mem: ${memory ?? "-"}KB)` : "")
+      const res = await axios.post("/editor", { code })
+
+      // stdout / stderr のみ返す
+      if (res.data.stderr && res.data.stderr.length > 0) {
+        this.outputTarget.textContent = res.data.stderr
+      } else {
+        this.outputTarget.textContent = res.data.stdout
+      }
     } catch (e) {
-      this.outputTarget.textContent = `Error: ${e?.response?.data?.error || e}`
+      this.outputTarget.textContent = `Error: ${e.response?.data?.stderr || e}`
     } finally {
       btn?.removeAttribute("disabled")
     }
