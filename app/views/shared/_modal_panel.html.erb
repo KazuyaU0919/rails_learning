@@ -1,66 +1,105 @@
 <!-- app/views/shared/_modal_panel.html.erb -->
-<div
-  data-modal-target="container"
-  class="hidden fixed inset-0 z-50 grid place-items-start md:place-items-center pt-24 md:pt-0"
-  role="dialog" aria-modal="true" aria-labelledby="user-menu-title">
+<div data-modal-target="container"
+     class="hidden fixed inset-0 z-50 grid place-items-start md:place-items-center pt-24 md:pt-0"
+     role="dialog" aria-modal="true" aria-labelledby="user-menu-title">
 
   <!-- 背景 -->
-  <div
-    data-modal-target="backdrop"
-    class="absolute inset-0 bg-black/40"
-    data-action="click->modal#backdrop"></div>
+  <div data-modal-target="backdrop"
+       class="absolute inset-0 bg-black/40"
+       data-action="click->modal#backdrop"></div>
 
   <!-- パネル -->
-  <div
-    data-modal-target="panel"
-    class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-center">
+  <div data-modal-target="panel"
+       class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-center">
 
     <div class="mb-4 flex items-center justify-center">
       <h2 id="user-menu-title" class="text-xl font-semibold">メニュー</h2>
-      <button
-        class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
-        data-action="click->modal#close"
-        aria-label="閉じる">×</button>
+      <button class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+              data-action="click->modal#close" aria-label="閉じる">
+        <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
+      </button>
     </div>
 
-    <% if logged_in? %>
-      <ul class="space-y-3">
-        <li><%= link_to "アプリの使い方", help_path,         class: "block hover:underline text-center" %></li>
-        <li><%= link_to "お問い合わせ",   contact_path,      class: "block hover:underline text-center" %></li>
-        <li><%= link_to "利用規約",       terms_path,        class: "block hover:underline text-center" %></li>
-        <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
+    <%# ===================== PC 用（lg以上だけ表示） ===================== %>
+    <div class="hidden lg:block">
+      <% if logged_in? %>
+        <ul class="space-y-3">
+          <li><%= link_to "アプリの使い方",       help_path,    class: "block hover:underline text-center" %></li>
+          <li><%= link_to "お問い合わせ",         contact_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "利用規約",             terms_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
 
-        <% if current_user&.admin? %>
+          <%# ※PC のみ管理者リンクを出す %>
+          <% if current_user&.admin? %>
+            <li class="pt-2 border-t">
+              <%= link_to "管理画面", admin_root_path, class: "block hover:underline text-center" %>
+            </li>
+          <% end %>
+
           <li class="pt-2 border-t">
-            <%= link_to "管理画面へログイン", admin_root_path, class: "block hover:underline text-center" %>
+            <%= link_to "ログアウト", session_path,
+                  data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
+                  class: "block hover:underline text-center" %>
           </li>
-        <% end %>
+        </ul>
+      <% else %>
+        <ul class="space-y-3">
+          <li><%= link_to "アプリの使い方",       help_path,    class: "block hover:underline text-center" %></li>
+          <li><%= link_to "お問い合わせ",         contact_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "利用規約",             terms_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
+          <li class="pt-2 border-t"><%= link_to "ログイン", new_session_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "新規登録", new_user_path, class: "block hover:underline text-center" %></li>
+        </ul>
+      <% end %>
+    </div>
 
-        <li class="pt-2 border-t">
-          <%= link_to "ログアウト", session_path,
-                      data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
-                      class: "block hover:underline text-center" %>
-        </li>
-      </ul>
-    <% else %>
-      <ul class="space-y-3">
-        <li><%= link_to "アプリの使い方",   help_path,        class: "block hover:underline text-center" %></li>
-        <li><%= link_to "お問い合わせ",     contact_path,     class: "block hover:underline text-center" %></li>
-        <li><%= link_to "利用規約",         terms_path,       class: "block hover:underline text-center" %></li>
-        <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
-        <li class="pt-2 border-t">
-          <%= link_to "ログイン",     new_session_path, class: "block hover:underline text-center" %>
-        </li>
-        <li>
-          <%= link_to "新規登録",     new_user_path,    class: "block hover:underline text-center" %>
-        </li>
-      </ul>
-    <% end %>
+    <%# ============== スマホ/タブレット用（lg未満のみ表示） ============== %>
+    <div class="lg:hidden">
+      <% if logged_in? %>
+        <ul class="space-y-3">
+          <%# まずアプリ内主要リンク %>
+          <li><%= link_to "Code Editor",  editor_path,      class: "block hover:underline text-center" %></li>
+          <li><%= link_to "Rails Books",  books_path,       class: "block hover:underline text-center" %></li>
+          <li><%= link_to "PreCode",      pre_codes_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "Code Library", code_libraries_path, class: "block hover:underline text-center" %></li>
+
+          <%# つづいて静的ページ %>
+          <li class="pt-2 border-t"><%= link_to "アプリの使い方",       help_path,    class: "block hover:underline text-center" %></li>
+          <li><%= link_to "お問い合わせ",         contact_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "利用規約",             terms_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
+
+          <%# ※スマホ/タブレットでは管理画面リンクは出さない %>
+
+          <li class="pt-2 border-t">
+            <%= link_to "ログアウト", session_path,
+                  data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
+                  class: "block hover:underline text-center" %>
+          </li>
+        </ul>
+      <% else %>
+        <ul class="space-y-3">
+          <%# 未ログイン時：ログイン導線 + 主要リンク %>
+          <li><%= link_to "ログイン", new_session_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "新規登録", new_user_path,    class: "block hover:underline text-center" %></li>
+
+          <li class="pt-2 border-t"><%= link_to "Code Editor",  editor_path,      class: "block hover:underline text-center" %></li>
+          <li><%= link_to "Rails Books",  books_path,       class: "block hover:underline text-center" %></li>
+          <li><%= link_to "PreCode",      pre_codes_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "Code Library", code_libraries_path, class: "block hover:underline text-center" %></li>
+
+          <li class="pt-2 border-t"><%= link_to "アプリの使い方",       help_path,    class: "block hover:underline text-center" %></li>
+          <li><%= link_to "お問い合わせ",         contact_path, class: "block hover:underline text-center" %></li>
+          <li><%= link_to "利用規約",             terms_path,   class: "block hover:underline text-center" %></li>
+          <li><%= link_to "プライバシーポリシー", privacy_path, class: "block hover:underline text-center" %></li>
+        </ul>
+      <% end %>
+    </div>
 
     <div class="mt-6 flex justify-center">
-      <button
-        class="inline-flex items-center rounded-lg bg-rose-600 px-5 py-2 text-white hover:bg-rose-700"
-        data-action="click->modal#close">閉じる</button>
+      <button class="inline-flex items-center rounded-lg bg-rose-600 px-5 py-2 text-white hover:bg-rose-700"
+              data-action="click->modal#close">閉じる</button>
     </div>
   </div>
 </div>

@@ -43,7 +43,14 @@
             <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 100) %></p>
           </div>
           <div class="text-sm text-slate-500">
-            👍 <%= pc.like_count %> ・ 🧰 <%= pc.use_count %>
+            <span class="inline-flex items-center gap-1 mr-4 align-middle">
+              <%= heroicon "heart", variant: :solid, options: { class: "w-4 h-4" } %>
+              <%= pc.like_count %>
+            </span>
+            <span class="inline-flex items-center gap-1 align-middle">
+              <%= heroicon "briefcase", variant: :outline, options: { class: "w-4 h-4" } %>
+              <%= pc.use_count %>
+            </span>
           </div>
         </div>
 

@@ -9,7 +9,8 @@
 
     <div class="text-xs text-slate-500">
       <span class="inline-flex items-center gap-1">
-        📄 <%= number_with_delimiter(book.book_sections_count || 0) %>
+        <%= heroicon "document-text", variant: :outline, options: { class: "w-4 h-4" } %>
+        <%= number_with_delimiter(book.book_sections_count || 0) %>
       </span>
     </div>
   </li>

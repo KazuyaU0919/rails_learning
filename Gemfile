@@ -41,6 +41,9 @@ gem "httparty"
 # パンくず機能
 gem "gretel"
 
+# アイコン
+gem "heroicon-rails"
+
 gem "image_processing", "~> 1.12"  # ActiveStorageで画像のリサイズやサムネイル生成を行うGem
 gem "mini_magick"                  # 画像処理ライブラリImageMagickのRubyラッパー
 
