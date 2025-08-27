@@ -7,32 +7,36 @@
     <!-- タイトル（常時表示） -->
     <%= link_to root_path, class: "font-semibold text-center md:text-left flex items-center gap-2" do %>
       <%= heroicon "rocket-launch", variant: :outline, options: { class: "w-6 h-6" } %>
-      <span>RailsLearning</span>
+      <span>RailsLearningTest</span>
     <% end %>
 
-    <!-- グローバルナビ：PCのみ表示（lg以上） -->
-    <nav class="hidden lg:flex items-center gap-3 text-sm">
-      <%= link_to "Code Editor",  editor_path,
+    <!-- === グローバルナビ＋ハンバーガー（右寄せ） === -->
+    <div class="ml-auto flex items-center gap-6">
+      <!-- グローバルナビ：PCのみ表示（lg以上） -->
+      <nav class="hidden lg:flex items-center gap-3 text-sm">
+        <%= link_to "Code Editor", editor_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-      <%= link_to "Rails Books",  books_path,
+        <%= link_to "Rails Books", books_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-      <%= link_to "PreCode",      pre_codes_path,
+        <%= link_to "PreCode", pre_codes_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-      <%= link_to "Code Library", code_libraries_path,
+        <%= link_to "Code Library", code_libraries_path,
             class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
 
-      <% unless logged_in? %>
-        <%= link_to "ログイン", new_session_path,
+        <% unless logged_in? %>
+          <%= link_to "ログイン", new_session_path,
               class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-      <% end %>
-    </nav>
+        <% end %>
+      </nav>
 
-    <!-- ハンバーガー（常時表示） -->
-    <button class="p-2 rounded-lg hover:bg-slate-100 md:hidden lg:block"
-            data-action="click->modal#open"
-            aria-label="メニューを開く">
-      <%= heroicon "bars-3", options: { class: "w-6 h-6 text-slate-500" } %>
-    </button>
+      <!-- ハンバーガー：モバイルで表示 -->
+      <button
+        class="p-2 rounded-lg hover:bg-slate-100 md:hidden lg:block"
+        data-action="click->modal#open"
+        aria-label="メニューを開く">
+        <%= heroicon "bars-3", options: { class: "w-6 h-6 text-slate-500" } %>
+      </button>
+    </div>
 
     <!-- モーダル（同一スコープ内で描画） -->
     <%= render "shared/modal_panel" %>

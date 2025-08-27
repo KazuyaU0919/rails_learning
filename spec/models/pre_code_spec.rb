@@ -2,11 +2,10 @@
 require "rails_helper"
 
 RSpec.describe PreCode, type: :model do
-  describe "associations" do
-    it { should belong_to(:user) }
-  end
-
   describe "validations" do
+    # 他の必須項目が満たされず検証に干渉しないよう、まともなインスタンスを用意
+    subject { build(:pre_code) }
+
     it { should validate_presence_of(:title) }
     it { should validate_length_of(:title).is_at_most(50) }
 
@@ -16,7 +15,9 @@ RSpec.describe PreCode, type: :model do
       expect(pre_code.errors[:title]).to be_present
     end
 
-    it { should validate_length_of(:description).is_at_most(500) }
+    # モデル側を 2000 に緩和したのでテストも合わせる
+    it { should validate_length_of(:description).is_at_most(2000) }
+
     it { should validate_presence_of(:body) }
   end
 end

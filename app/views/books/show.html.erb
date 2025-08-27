@@ -6,16 +6,22 @@
 <h1 class="text-3xl font-bold mb-3"><%= @book.title %></h1>
 <p class="text-slate-600 mb-6"><%= @book.description %></p>
 
+
 <h2 class="text-xl font-semibold mb-2">目次</h2>
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <% @sections.each do |s| %>
-    <li class="px-4 py-3 hover:bg-slate-50 flex items-center justify-between">
-      <div>
-        <span class="text-slate-400 mr-3 text-sm"><%= s.position %>.</span>
-        <%= link_to s.heading, book_section_path(@book, s), class: "text-slate-900 hover:underline" %>
-      </div>
-      <% if s.is_free %>
-        <span class="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded">FREE</span>
+    <li>
+      <%= link_to book_section_path(@book, s),
+          class: "block px-4 py-3 hover:bg-slate-50 focus:bg-slate-50 focus:outline-none" do %>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-slate-400 mr-3 text-sm"><%= s.position %>.</span>
+            <span class="text-slate-900"><%= s.heading %></span>
+          </div>
+          <% if s.is_free %>
+            <span class="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded">FREE</span>
+          <% end %>
+        </div>
       <% end %>
     </li>
   <% end %>
