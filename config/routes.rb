@@ -50,12 +50,6 @@ Rails.application.routes.draw do
     resources :book_sections, except: %i[show]
   end
 
-  # 一時昇格ルート（ENVがある時だけ有効化）
-  if ENV["ADMIN_PROMOTE_TOKEN"].present?
-    get  "/_promote",    to: "admin_bootstrap#form"
-    post "/_promote_me", to: "admin_bootstrap#promote_me"
-  end
-
   # OmniAuth
   get "/auth/:provider", to: "omni_auth#passthru", as: :auth,
                          constraints: { provider: /(google_oauth2|github)/ }
