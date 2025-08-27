@@ -1,52 +1,38 @@
 # app/controllers/editor_controller.rb
 class EditorController < ApplicationController
-  # JSON以外は弾く（明示的に 406 を返す）
-  before_action :ensure_json!, only: [ :create, :pre_code_body ]
-
-  # MVP: axios で JSON を投げる想定（CSRF トークンを付ける版に切替予定なら後で外す）
+  # JSON以外は弾く（明示的に406を返す）
+  before_action :ensure_json!, only: %i[create pre_code_body]
   protect_from_forgery with: :null_session, only: :create
 
-  # GET /editor (root)
+  # GET /editor
   def index
-    @my_pre_codes   = logged_in? ? current_user.pre_codes.order(created_at: :desc).limit(30) : PreCode.none
+    @my_pre_codes = logged_in? ? current_user.pre_codes.order(created_at: :desc).limit(30) : PreCode.none
     @popular_public = PreCode.order(like_count: :desc).limit(30)
   end
 
   # POST /editor
-  # params: { code: "puts 1+1", language_id: 72 }
   def create
-    code = params[:code].to_s
-
-    # ParameterMissing を起こさず 422 を返す
-    if code.strip.empty?
-      render json: { error: "code が空です" }, status: :unprocessable_entity
-      return
-    end
-
-    # サイズ制限
-    if code.bytesize > 200_000
-      render json: { error: "code が長すぎます" }, status: :unprocessable_entity
-      return
-    end
-
+    code    = params[:code].to_s
     lang_id = params[:language_id].presence || Judge0::Client::RUBY_LANG_ID
-    result  = Judge0::Client.new.run_ruby(code, language_id: lang_id)
 
+    # 空や過大リクエストの防御
+    if code.strip.empty?
+      render json: { stdout: "", stderr: "code が空です" }, status: :unprocessable_entity and return
+    end
+    if code.bytesize > 200_000
+      render json: { stdout: "", stderr: "code が大きすぎます" }, status: :unprocessable_entity and return
+    end
+
+    # Judge0 実行
+    result = Judge0::Client.new.run_ruby(code, language_id: lang_id)
+
+    # **stdout / stderr のみ返す**
     render json: {
-      status: result.dig("status", "description"),
-      stdout: result["stdout"],
-      stderr: result["stderr"],
-      time:   result["time"],
-      memory: result["memory"],
-      token:  result["token"] # デバッグ/将来の参照用
+      stdout: result["stdout"] || "",
+      stderr: result["stderr"] || ""
     }
   rescue Judge0::Error => e
-    # メッセージ内に "HTTP 4xx" が含まれていれば、そのコードで返す
-    if (m = e.message.match(/HTTP\s+(\d{3})/))
-      render json: { error: e.message }, status: m[1].to_i
-    else
-      render json: { error: e.message }, status: :bad_gateway
-    end
+    render json: { stdout: "", stderr: e.message }, status: :bad_gateway
   end
 
   # GET /pre_codes/:id/body
@@ -65,6 +51,6 @@ class EditorController < ApplicationController
 
   def ensure_json!
     return if request.format.json?
-    head :not_acceptable # 406
+    head :not_acceptable
   end
 end

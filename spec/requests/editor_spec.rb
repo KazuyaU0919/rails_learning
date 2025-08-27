@@ -9,7 +9,7 @@ RSpec.describe "Editor API", type: :request do
       allow(Judge0::Client).to receive(:new).and_return(client)
     end
 
-    it "code を実行して結果(JSON)を返す（stdout は復号済みが返る前提）" do
+    it "code を実行して結果(JSON)を返す（stdout のみ返す）" do
       fake = {
         "status" => { "description" => "Accepted" },
         "stdout" => "2\n",
@@ -24,22 +24,23 @@ RSpec.describe "Editor API", type: :request do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
-      expect(json["status"]).to eq("Accepted")
       expect(json["stdout"]).to eq("2\n")
-      expect(json).to include("time", "memory", "token")
+      expect(json["stderr"]).to eq("") # nil の場合は空文字で返す
     end
 
     it "code が空なら 422 を返す" do
       post editor_path, params: { code: "" }, as: :json
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(JSON.parse(response.body)).to include("error")
+      json = JSON.parse(response.body)
+      expect(json["stderr"]).to eq("code が空です")
     end
 
     it "code が 200KB を超えると 422 を返す" do
       big = "a" * 200_001
       post editor_path, params: { code: big }, as: :json
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(JSON.parse(response.body)).to include("error")
+      json = JSON.parse(response.body)
+      expect(json["stderr"]).to eq("code が大きすぎます")
     end
   end
 
