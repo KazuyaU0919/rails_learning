@@ -3,23 +3,29 @@
 <div id="<%= dom_id(pre_code, :actions) %>" class="flex gap-2">
   <% if logged_in? %>
     <% if current_like %>
-      <%= button_to "♥ #{pre_code.like_count}",
-            like_path(current_like),
+      <%= button_to like_path(current_like),
             method: :delete,
-            form: { data: { turbo_stream: true } },
-            class: "px-3 py-1 rounded bg-rose-600 text-white" %>
+            form:   { data: { turbo_stream: true } },
+            class:  "px-3 py-1 rounded bg-rose-600 text-white inline-flex items-center gap-1" do %>
+        <%= heroicon "heart", variant: :solid,  options: { class: "w-4 h-4" } %>
+        <%= pre_code.like_count %>
+      <% end %>
     <% else %>
-      <%= button_to "♡ #{pre_code.like_count}",
-            likes_path(pre_code_id: pre_code.id),
+      <%= button_to likes_path(pre_code_id: pre_code.id),
             method: :post,
-            form: { data: { turbo_stream: true } },
-            class: "px-3 py-1 rounded ring-1 ring-slate-300" %>
+            form:   { data: { turbo_stream: true } },
+            class:  "px-3 py-1 rounded ring-1 ring-slate-300 inline-flex items-center gap-1" do %>
+        <%= heroicon "heart", variant: :outline, options: { class: "w-4 h-4" } %>
+        <%= pre_code.like_count %>
+      <% end %>
     <% end %>
+  <% end %>
 
-    <%= button_to "使った(#{pre_code.use_count})",
-          used_codes_path(pre_code_id: pre_code.id),
-          method: :post,
-          form: { data: { turbo_stream: true } },
-          class: "px-3 py-1 rounded bg-slate-900 text-white" %>
+  <%= button_to used_codes_path(pre_code_id: pre_code.id),
+        method: :post,
+        form:   { data: { turbo_stream: true } },
+        class:  "px-3 py-1 rounded bg-slate-900 text-white inline-flex items-center gap-1" do %>
+    <%= heroicon "briefcase", variant: :solid, options: { class: "w-4 h-4" } %>
+    <%= pre_code.use_count %>
   <% end %>
 </div>
