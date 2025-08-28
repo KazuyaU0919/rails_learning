@@ -1,19 +1,150 @@
 <!-- app/views/static_pages/help.html.erb -->
+<%# パンくず %>
 <% breadcrumb :root %>
 <% breadcrumb :help %>
 <%= render "shared/breadcrumbs" %>
 
 <% content_for :title, "ヘルプ" %>
-<h1 class="text-2xl font-bold mb-4">ヘルプ</h1>
-<section class="prose max-w-none">
-  <h2>使い方</h2>
-  <p>このサービスの基本操作や各機能の説明をまとめます。</p>
 
-  <h3>主な機能</h3>
-  <ul>
-    <li>Code Editor（実行・テーマ切替・初期データ）</li>
-    <li>Rails Books（目次・前後ページ）</li>
-    <li>PreCode / CodeLibrary（ランキング・いいね）</li>
-    <li>…など</li>
-  </ul>
-</section>
+<div class="mx-auto max-w-3xl space-y-10">
+  <!-- ページ見出し -->
+  <h1 class="text-2xl font-bold mb-2">🚀 RailsLearning の使い方</h1>
+  <hr class="border-slate-200">
+
+  <!-- Code Editor -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">📝 Code Editor（コードエディタ）</h2>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
+      <p class="mt-1">
+        アプリ上で Ruby や Rails のコードを入力・実行できる機能です。学習した内容をすぐに試し、その場で結果を確認できます。
+      </p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
+      <ol class="list-decimal ml-6 space-y-1 mt-1">
+        <li>「初期データ」プルダウンからサンプルコードを選択できます。</li>
+        <li>エディタ欄に自由にコードを入力してください。</li>
+        <li>▶ <span class="font-semibold">実行</span> ボタンを押すと、下部に実行結果が表示されます。</li>
+        <li>テーマ切替ボタンで、ダーク／ライトモードを切り替えられます。</li>
+      </ol>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
+      <ul class="list-disc ml-6 space-y-1 mt-1">
+        <li>学習中のコード断片を気軽に試す場として利用してください。</li>
+        <li>保存はされないため、成果を残したい場合は PreCode 機能の利用がおすすめです。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <!-- PreCode -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">📦 PreCode（プリコード）</h2>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
+      <p class="mt-1">
+        「自分専用のコード断片（スニペット）」を保存できる機能です。頻繁に使うコードや学習メモを整理して残せます。簡単な Ruby の問題を作ることもできます。
+      </p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
+      <ol class="list-decimal ml-6 space-y-1 mt-1">
+        <li>右上の「新規作成」から PreCode を登録します。</li>
+        <li><span class="font-semibold">タイトル</span>、<span class="font-semibold">説明</span>（用途や補足）、<span class="font-semibold">コード本体</span>を入力します。</li>
+        <li>保存後は一覧に追加され、クリックで詳細を確認できます。</li>
+        <li>編集・削除も可能です。</li>
+      </ol>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
+      <ul class="list-disc ml-6 space-y-1 mt-1">
+        <li>学習メモやよく使う処理の記録に最適です。</li>
+        <li>自動リサイズフォーム＋残り文字数カウンタで、長文でも扱いやすくなっています。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <!-- Code Library -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">📚 Code Library（コードライブラリ）</h2>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
+      <p class="mt-1">
+        ユーザーが作成した PreCode を「共有ライブラリ」として一覧・検索できる機能です。他人のコードを参考にしたり、人気コードを学習に活かせます。
+      </p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
+      <ol class="list-decimal ml-6 space-y-1 mt-1">
+        <li>検索フォームからタイトルや説明でコードを検索できます。</li>
+        <li>並び替えで「人気順」「利用数順」「新着順」を切り替えられます。</li>
+        <li>各コードページでは「いいね ❤️」や「使った 🧰」を押してリアクションできます。</li>
+      </ol>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
+      <ul class="list-disc ml-6 space-y-1 mt-1">
+        <li>学習仲間がどんなコードを使っているか参考にできます。</li>
+        <li>自分のコードが他の人に使われるとモチベーションUPにつながります。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <!-- Rails Books -->
+  <section class="space-y-4">
+    <h2 class="text-xl font-semibold">📖 Rails Books（Railsテキスト）</h2>
+
+    <div class="space-y-2">
+      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
+      <p>
+        Rails の基礎から応用を体系的に学べる教材ページです。章ごとに整理されており、目次から順番に読み進められます。
+      </p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
+      <ol class="list-decimal ml-6 space-y-1 mt-1">
+        <li>書籍一覧ページから教材を選びます。</li>
+        <li>各書籍には <span class="font-semibold">章の一覧（目次）</span> があり、クリックで内容を閲覧できます。</li>
+        <li>章ページでは本文を読み進めながら、前後の章に移動できます。</li>
+      </ol>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
+      <ul class="list-disc ml-6 space-y-1 mt-1">
+        <li>一部の章には「FREE」ラベルがあり、無料で閲覧可能です。</li>
+        <li>基礎から体系的に進められるため、カリキュラム学習の補助にも使えます。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="border-slate-200">
+
+  <!-- まとめ -->
+  <section class="space-y-2">
+    <h2 class="text-xl font-semibold">✅ まとめ</h2>
+    <ul class="list-disc ml-6 space-y-1">
+      <li><span class="font-semibold">Code Editor</span>：その場でコードを実行</li>
+      <li><span class="font-semibold">PreCode</span>：自分のコードメモを保存</li>
+      <li><span class="font-semibold">Code Library</span>：共有ライブラリで学び合い</li>
+      <li><span class="font-semibold">Rails Books</span>：体系的な教材で学習</li>
+    </ul>
+  </section>
+</div>

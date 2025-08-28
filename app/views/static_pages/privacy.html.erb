@@ -4,10 +4,112 @@
 <%= render "shared/breadcrumbs" %>
 
 <% content_for :title, "プライバシーポリシー" %>
-<h1 class="text-2xl font-bold mb-4">プライバシーポリシー</h1>
-<section class="prose max-w-none">
-  <h2>個人情報の利用目的</h2>
-  <p>…</p>
-  <h2>アクセス解析・Cookie</h2>
-  <p>…</p>
-</section>
+
+<div class="mx-auto max-w-3xl">
+  <h1 class="text-2xl font-bold mb-6">プライバシーポリシー</h1>
+
+  <div class="space-y-6 text-slate-700">
+    <div>
+      <p>
+        本プライバシーポリシー（以下、「本ポリシー」といいます。）は、当サービスが取得するユーザーの情報とその取扱いについて定めるものです。<br>
+        ユーザーの皆さまは、本ポリシーに同意のうえ本サービスをご利用ください。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">1. 取得する情報</h2>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>アカウント情報（氏名・ニックネーム、メールアドレス 等）</li>
+        <li>利用状況に関する情報（アクセス日時、閲覧ページ、検索条件、端末情報、IPアドレス 等）</li>
+        <li>お問い合わせ時に入力いただく情報</li>
+        <li>Cookie 等の識別子・広告識別子</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">2. 利用目的</h2>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>本サービスの提供・維持・保護および改善のため</li>
+        <li>利用状況の把握、機能改善や新機能開発のための分析のため</li>
+        <li>不正利用の防止、セキュリティ対策のため</li>
+        <li>問い合わせ対応・重要なお知らせの連絡のため</li>
+        <li>法令・規約等に基づく対応のため</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">3. 取得方法</h2>
+      <p>
+        ユーザーの入力による取得のほか、アクセス解析ツールや Cookie 等を用いて自動的に取得する場合があります。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">4. Cookie・アクセス解析</h2>
+      <p>
+        本サービスでは、利便性向上・利用状況の把握のために Cookie 等の技術を使用することがあります。<br>
+        ブラウザ設定により Cookie の受け入れを拒否できますが、サービスの一部機能が利用できない場合があります。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">5. 第三者提供</h2>
+      <p>
+        当社は、次の場合を除き、本人の同意なく個人情報を第三者に提供しません。<br>
+      </p>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>法令に基づく場合</li>
+        <li>人の生命・身体または財産の保護のために必要がある場合</li>
+        <li>業務委託先に取り扱いを委託する場合（委託先は適切に監督します）</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">6. 外部送信・委託</h2>
+      <p>
+        本サービスの運営にあたり、サーバ運用やアクセス解析等を外部事業者へ委託し、必要な範囲で情報が送信されることがあります。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">7. 安全管理措置</h2>
+      <p>
+        取得した情報は、アクセス制御・暗号化・ログ監査等、適切な安全管理措置を講じて取り扱います。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">8. 開示・訂正・利用停止等の請求</h2>
+      <p>
+        ユーザーは、当社所定の手続により、自己の個人情報の開示・訂正・利用停止等を請求できます。<br>
+        具体的な手続は「お問い合わせ」よりご連絡ください。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">9. 未成年者の利用</h2>
+      <p>
+        未成年の方が本サービスを利用する場合、親権者等の同意を得た上でご利用ください。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">10. ポリシーの変更</h2>
+      <p>
+        本ポリシーの内容は、法令の改正やサービス内容の変更等により、事前の予告なく変更されることがあります。<br>
+        変更後のポリシーは、本サービス上に掲示した時点から効力を生じます。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="font-semibold text-lg mb-2">11. お問い合わせ</h2>
+      <p>
+        本ポリシーに関するお問い合わせは、本サービス内の連絡手段よりご連絡ください。
+      </p>
+    </div>
+
+    <div class="text-xs text-slate-500">
+      最終更新日：<%= Date.today.strftime("%Y-%m-%d") %>
+    </div>
+  </div>
+</div>

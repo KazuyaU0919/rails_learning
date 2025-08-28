@@ -20,25 +20,39 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-slate-50 text-slate-800">
+  <body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
     <!-- ヘッダー -->
     <%= render "shared/nav" %>
 
-    <!-- メイン -->
-    <main class="<%= content_for?(:page_container_class) \
+    <!-- メイン（高さだけ担当） -->
+    <main class="flex-1">
+      <!-- 幅・左右余白はここで集中管理 -->
+      <div class="<%= content_for?(:page_container_class) \
                     ? yield(:page_container_class) \
                     : 'mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-6' %>">
-      <%= render "shared/flash" %>
-      <%= yield %>
+        <%= render "shared/flash" %>
+        <%= yield %>
+      </div>
     </main>
-  </body>
 
-  <footer class="mt-12 py-8 text-sm text-slate-500">
-    <div class="mx-auto max-w-md px-4 flex flex-wrap gap-4">
-      <%= link_to "利用規約", terms_path, class: "hover:underline" %>
-      <%= link_to "プライバシー", privacy_path, class: "hover:underline" %>
-      <%= link_to "ヘルプ", help_path, class: "hover:underline" %>
-      <%= link_to "お問い合わせ", contact_path, class: "hover:underline" %>
-    </div>
-  </footer>
+    <!-- フッター -->
+    <footer class="mt-12 border-t bg-white/50">
+      <div class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 items-center gap-4">
+          <!-- 左：リンク群 -->
+          <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500 w-full sm:w-auto justify-center sm:justify-start">
+            <li><%= link_to "利用規約", terms_path, class: "hover:underline" %></li>
+            <li><%= link_to "プライバシーポリシー", privacy_path, class: "hover:underline" %></li>
+            <li><%= link_to "アプリの使い方", help_path, class: "hover:underline" %></li>
+            <li><%= link_to "お問い合わせ", contact_path, class: "hover:underline" %></li>
+          </ul>
+
+          <!-- 右：コピーライト -->
+          <p class="text-xs text-slate-400 text-center sm:text-right w-full sm:w-auto">
+            © <%= Time.current.year %> Rails Learning
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
