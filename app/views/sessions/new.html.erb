@@ -1,25 +1,39 @@
 <% content_for :title, "ログイン" %>
-<h1 class="text-xl font-semibold mb-4">ログイン</h1>
 
-<%= form_with url: session_path, scope: nil, class: "space-y-4" do |f| %>
-  <div>
-    <label class="block text-sm mb-1" for="email">メールアドレス</label>
-    <input type="email" name="email" id="email"
-           class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
-  </div>
+<div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
+  <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-6">
+    <h1 class="text-2xl font-bold text-center">ログイン</h1>
 
-  <div>
-    <label class="block text-sm mb-1" for="password">パスワード</label>
-    <input type="password" name="password" id="password"
-           class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
-  </div>
+    <%= form_with url: session_path, scope: nil, class: "space-y-4" do |f| %>
+      <div>
+        <label class="block text-sm mb-1" for="email">メールアドレス</label>
+        <input type="email" name="email" id="email" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
+      </div>
 
-  <div class="flex items-center gap-3">
-    <%= f.submit "ログイン", class: "rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" %>
-    <%= link_to "パスワードをお忘れですか？", new_password_reset_path, class: "text-sm text-slate-500 hover:underline" %>
-  </div>
+      <div>
+        <label class="block text-sm mb-1" for="password">パスワード</label>
+        <input type="password" name="password" id="password" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
+      </div>
 
-  <div class="mt-6">
-    <%= render "shared/oauth_buttons" %>
+      <%= f.submit "ログイン", class: "w-full bg-slate-900 text-white py-2 rounded-xl hover:bg-slate-800" %>
+    <% end %>
+
+    <div class="flex justify-between text-sm text-slate-600">
+      <%= link_to "パスワード再設定", new_password_reset_path, class: "hover:underline" %>
+      <%= link_to "新規登録", new_user_path, class: "hover:underline" %>
+    </div>
+
+    <div class="relative my-4">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-300"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="bg-white px-2 text-gray-500">または</span>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <%= render "shared/oauth_buttons" %>
+    </div>
   </div>
-<% end %>
+</div>

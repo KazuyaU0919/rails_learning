@@ -1,36 +1,50 @@
 <% content_for :title, "新規登録" %>
-<h1 class="text-xl font-semibold mb-4">新規登録</h1>
 
-<%= form_with model: @user, url: users_path, class: "space-y-4" do |f| %>
-  <%= render "shared/errors", model: @user %>
+<div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
+  <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-6">
 
-  <div>
-    <%= f.label :name, "名前", class: "block text-sm mb-1" %>
-    <%= f.text_field :name, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
-  </div>
+    <h1 class="text-2xl font-bold text-center">新規登録</h1>
 
-  <div>
-    <%= f.label :email, "メールアドレス", class: "block text-sm mb-1" %>
-    <%= f.email_field :email, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
-  </div>
+    <%= form_with model: @user, url: users_path, class: "space-y-4" do |f| %>
+      <div>
+        <%= f.label :name, "ユーザー名", class: "block text-sm mb-1" %>
+        <%= f.text_field :name, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+      </div>
 
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <div>
-      <%= f.label :password, "パスワード", class: "block text-sm mb-1" %>
-      <%= f.password_field :password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+      <div>
+        <%= f.label :email, "メールアドレス", class: "block text-sm mb-1" %>
+        <%= f.email_field :email, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+      </div>
+
+      <div>
+        <%= f.label :password, "パスワード", class: "block text-sm mb-1" %>
+        <%= f.password_field :password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
+        <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+      </div>
+
+      <%= f.submit "新規登録", class: "w-full bg-slate-900 text-white py-2 rounded-xl hover:bg-slate-800" %>
+    <% end %>
+
+    <div class="flex justify-end text-sm text-slate-600">
+      <%= link_to "ログインページへ", new_session_path, class: "hover:underline" %>
     </div>
-    <div>
-      <%= f.label :password_confirmation, "確認用パスワード", class: "block text-sm mb-1" %>
-      <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+
+    <div class="relative my-4">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-300"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="bg-white px-2 text-gray-500">または</span>
+      </div>
     </div>
-  </div>
 
-  <div class="flex items-center gap-3">
-    <%= f.submit "登録する", class: "rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" %>
-    <%= link_to "ログインページへ", new_session_path, class: "text-sm text-slate-500 hover:underline" %>
-  </div>
+    <div class="space-y-2">
+      <%= render "shared/oauth_buttons" %>
+    </div>
 
-  <div class="mt-6">
-    <%= render "shared/oauth_buttons" %>
   </div>
-<% end %>
+</div>

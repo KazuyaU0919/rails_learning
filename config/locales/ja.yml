@@ -19,8 +19,16 @@ ja:
         heading: "見出し"
         content: "本文"
         images: "画像（複数可）"
+      pre_code:
+        title: "タイトル"
+        body: "コードの説明"
+    models:
+      pre_code: "PreCode"
   helpers:
     submit:
       book_section:
         create: "作成する"
         update: "更新する"
+  errors:
+    messages:
+      blank: "を入力してください"
