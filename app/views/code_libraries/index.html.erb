@@ -45,16 +45,7 @@
           <% end %>
 
           <!-- 右側：メトリクスやボタン（リンクの外） -->
-          <div class="text-sm text-slate-500 shrink-0">
-            <span class="inline-flex items-center gap-1 mr-4 align-middle">
-              <%= heroicon "heart", variant: :solid, options: { class: "w-4 h-4" } %>
-              <%= pc.like_count %>
-            </span>
-            <span class="inline-flex items-center gap-1 align-middle">
-              <%= heroicon "briefcase", variant: :outline, options: { class: "w-4 h-4" } %>
-              <%= pc.use_count %>
-            </span>
-          </div>
+          <%= render "metrics", pre_code: pc %>
         </div>
 
         <div class="mt-3">

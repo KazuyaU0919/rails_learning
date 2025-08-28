@@ -1,15 +1,29 @@
 <% content_for :title, "パスワード再設定" %>
-<h1 class="text-xl font-semibold mb-4">パスワード再設定メールを送る</h1>
 
-<%= form_with url: password_resets_path, scope: nil, class: "space-y-4" do |f| %>
-  <div>
-    <label class="block text-sm mb-1" for="email">登録メールアドレス</label>
-    <input
-      type="email" name="email" id="email"
-      class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
-      placeholder="you@example.com" />
+<div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
+  <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-6">
+
+    <h1 class="text-xl font-semibold mb-4 text-center">パスワードをお忘れの方</h1>
+
+    <p class="text-sm text-gray-600 text-center">
+      登録したメールアドレスを入力してください。<br>
+      パスワードリセット用のリンクを送信します。
+    </p>
+
+    <%= form_with url: password_resets_path, scope: nil, class: "space-y-4" do |f| %>
+      <div>
+        <label class="block text-sm mb-1" for="email">メールアドレス</label>
+        <input type="email" name="email" id="email"
+          class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
+          placeholder="メールアドレスを入力してください" />
+      </div>
+
+      <%= f.submit "送信", class: "w-full bg-slate-900 text-white py-2 rounded-xl hover:bg-slate-800" %>
+    <% end %>
+
+    <div class="text-center">
+      <%= link_to "ログインページに戻る", new_session_path, class: "text-sm text-slate-600 hover:underline" %>
+    </div>
+
   </div>
-
-  <%= f.submit "送信する",
-        class: "rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" %>
-<% end %>
+</div>

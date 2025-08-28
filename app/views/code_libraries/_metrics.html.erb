@@ -1,0 +1,11 @@
+<%# 右側アイコン＋カウンタ（置換対象） %>
+<div id="<%= dom_id(pre_code, :metrics) %>" class="text-sm text-slate-500 shrink-0">
+  <span class="inline-flex items-center gap-1 mr-4 align-middle">
+    <%= heroicon "heart",  variant: :solid,   options: { class: "w-4 h-4" } %>
+    <%= pre_code.like_count %>
+  </span>
+  <span class="inline-flex items-center gap-1 align-middle">
+    <%= heroicon "briefcase", variant: :outline, options: { class: "w-4 h-4" } %>
+    <%= pre_code.use_count %>
+  </span>
+</div>

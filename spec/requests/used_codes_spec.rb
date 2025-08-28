@@ -3,7 +3,8 @@ require "rails_helper"
 
 RSpec.describe "UsedCodes", type: :request do
   let(:user)     { create(:user, password: "secret123", password_confirmation: "secret123") }
-  let(:pre_code) { create(:pre_code) }
+  let(:author)   { create(:user, password: "secret123", password_confirmation: "secret123") }
+  let(:pre_code) { create(:pre_code, user: author) }
 
   describe "認可" do
     it "未ログインは作成にアクセスできずリダイレクト" do
@@ -20,6 +21,7 @@ RSpec.describe "UsedCodes", type: :request do
         post used_codes_path, params: { pre_code_id: pre_code.id }
       }.to change(UsedCode, :count).by(1)
        .and change { pre_code.reload.use_count }.by(1)
+
       expect(response).to have_http_status(:ok).or have_http_status(:found)
     end
 
@@ -29,6 +31,16 @@ RSpec.describe "UsedCodes", type: :request do
         post used_codes_path, params: { pre_code_id: pre_code.id }
       }.not_to change(UsedCode, :count)
       expect(pre_code.reload.use_count).to eq(1)
+    end
+
+    # === ここを追加 ===
+    it "自分の投稿は利用記録を作れず :forbidden で件数も増えない" do
+      my_pre_code = create(:pre_code, user: user)
+      expect {
+        post used_codes_path, params: { pre_code_id: my_pre_code.id }
+      }.not_to change(UsedCode, :count)
+      expect(my_pre_code.reload.use_count).to eq(0)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 end
