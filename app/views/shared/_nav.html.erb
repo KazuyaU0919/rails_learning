@@ -1,44 +1,49 @@
 <!-- app/views/shared/_nav.html.erb -->
 <header class="border-b bg-white">
-  <!-- モーダルの controller スコープ（トリガーとモーダルを同じ親に） -->
-  <div class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-3 flex items-center justify-between"
-       data-controller="modal">
+  <div
+    class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-3
+           grid grid-cols-3 items-center"
+    data-controller="modal">
 
-    <!-- タイトル（常時表示） -->
-    <%= link_to root_path, class: "font-semibold text-center md:text-left flex items-center gap-2" do %>
-      <%= heroicon "rocket-launch", variant: :outline, options: { class: "w-6 h-6" } %>
+    <!-- タイトル：base=中央 / lg=左 -->
+    <%= link_to root_path,
+          class: "col-start-2 justify-self-center
+                  lg:col-start-1 lg:justify-self-start
+                  inline-flex items-center gap-2
+                  font-semibold text-lg lg:text-xl
+                  whitespace-nowrap" do %>
+      <%= heroicon "rocket-launch", variant: :outline,
+            options: { class: "w-6 h-6" } %>
       <span>Rails Learning</span>
     <% end %>
 
-    <!-- === グローバルナビ＋ハンバーガー（右寄せ） === -->
-    <div class="ml-auto flex items-center gap-6">
-      <!-- グローバルナビ：PCのみ表示（lg以上） -->
-      <nav class="hidden lg:flex items-center gap-3 text-sm">
+    <!-- 右側クラスター：常に右端。中に nav(PCのみ) と バーガー(常時) -->
+    <div class="col-start-3 justify-self-end flex items-center gap-4">
+      <!-- グローバルメニュー：LG以上のみ / 右寄せ / 折り返しなし -->
+      <nav class="hidden lg:flex items-center gap-3 text-sm whitespace-nowrap">
         <%= link_to "Code Editor", editor_path,
-            class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
         <%= link_to "Rails Books", books_path,
-            class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
         <%= link_to "PreCode", pre_codes_path,
-            class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
         <%= link_to "Code Library", code_libraries_path,
-            class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-
+              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
         <% unless logged_in? %>
           <%= link_to "ログイン", new_session_path,
-              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+                class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
         <% end %>
       </nav>
 
-      <!-- ハンバーガー：モバイルで表示 -->
+      <!-- ハンバーガー：常時表示（PCでも出す） -->
       <button
-        class="p-2 rounded-lg hover:bg-slate-100 lg:block"
-        data-action="click->modal#open"
-        aria-label="メニューを開く">
+        class="p-2 rounded-lg hover:bg-slate-100"
+        data-action="click->modal#open" aria-label="メニューを開く">
         <%= heroicon "bars-3", options: { class: "w-6 h-6 text-slate-500" } %>
       </button>
     </div>
 
-    <!-- モーダル（同一スコープ内で描画） -->
+    <!-- モーダル（同スコープ内で描画） -->
     <%= render "shared/modal_panel" %>
   </div>
 </header>
