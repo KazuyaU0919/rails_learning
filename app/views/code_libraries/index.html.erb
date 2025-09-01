@@ -1,32 +1,45 @@
-<!-- app/views/code_libraries/index.html.erb -->
+<%# app/views/code_libraries/index.html.erb %>
 <% breadcrumb :code_libraries %>
 <%= render "shared/breadcrumbs" %>
 
-<% content_for :title, "コードライブラリ" %>
+<%# ページ <title> 用（SEO等） %>
+<% content_for :title, "Code Library" %>
 
-<div class="mb-4 space-y-3">
-  <!-- 見出し -->
-  <div>
-    <h1 class="text-xl font-semibold"><%= yield :title %></h1>
+<%# ===== ヘッダーブロック：中央にタイトル、その“下の行”に右寄せの検索群 ===== %>
+<div class="mb-6">
+
+  <%# 中央タイトル %>
+  <div class="text-center">
+    <h1 class="text-2xl font-semibold">Code Library</h1>
+    <p class="mt-1 text-sm text-slate-500">~ 初期データ閲覧機能 ~</p>
   </div>
 
-  <!-- 検索フォーム（Ransack） -->
-  <div>
-    <%= search_form_for @q, url: code_libraries_path, method: :get, html: { class: "flex gap-2" } do |f| %>
-      <%= f.search_field :title_or_description_cont,
-            value: @q.title_or_description_cont,
-            placeholder: "キーワード",
-            class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64 md:w-80" %>
+  <%# タイトルの下の行：右寄せで検索フォーム＆使い方 %>
+  <div class="mt-4">
+    <div class="flex gap-2 justify-end">
+      <%= search_form_for @q, url: code_libraries_path, method: :get,
+            html: { class: "flex gap-2" } do |f| %>
+        <%= f.search_field :title_or_description_cont,
+              value: @q.title_or_description_cont,
+              placeholder: "検索（タイトル／説明）",
+              class: "px-3 py-2 rounded ring-1 ring-slate-300 min-w-0 w-40 sm:w-56 md:w-72 lg:w-80" %>
 
-      <%= select_tag :sort,
-            options_for_select(
-              [["人気順", "popular"], ["利用数順", "used"], ["新着順", "newest"]],
-              params[:sort].presence || "popular"
-            ),
-            class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
+        <%= select_tag :sort,
+              options_for_select(
+                [["人気順", "popular"], ["利用数順", "used"], ["新着順", "newest"]],
+                params[:sort].presence || "popular"
+              ),
+              class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
 
-      <%= f.submit "検索", class: "px-3 py-2 rounded bg-slate-900 text-white" %>
-    <% end %>
+        <%= f.submit "検索",
+              class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+      <% end %>
+    </div>
+
+    <div class="flex mt-2 justify-end">
+      <%= link_to "使い方", help_path,
+            class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+    </div>
   </div>
 </div>
 
@@ -34,16 +47,16 @@
 <% if @pre_codes.blank? %>
   <p class="text-slate-500">該当するデータがありません。</p>
 <% else %>
-  <ul class="space-y-3">
+  <ul class="space-y-3 -mt-2">
     <% @pre_codes.each do |pc| %>
       <li class="relative border rounded-xl p-4 group">
-        <!-- 透明の全体リンク（カード全面） -->
+        <%# 透明の全体リンク（カード全面） %>
         <%= link_to code_library_path(pc),
               class: "absolute inset-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300",
               "aria-label": "#{pc.title} の詳細" do %>
         <% end %>
 
-        <!-- 上段：タイトル/説明 + 右上メトリクス -->
+        <%# 上段：タイトル/説明 + 右上メトリクス %>
         <div class="flex justify-between">
           <div class="flex-1 pr-4">
             <div class="font-semibold"><%= pc.title %></div>
@@ -54,10 +67,8 @@
           </div>
         </div>
 
-        <!-- 下段：アクション（※ここが肝） -->
-        <!-- ラッパはクリックを拾わない -->
+        <%# 下段：アクション（※ここが肝） - 上の透明リンクを拾わない %>
         <div class="mt-3 flex items-center gap-2 pointer-events-none">
-          <!-- 各ボタンはクリック可 -->
           <div class="pointer-events-auto z-20">
             <%= render "actions",
                   pre_code: pc,
@@ -68,7 +79,7 @@
     <% end %>
   </ul>
 
-  <!-- ページネーション（検索条件を保持して遷移） -->
+  <%# ページネーション（検索条件を保持して遷移） %>
   <div class="mt-6">
     <%= paginate @pre_codes, params: request.query_parameters %>
   </div>

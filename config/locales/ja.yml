@@ -10,6 +10,7 @@ ja:
       default: "%Y/%m/%d %H:%M"
       short:   "%m/%d %H:%M"
       long:    "%Y年%-m月%-d日 %H:%M"
+      ymd_hm: "%Y/%m/%d %H:%M"
   activerecord:
     attributes:
       book_section:

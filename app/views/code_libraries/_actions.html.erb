@@ -20,12 +20,4 @@
       <% end %>
     <% end %>
   <% end %>
-
-  <%= button_to used_codes_path(pre_code_id: pre_code.id),
-        method: :post,
-        form:   { data: { turbo_stream: true } },
-        class:  "px-3 py-1 rounded bg-slate-900 text-white inline-flex items-center gap-1" do %>
-    <%= heroicon "briefcase", variant: :solid, options: { class: "w-4 h-4" } %>
-    <%= pre_code.use_count %>
-  <% end %>
 </div>

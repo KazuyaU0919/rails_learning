@@ -2,25 +2,34 @@
 
 <div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
   <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-6">
+
     <h1 class="text-2xl font-bold text-center">ログイン</h1>
 
     <%= form_with url: session_path, scope: nil, class: "space-y-4" do |f| %>
       <div>
         <label class="block text-sm mb-1" for="email">メールアドレス</label>
-        <input type="email" name="email" id="email" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
+        <input type="email" name="email" id="email"
+               placeholder="ユーザー名を入力してください"
+               class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
       </div>
 
       <div>
         <label class="block text-sm mb-1" for="password">パスワード</label>
-        <input type="password" name="password" id="password" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
+        <input type="password" name="password" id="password"
+               placeholder="8文字以上 20文字未満"
+               class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
       </div>
 
-      <%= f.submit "ログイン", class: "w-full bg-slate-900 text-white py-2 rounded-xl hover:bg-slate-800" %>
+      <%# ログインボタン：赤 %>
+      <%= f.submit "ログイン",
+            class: "w-full bg-[#CC0000] text-white py-2 rounded-xl hover:bg-[#BB0000] active:bg-[#AA0000]" %>
     <% end %>
 
-    <div class="flex justify-between text-sm text-slate-600">
-      <%= link_to "パスワード再設定", new_password_reset_path, class: "hover:underline" %>
-      <%= link_to "新規登録", new_user_path, class: "hover:underline" %>
+    <div class="flex justify-between text-sm -mt-3">
+      <%= link_to "パスワード再設定", new_password_reset_path,
+            class: "text-blue-600 hover:underline" %>
+      <%= link_to "新規登録", new_user_path,
+            class: "text-blue-600 hover:underline" %>
     </div>
 
     <div class="relative my-4">

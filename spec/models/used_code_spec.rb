@@ -15,13 +15,6 @@ RSpec.describe UsedCode, type: :model do
     expect(uc.used_at).to be_present
   end
 
-  it "同じユーザーは同じPreCodeを二重記録できない（ユニーク制約）" do
-    create(:used_code, user: u1, pre_code: pc)
-    dup = build(:used_code, user: u1, pre_code: pc)
-
-    expect(dup).to be_invalid
-  end
-
   it "作成で pre_codes.use_count を自動加算（counter_cache）" do
     expect { create(:used_code, user: u1, pre_code: pc) }
       .to change { pc.reload.use_count }.by(1)

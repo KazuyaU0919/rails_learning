@@ -3,9 +3,9 @@
 <div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
   <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-6">
 
-    <h1 class="text-xl font-semibold mb-4 text-center">パスワードをお忘れの方</h1>
+    <h1 class="text-2xl font-semibold text-center">パスワードをお忘れの方</h1>
 
-    <p class="text-sm text-gray-600 text-center">
+    <p class="-mt-1 text-sm text-gray-600 text-center">
       登録したメールアドレスを入力してください。<br>
       パスワードリセット用のリンクを送信します。
     </p>
@@ -14,15 +14,19 @@
       <div>
         <label class="block text-sm mb-1" for="email">メールアドレス</label>
         <input type="email" name="email" id="email"
-          class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
-          placeholder="メールアドレスを入力してください" />
+               class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
+               placeholder="メールアドレスを入力してください" />
       </div>
 
-      <%= f.submit "送信", class: "w-full bg-slate-900 text-white py-2 rounded-xl hover:bg-slate-800" %>
+      <%# ▼ 送信ボタン：赤に %>
+      <%= f.submit "送信",
+            class: "w-full rounded-xl px-5 py-2 text-white bg-[#CC0000] hover:bg-[#BB0000] active:bg-[#AA0000]" %>
     <% end %>
 
-    <div class="text-center">
-      <%= link_to "ログインページに戻る", new_session_path, class: "text-sm text-slate-600 hover:underline" %>
+    <%# ▼ ログインへ戻る：青＋hover下線 %>
+    <div class="text-center -mt-1">
+      <%= link_to "ログインページに戻る", new_session_path,
+            class: "text-sm text-blue-600 hover:underline" %>
     </div>
 
   </div>

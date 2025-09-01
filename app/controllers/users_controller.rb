@@ -1,6 +1,7 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
   before_action :require_guest!, only: %i[new create]
+  before_action :use_gray_bg
 
   def new
     @user = User.new
@@ -28,6 +29,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def use_gray_bg
+    @body_bg = "bg-slate-50"
+  end
 
   def user_params
     params.require(:user)

@@ -5,52 +5,65 @@
 <%= render "shared/breadcrumbs" %>
 <% content_for :title, "コードエディタ" %>
 
-<%# ▼このページはレイアウト側のコンテナをフル幅にする %>
+<%# このページはレイアウト側のコンテナをフル幅にする %>
 <% content_for :page_container_class, "w-full px-2 md:px-4 lg:px-8 py-6" %>
 
-<div class="w-full space-y-6" data-controller="editor">
+<%# CodeMirror の背景は“コンテナ色を透過”させる %>
+<style>
+  .cm-editor, .cm-scroller { background: transparent !important; }
+</style>
+
+<div class="w-full space-y-6 bg-white" data-controller="editor">
   <h1 class="text-2xl font-semibold"><%= yield :title %></h1>
 
-  <!-- 操作バー：初期データ選択 / テーマ切替 / 実行 -->
-  <div class="flex flex-wrap items-center gap-2">
-    <label class="text-sm" for="precode-select">初期データ</label>
-    <select id="precode-select"
-            data-editor-target="select"
-            data-action="change->editor#changeSelect"
-            class="px-3 py-2 rounded ring-1 ring-slate-300">
-      <option value="">（選択）</option>
-      <% @my_pre_codes.each do |pc| %>
-        <option value="<%= pc.id %>">[自分] <%= pc.title %></option>
-      <% end %>
-      <% @popular_public.each do |pc| %>
-        <option value="<%= pc.id %>">[人気] <%= pc.title %></option>
-      <% end %>
-    </select>
-
-    <button type="button"
-            data-action="editor#toggleTheme"
-            class="px-3 py-2 rounded ring-1 ring-slate-300">
-      テーマ切替
-    </button>
-
-    <button type="button"
-            data-action="editor#run"
-            class="px-3 py-2 rounded bg-slate-900 text-white">
-      実行 ▶
-    </button>
+  <!-- 入力欄（CodeMirror をここにマウント） -->
+  <div data-editor-target="mount"
+       class="w-full min-h-[60vh] ring-1 ring-slate-300 overflow-hidden -mt-3">
   </div>
 
-  <!-- CodeMirror のマウント先 -->
-  <div data-editor-target="mount"
-       class="w-full min-h-[60vh] rounded-md ring-1 ring-slate-300 overflow-hidden"></div>
+  <!-- 左側：初期データ選択 ＆ テーマ切替（スマホ時は縦積み） -->
+  <div class="flex flex-col md:flex-row md:items-center gap-2 -mt-3">
+    <!-- セレクト：スマホは幅いっぱい、ラベルはスマホで非表示 -->
+    <div class="flex items-center gap-2 w-full md:w-auto">
+      <label class="text-sm hidden md:inline" for="precode-select">初期データ</label>
+      <select id="precode-select"
+              data-editor-target="select"
+              data-action="change->editor#changeSelect"
+              class="w-full md:w-80 px-3 py-2 rounded ring-1 ring-slate-300">
+        <option value="">(選択)</option>
+        <% @my_pre_codes.each do |pc| %>
+          <option value="<%= pc.id %>">[自分] <%= pc.title %></option>
+        <% end %>
+        <% @popular_public.each do |pc| %>
+          <option value="<%= pc.id %>">[人気] <%= pc.title %></option>
+        <% end %>
+      </select>
+    </div>
 
-  <!-- 実行結果の出力領域 -->
+    <!-- ボタン行：スマホはセレクトの下で2つ横並び／PCは右寄せ -->
+    <div class="flex gap-2 pt-2 md:pt-0 md:ml-auto">
+      <button type="button"
+              data-action="editor#toggleTheme"
+              class="px-3 py-2 rounded ring-1 ring-slate-300">
+        テーマ切替
+      </button>
+
+      <!-- 実行ボタン（既存の見た目はそのまま） -->
+      <button type="button"
+              data-action="editor#run"
+              class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
+        実行 ▶
+      </button>
+    </div>
+  </div>
+
+  <!-- 出力欄 -->
   <pre data-editor-target="output"
-       class="mt-4 w-full p-3 rounded-md bg-slate-50 ring-1 ring-slate-200 text-sm whitespace-pre-wrap">
-    <!-- 実行結果がここに表示されます -->
+      class="-mt-3 w-full p-3 rounded-none bg-slate-50 ring-1 ring-slate-200 text-sm whitespace-pre-wrap">
+      <!-- 実行結果がここに表示されます -->
   </pre>
 
-  <!-- JS無効時のフォールバック -->
+  <!-- JS無効時のフォールバック（そのまま） -->
   <noscript>
     <div class="p-3 rounded bg-amber-50 ring-1 ring-amber-200 text-sm">
       JavaScript を有効にするとエディタを利用できます。

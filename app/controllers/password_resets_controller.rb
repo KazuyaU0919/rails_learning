@@ -1,6 +1,7 @@
 # app/controllers/password_resets_controller.rb
 class PasswordResetsController < ApplicationController
   before_action :require_guest!, only: %i[new create edit update]
+  before_action :use_gray_bg
 
   def new; end
 
@@ -32,7 +33,12 @@ class PasswordResetsController < ApplicationController
   end
 
   private
+
   def password_params
     params.require(:user).permit(:password, :password_confirmation)
+  end
+
+  def use_gray_bg
+    @body_bg = "bg-slate-50"
   end
 end

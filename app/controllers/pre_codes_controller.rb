@@ -4,9 +4,9 @@ class PreCodesController < ApplicationController
 
   # GET /pre_codes
   def index
-    @pre_codes = current_user.pre_codes
-                             .order(id: :desc)
-                             .page(params[:page])
+    base = current_user.pre_codes
+    @q = base.ransack(params[:q])
+    @pre_codes = @q.result.order(id: :desc).page(params[:page])
   end
 
   # GET /pre_codes/:id

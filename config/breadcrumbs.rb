@@ -32,7 +32,6 @@ end
 # 本の中の Section（公開側）
 crumb :book_section do |book, section|
   parent :book, book
-  # 例）"2. 環境構築"
   link "#{section.position}. #{section.heading}", book_section_path(book, section)
 end
 
@@ -53,8 +52,8 @@ crumb :pre_code_new do
 end
 
 crumb :pre_code_edit do |code|
-  parent :pre_codes
-  link "#{code.title}：編集", edit_pre_code_path(code)
+  parent :pre_code, code
+  link "編集", edit_pre_code_path(code)
 end
 
 # --- Code Library ---
@@ -71,7 +70,7 @@ end
 # --- Static pages ---
 crumb :help do
   parent :root
-  link "ヘルプ", help_path
+  link "アプリの使い方", help_path
 end
 
 crumb :terms do
@@ -112,6 +111,12 @@ crumb :admin_book do |book|
   link book.title, admin_book_path(book) # showが無ければ edit_admin_book_path(book) に変更可
 end
 
+# Admin: Books 新規作成
+crumb :admin_book_new do
+  parent :admin_books
+  link "新規作成", new_admin_book_path
+end
+
 # 管理側 Book 編集（「タイトル：編集」表記）
 crumb :admin_book_edit do |book|
   parent :admin_books
@@ -128,6 +133,12 @@ end
 crumb :admin_book_section do |section|
   parent :admin_book_sections
   link section.heading, admin_book_section_path(section) # showが無ければ edit_admin_book_section_path(section)
+end
+
+# Admin: Book Sections 新規作成
+crumb :admin_book_section_new do
+  parent :admin_book_sections
+  link "新規作成", new_admin_book_section_path
 end
 
 # 管理側 Section 編集（「見出し：編集」表記）
