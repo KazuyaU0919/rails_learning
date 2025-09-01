@@ -1,7 +1,8 @@
 <!-- app/views/shared/_nav.html.erb -->
-<header class="border-b bg-white">
+<header class="border-b bg-[#CC0000] text-white">
   <div
-    class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-3
+    class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8
+           h-16
            grid grid-cols-3 items-center"
     data-controller="modal">
 
@@ -9,37 +10,65 @@
     <%= link_to root_path,
           class: "col-start-2 justify-self-center
                   lg:col-start-1 lg:justify-self-start
-                  inline-flex items-center gap-2
-                  font-semibold text-lg lg:text-xl
-                  whitespace-nowrap" do %>
-      <%= heroicon "rocket-launch", variant: :outline,
-            options: { class: "w-6 h-6" } %>
-      <span>Rails Learning</span>
+                  inline-flex items-center gap-2 h-full
+                  font-semibold text-lg lg:text-xl whitespace-nowrap" do %>
+      <%= heroicon "academic-cap", variant: :outline, options: { class: "w-6 h-6 text-white" } %>
+      <span class="text-white">Rails Learning</span>
     <% end %>
 
-    <!-- 右側クラスター：常に右端。中に nav(PCのみ) と バーガー(常時) -->
-    <div class="col-start-3 justify-self-end flex items-center gap-4">
-      <!-- グローバルメニュー：LG以上のみ / 右寄せ / 折り返しなし -->
-      <nav class="hidden lg:flex items-center gap-3 text-sm whitespace-nowrap">
-        <%= link_to "Code Editor", editor_path,
-              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-        <%= link_to "Rails Books", books_path,
-              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-        <%= link_to "PreCode", pre_codes_path,
-              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
-        <%= link_to "Code Library", code_libraries_path,
-              class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+    <!-- 右側クラスター：配置は従来どおり -->
+    <div class="col-start-3 justify-self-end flex items-center gap-0 h-full">
+
+      <!-- グローバルメニュー：LG以上のみ／背景同化・枠なし・ホバーで色替え -->
+      <nav class="hidden lg:flex items-center gap-0 text-sm whitespace-nowrap h-full">
+        <%= link_to editor_path,
+          class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+          <span class="flex flex-col items-center justify-center leading-4">
+            <span class="mt-1 text-sm font-medium whitespace-nowrap">Code Editor</span>
+            <span class="text-[10px] opacity-90 whitespace-nowrap">- エディタ -</span>
+          </span>
+        <% end %>
+
+        <%= link_to books_path,
+          class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+          <span class="flex flex-col items-center justify-center leading-4">
+            <span class="mt-1 text-sm font-medium whitespace-nowrap">Rails Books</span>
+            <span class="text-[10px] opacity-90 whitespace-nowrap">- テキスト -</span>
+          </span>
+        <% end %>
+
+        <%= link_to pre_codes_path,
+          class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+          <span class="flex flex-col items-center justify-center leading-4">
+            <span class="mt-1 text-sm font-medium whitespace-nowrap">PreCode</span>
+            <span class="text-[10px] opacity-90 whitespace-nowrap">- 初期データ登録 -</span>
+          </span>
+        <% end %>
+
+        <%= link_to code_libraries_path,
+          class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+          <span class="flex flex-col items-center justify-center leading-4">
+            <span class="mt-1 text-sm font-medium whitespace-nowrap">Code Library</span>
+            <span class="text-[10px] opacity-90 whitespace-nowrap">- 初期データ閲覧 -</span>
+          </span>
+        <% end %>
+
         <% unless logged_in? %>
-          <%= link_to "ログイン", new_session_path,
-                class: "px-3 py-1 rounded-lg ring-1 ring-slate-300 hover:bg-slate-50" %>
+          <%= link_to new_session_path,
+            class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+            <span class="flex flex-col items-center justify-center leading-4">
+              <span class="mt-1 text-sm font-medium whitespace-nowrap">Login</span>
+              <span class="text-[10px] opacity-90 whitespace-nowrap">- ログイン -</span>
+            </span>
+          <% end %>
         <% end %>
       </nav>
 
-      <!-- ハンバーガー：常時表示（PCでも出す） -->
+      <!-- ハンバーガー：常時表示（デザインのみ変更） -->
       <button
-        class="p-2 rounded-lg hover:bg-slate-100"
+        class="inline-flex items-center justify-center h-full px-3 rounded-none hover:bg-[#BB0000] active:bg-[#AA0000]"
         data-action="click->modal#open" aria-label="メニューを開く">
-        <%= heroicon "bars-3", options: { class: "w-6 h-6 text-slate-500" } %>
+        <%= heroicon "bars-3", options: { class: "w-6 h-6" } %>
       </button>
     </div>
 

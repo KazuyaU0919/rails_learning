@@ -2,21 +2,58 @@
 <%= render "shared/breadcrumbs" %>
 <% content_for :title, "My PreCodes" %>
 
-<div class="flex justify-between items-center mb-4">
-  <h1 class="text-xl font-semibold"><%= yield :title %></h1>
-  <%= link_to "新規作成", new_pre_code_path,
-        class: "rounded-xl bg-slate-900 text-white px-3 py-2 hover:bg-slate-800" %>
+<%# ===== ヘッダーブロック：中央にタイトル、その“下の行”に右寄せの検索群 ===== %>
+<div class="mb-6">
+
+  <%# 中央タイトル %>
+  <div class="text-center">
+    <h1 class="text-2xl font-semibold">My PreCodes</h1>
+    <p class="mt-1 text-sm text-slate-500">~ 初期データ登録機能 ~</p>
+  </div>
+
+  <%# タイトルの下の行：右寄せで検索フォーム＆使い方/新規作成 %>
+  <div class="mt-4">
+    <div class="flex gap-2 justify-end">
+      <%= search_form_for @q, url: pre_codes_path, method: :get,
+            html: { class: "flex gap-2" } do |f| %>
+        <%= f.search_field :title_or_description_cont,
+              value: @q.title_or_description_cont,
+              placeholder: "検索（タイトル／説明）",
+              class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64" %>
+        <%= f.submit "検索",
+              class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+      <% end %>
+    </div>
+
+    <div class="flex gap-2 mt-2 justify-end">
+      <%= link_to "使い方", help_path,
+            class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+
+      <%= link_to "PreCode 新規作成", new_pre_code_path,
+            class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+    </div>
+  </div>
 </div>
 
 <% if @pre_codes.blank? %>
   <p class="text-slate-500">まだ登録がありません。まずは「新規作成」からはじめましょう。</p>
 <% else %>
-  <ul class="space-y-3">
+  <ul class="space-y-3 -mt-2">
     <% @pre_codes.each do |pc| %>
       <li>
         <%= link_to pc, class: "block border rounded-xl p-4 ring-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300" do %>
-          <div class="font-semibold"><%= pc.title %></div>
-          <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 120) %></p>
+          <div class="flex justify-between">
+            <!-- 左：タイトル／説明 -->
+            <div class="flex-1 pr-4">
+              <div class="font-semibold"><%= pc.title %></div>
+              <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 120) %></p>
+            </div>
+
+            <!-- 右：メトリクス（いいね数・利用数） -->
+            <div class="shrink-0">
+              <%= render "code_libraries/metrics", pre_code: pc %>
+            </div>
+          </div>
         <% end %>
       </li>
     <% end %>

@@ -7,18 +7,22 @@ class UsedCodesController < ApplicationController
     # 自分の投稿は弾く
     return head :forbidden if @pre_code.user_id == current_user.id
 
-    # 1ユーザー1レコード
-    UsedCode.find_or_create_by!(user: current_user, pre_code: @pre_code) do |uc|
-      uc.used_at = Time.current
+    # ---- 連打の簡易スロットル（同一ユーザーが短時間に連投したら無視）----
+    recently = UsedCode
+      .where(user: current_user, pre_code: @pre_code)
+      .where("created_at > ?", 3.seconds.ago)
+      .exists?
+
+    unless recently
+      # レコードを1件作るだけで counter_cache(:use_count) が +1 される
+      UsedCode.create!(user: current_user, pre_code: @pre_code, used_at: Time.current)
     end
 
-    # 表示用に最新値へリロード
+    # 最新値を再読込
     @pre_code.reload
 
-    respond_to do |f|
-      f.turbo_stream
-      f.html { redirect_back fallback_location: code_libraries_path }
-    end
+    # 同期リダイレクト（パラメータで来ていればエディタ、無ければ一覧）
+    redirect_to params[:redirect].presence || code_libraries_path
   end
 
   private

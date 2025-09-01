@@ -6,33 +6,64 @@
 <% content_for :title, @pre_code.title %>
 
 <div class="mx-auto w-full max-w-2xl space-y-8">
-  <!-- Title -->
+  <!-- 登録名 -->
   <section>
-    <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">タイトル</h2>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
-      <p class="text-xl font-semibold"><%= @pre_code.title %></p>
+      <p class="text-base"><%= @pre_code.title %></p>
     </div>
   </section>
 
-  <!-- Description -->
+  <!-- コードの説明 -->
   <section>
-    <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">説明</h2>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">コードの説明</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
       <%= simple_format @pre_code.description %>
     </div>
   </section>
 
-  <!-- Code -->
+  <!-- 登録コード + 最終更新 -->
   <section>
-    <h2 class="text-xs font-semibold tracking-wider text-slate-500 uppercase">コード</h2>
-    <pre class="mt-1 rounded-xl bg-slate-900 text-white p-4 overflow-x-auto"><code><%= @pre_code.body %></code></pre>
+    <div class="flex items-baseline justify-between">
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録コード</h2>
+      <p class="text-xs text-slate-500">
+        最終更新日：<%= l @pre_code.updated_at.in_time_zone, format: :ymd_hm %>
+      </p>
+    </div>
+
+    <!-- CodeMirror（閲覧専用） -->
+    <style>
+      .cm-editor, .cm-scroller { background: transparent !important; }
+    </style>
+    <div
+      data-controller="code-view"
+      data-code-view-theme-value="light"
+      class="mt-1 rounded-xl ring-1 ring-slate-300 overflow-hidden">
+      <textarea data-code-view-target="field" class="hidden"><%= @pre_code.body %></textarea>
+      <div data-code-view-target="mount" class="w-full min-h-[120px]"></div>
+    </div>
   </section>
 
-  <!-- アクション（いいね／使った） -->
-  <section class="mt-6">
-    <div class="flex gap-2">
-      <% current_like = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id) : nil %>
-      <%= render "actions", pre_code: @pre_code, current_like: current_like %>
+  <!-- 利用ボタン ＋ いいねボタン（同一行・中央固定） -->
+  <section class="-mt-2">
+    <div class="grid grid-cols-3 items-center">
+      <!-- 中央：利用ボタン（PreCode送信ボタンと同じサイズ） -->
+      <div class="col-start-2 justify-self-center">
+        <%= button_to "このデータを利用する",
+              used_codes_path(pre_code_id: @pre_code.id,
+                              redirect: editor_path(pre_code_id: @pre_code.id)),
+              method: :post,
+              form: { data: { turbo: false } },
+              class: "inline-flex justify-center w-64 md:w-80 lg:w-96
+                      bg-[#CC0000] text-white px-4 py-2 rounded
+                      hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+      </div>
+
+      <!-- 右端：いいねボタン -->
+      <div class="col-start-3 justify-self-end">
+        <% current_like = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id) : nil %>
+        <%= render "actions", pre_code: @pre_code, current_like: current_like %>
+      </div>
     </div>
   </section>
 </div>

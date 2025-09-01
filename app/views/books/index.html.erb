@@ -1,8 +1,11 @@
-<!-- app/views/books/index.html.erb -->
+<%# app/views/books/index.html.erb %>
 <% breadcrumb :books %>
 <%= render "shared/breadcrumbs" %>
 
-<h1 class="text-2xl font-semibold mb-6">教本一覧</h1>
+<div class="mb-6 text-center">
+  <h1 class="text-2xl font-semibold">Rails Books</h1>
+  <p class="mt-1 text-sm text-slate-500">~ Railsを知るための教科書 ~</p>
+</div>
 
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <%= render partial: "book", collection: @books, as: :book %>

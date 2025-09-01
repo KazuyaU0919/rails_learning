@@ -6,145 +6,581 @@
 
 <% content_for :title, "ヘルプ" %>
 
-<div class="mx-auto max-w-3xl space-y-10">
-  <!-- ページ見出し -->
-  <h1 class="text-2xl font-bold mb-2">🚀 RailsLearning の使い方</h1>
-  <hr class="border-slate-200">
+<div class="mx-auto max-w-4xl space-y-10">
+  <!-- ページ見出し（中央＋サブタイトル） -->
+  <div class="text-center">
+    <h1 class="text-2xl font-semibold">🚀 Rails Learning の使い方</h1>
+    <p class="mt-1 text-sm text-slate-500">~ アプリの使い方や機能についての説明 ~</p>
+    <hr class="mt-3 border-slate-200">
+  </div>
 
-  <!-- Code Editor -->
-  <section class="space-y-4">
-    <h2 class="text-xl font-semibold">📝 Code Editor（コードエディタ）</h2>
+  <!-- =========================
+       Ruby & paiza 学習のための使い方（トグル）
+       ========================= -->
+  <section>
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-1 mb-3">
+      Ruby & paiza 学習のためのアプリの使い方（クリックで詳細表示）
+    </h2>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
-      <p class="mt-1">
-        アプリ上で Ruby や Rails のコードを入力・実行できる機能です。学習した内容をすぐに試し、その場で結果を確認できます。
-      </p>
-    </div>
+    <!-- 1) ブックマーク -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">1. アプリを PC のブックマークに追加</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">アプリをいつでも利用できるように、ブックマーク登録を行いましょう。</p>
+      </summary>
+      <div class="py-4 px-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>Mac は <kbd class="px-1 py-0.5 rounded bg-slate-100 border">command + D</kbd>、Windows は <kbd class="px-1 py-0.5 rounded bg-slate-100 border">Ctrl + D</kbd>を押してみましょう。Rails Learningがブックマーク登録されます。</li>
+          <li>ブックマークバーにドラッグして常時表示するとさらに早く、サイトにアクセスできます。</li>
+        </ol>
+      </div>
+    </details>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
-      <ol class="list-decimal ml-6 space-y-1 mt-1">
-        <li>「初期データ」プルダウンからサンプルコードを選択できます。</li>
-        <li>エディタ欄に自由にコードを入力してください。</li>
-        <li>▶ <span class="font-semibold">実行</span> ボタンを押すと、下部に実行結果が表示されます。</li>
-        <li>テーマ切替ボタンで、ダーク／ライトモードを切り替えられます。</li>
-      </ol>
-    </div>
+    <!-- 2) アカウント作成 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">2. アカウント作成</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">アプリを初めて利用する際は、メールアドレス・Google・GitHubから新規登録を行ってください。</p>
+        <p class="mt-1 text-sm text-slate-600">アカウントを作成しログインすると、すべての機能が使えるようになります。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>画面右上の「≡」から「新規登録」を選択し、アカウント登録を行なってください。</li>
+          <li>メール / Google / GitHub のいずれからでも登録・ログインが可能です。</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>外部認証（ Google や GitHub ）でログインすると、登録後、簡単にログインができるようになります。</li>
+          <li>アカウント作成後、メール / Google / GitHub どれでログインしても、同一メールアドレスであれば、同じアカウントとして扱われます。</li>
+          <li>GitHub で登録しておくと、将来の Rails 学習やコード共有と親和性が高いです。</li>
+        </ul>
+      </div>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
-      <ul class="list-disc ml-6 space-y-1 mt-1">
-        <li>学習中のコード断片を気軽に試す場として利用してください。</li>
-        <li>保存はされないため、成果を残したい場合は PreCode 機能の利用がおすすめです。</li>
-      </ul>
-    </div>
+      <% unless logged_in? %>
+        <div class="pb-5 mt-3 flex justify-center">
+          <%= link_to "このページへ移動する", new_user_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+        </div>
+      <% end %>
+    </details>
+
+    <!-- 3) Code Library を使って解く -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">3. Code Library で学びたい問題を選んで解く</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">まずは、既存の問題を解いて、Rails Learningの使い方や学習の進め方を学んでいきましょう。</p>
+        <p class="mt-1 text-sm text-slate-600">Rubyの標準メソッドやpaiza頻出コードの使い方を学ぶことができます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューから CodeLibrary をタップし、Code Library 画面に遷移します。</li>
+          <li>タイトルや説明文をキーワードにして、検索フォームから目的のコードを検索します。</li>
+          <li>並び替えで「人気順」「利用数順」「新着順」を切り替えられます。</li>
+          <li>気になるコードがあればタップして、コードページ（詳細画面）へ遷移しましょう。</li>
+          <li>各コードページで、「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 学びを深くするコツ</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li><span class="font-semibold">コードを理解する → 少し変える → 変化を見る</span>の 3 ステップを繰り返すことで、そのコードに対する理解度が上がります。</li>
+          <li>詰まった箇所はメモし、用語を調べてみましょう！</li>
+          <li>復習したい内容ができたら、PreCode 機能を使ってみましょう！</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", code_libraries_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 4) My PreCode に保存して自作問題化 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">4. 復習したい Ruby の標準メソッドを My PreCode に保存し、自分用の学習問題にする</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">「自分専用のコード断片（スニペット）」を作成・保存することで、自分用のメモや問題を作成することができます。</p>
+        <p class="mt-1 text-sm text-slate-600">実践的な復習を行うことで、プログラマーとしての実力をグンと底上げしましょう！</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューから PreCode をタップし、PreCode 画面に遷移します。</li>
+          <li>画面右上の「PreCode 新規作成」をタップします。</li>
+          <li>「タイトル」「コードの説明（用途や補足）」「コード本体」を入力し、「登録」ボタンをタップします。</li>
+          <li>保存後は一覧に追加され、クリックで詳細を確認できます。</li>
+          <li>詳細画面の「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>学習メモや頻繁に使うコードを保存・利用することで学習の効率化が図れます。</li>
+          <li>自分が復習するための<span class="font-semibold">ミニ問題</span>を作成することで、効率的に知識を定着させられます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", pre_codes_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 5) 毎日の振り返りで定着 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">5. 日常的に振り返り学習を行い、知識を定着させる</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">知識は理解するだけでは効率的に扱うことができません。</p>
+        <p class="mt-1 text-sm text-slate-600">日常的な復習を重ねることで、知識を理解し、実践し、定着させましょう。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">💻 やること</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>学習した内容を PreCode に問題としてまとめ、翌日、解いてみましょう。</li>
+          <li>Code Library で、同テーマの問題を探し、学んだ知識を応用して使ってみるのも良い学習法です。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🧩 理由</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>人は 1 日で覚えた内容の 74 %を忘れてしまいます（エビングハウスの忘却曲線）。</li>
+          <li>覚えたことを忘れないように復習を重ね、知識を定着させましょう。</li>
+        </ul>
+      </div>
+    </details>
   </section>
 
-  <hr class="border-slate-200">
+  <!-- =========================
+       Rails 初学者の使い方（トグル）
+       ========================= -->
+  <section>
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-1 mb-3">
+      Rails 初学者のアプリの使い方（クリックで詳細表示）
+    </h2>
 
-  <!-- PreCode -->
-  <section class="space-y-4">
-    <h2 class="text-xl font-semibold">📦 PreCode（プリコード）</h2>
+    <!-- 1) スマホのホームに追加 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">1. アプリをスマホのホーム画面に追加</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">
+          アプリをいつでも利用できるように、スマホのホーム画面に追加しましょう。
+        </p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>iPhone：Safari でサイトを開く → 共有 → <span class="font-semibold">ホーム画面に追加できます</span>。</li>
+          <li>Android：Chrome で開く → メニュー → <span class="font-semibold">ホーム画面に追加できます</span>。</li>
+          <li>スキマ時間を使って、学習を進め、学習の効率化を図りましょう。</li>
+        </ol>
+      </div>
+    </details>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
-      <p class="mt-1">
-        「自分専用のコード断片（スニペット）」を保存できる機能です。頻繁に使うコードや学習メモを整理して残せます。簡単な Ruby の問題を作ることもできます。
-      </p>
-    </div>
+    <!-- 2) アカウント作成 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">2. アカウント作成</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">アプリを初めて利用する際は、メールアドレス・Google・GitHubから新規登録を行ってください。</p>
+        <p class="mt-1 text-sm text-slate-600">アカウントを作成しログインすると、すべての機能が使えるようになります。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>画面右上の「≡」から「新規登録」を選択し、アカウント登録を行なってください。</li>
+          <li>メール / Google / GitHub のいずれからでも登録・ログインが可能です。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>外部認証（ Google や GitHub ）でログインすると、登録後、簡単にログインができるようになります。</li>
+          <li>アカウント作成後、メール / Google / GitHub どれでログインしても、同一メールアドレスであれば、同じアカウントとして扱われます。</li>
+          <li>GitHub で登録しておくと、将来の Rails 学習やコード共有と親和性が高いです。</li>
+        </ul>
+      </div>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
-      <ol class="list-decimal ml-6 space-y-1 mt-1">
-        <li>右上の「新規作成」から PreCode を登録します。</li>
-        <li><span class="font-semibold">タイトル</span>、<span class="font-semibold">説明</span>（用途や補足）、<span class="font-semibold">コード本体</span>を入力します。</li>
-        <li>保存後は一覧に追加され、クリックで詳細を確認できます。</li>
-        <li>編集・削除も可能です。</li>
-      </ol>
-    </div>
+      <% unless logged_in? %>
+        <div class="pb-5 mt-3 flex justify-center">
+          <%= link_to "このページへ移動する", new_user_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+        </div>
+      <% end %>
+    </details>
 
-    <div>
-      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
-      <ul class="list-disc ml-6 space-y-1 mt-1">
-        <li>学習メモやよく使う処理の記録に最適です。</li>
-        <li>自動リサイズフォーム＋残り文字数カウンタで、長文でも扱いやすくなっています。</li>
-      </ul>
-    </div>
+    <!-- 3) Rails Books で体系的に進める -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">3. Rails Books で体系的に学習を進める</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Rails初学者〜初心者にとって必要な知識を詰め込んだRails学習のための教科書を使って、Railsの基礎知識を身につけましょう。</p>
+        <p class="mt-1 text-sm text-slate-600">難しい参考書や教材で、Rails学習に壁を感じていたら、こちらの書籍から学習を進めてみましょう。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューからRails Booksをタップし、Rails Books画面に遷移します。</li>
+          <li>一覧画面から、学習したい章を選択します（初学者は１章の初級編から）。</li>
+          <li>各章を読み進めながら、学習を進めます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>すべての章の初級編を読み終わってから、各章の中級編（作成中）、上級編（作成中）に取り掛かることを推奨します。</li>
+          <li>一部の章には「FREE」ラベルがあり、未ログイン状態でも閲覧可能です（ログインすれば全ての章を閲覧できます）。</li>
+          <li>Rails初学者〜初心者に向けた、Railsの全体像を知るための教科書で、基礎から体系的に学習を進められます。</li>
+          <li>RUNTEQ生は、Rails入門〜応用の補助に利用できます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", books_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 4) 小さなアプリを作って試す -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">4. 学んだコードを使って、実際に小さなアプリを作成してみる</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">学んだコードを使って、実際に小さなアプリを作ってみましょう。</p>
+        <p class="mt-1 text-sm text-slate-600">最初は手順通りに実装していれば、あまり悩むことなくアプリが作れます。</p>
+        <p class="mt-1 text-sm text-slate-600">慣れてきたら、自分で色々と考えてアプリを作ってみましょう！</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順（初心者向け）</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>Rails Books 1章の「環境構築」〜「アプリをつくてみよう🎶」で、アプリ作成の流れや基本コマンドを学びましょう。</li>
+          <li>Rails Books 14章で、手順に沿ってアプリを作成し、実際の開発の流れを理解しましょう。</li>
+          <li>最後に、自分の力で、設計〜開発までやってみましょう！（ミニアプリ開発）</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>プログラミング学習は、アプリ開発と並行して行うことで、学習の理解度を大きく上げることができます。</li>
+          <li>実装中の不明点や発生したエラーはメモをとっておき、後で復習しましょう。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", books_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 5) スキマ時間で振り返る -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">5. スキマ時間に振り返りを行う</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">知識は理解するだけでは効率的に扱うことができません。</p>
+        <p class="mt-1 text-sm text-slate-600">日常的な復習を重ねることで、知識を理解し、実践し、定着させましょう。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">💻 やること</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>学習した内容を PreCode に問題としてまとめ、翌日、解いてみましょう。</li>
+          <li>Code Library で、同テーマの問題を探し、学んだ知識を応用して使ってみるのも良い学習法です。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🧩 理由</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>人は 1 日で覚えた内容の 74 %を忘れてしまいます（エビングハウスの忘却曲線）。</li>
+          <li>覚えたことを忘れないように復習を重ね、知識を定着させましょう。</li>
+        </ul>
+      </div>
+    </details>
   </section>
 
-  <hr class="border-slate-200">
+  <!-- =========================
+       効果的な活用ヒント
+       ========================= -->
+  <section class="rounded-lg bg-[#FFEEFF] p-8">
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-2 mb-6">
+      効果的な活用ヒント
+    </h2>
 
-  <!-- Code Library -->
-  <section class="space-y-4">
-    <h2 class="text-xl font-semibold">📚 Code Library（コードライブラリ）</h2>
-
-    <div>
-      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
-      <p class="mt-1">
-        ユーザーが作成した PreCode を「共有ライブラリ」として一覧・検索できる機能です。他人のコードを参考にしたり、人気コードを学習に活かせます。
-      </p>
-    </div>
-
-    <div>
-      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
-      <ol class="list-decimal ml-6 space-y-1 mt-1">
-        <li>検索フォームからタイトルや説明でコードを検索できます。</li>
-        <li>並び替えで「人気順」「利用数順」「新着順」を切り替えられます。</li>
-        <li>各コードページでは「いいね ❤️」や「使った 🧰」を押してリアクションできます。</li>
-      </ol>
-    </div>
-
-    <div>
-      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
-      <ul class="list-disc ml-6 space-y-1 mt-1">
-        <li>学習仲間がどんなコードを使っているか参考にできます。</li>
-        <li>自分のコードが他の人に使われるとモチベーションUPにつながります。</li>
-      </ul>
-    </div>
-  </section>
-
-  <hr class="border-slate-200">
-
-  <!-- Rails Books -->
-  <section class="space-y-4">
-    <h2 class="text-xl font-semibold">📖 Rails Books（Railsテキスト）</h2>
-
-    <div class="space-y-2">
-      <p class="text-sm font-semibold text-slate-500">💡 概要</p>
-      <p>
-        Rails の基礎から応用を体系的に学べる教材ページです。章ごとに整理されており、目次から順番に読み進められます。
-      </p>
-    </div>
-
-    <div>
-      <p class="text-sm font-semibold text-slate-500">🔧 主な使い方</p>
-      <ol class="list-decimal ml-6 space-y-1 mt-1">
-        <li>書籍一覧ページから教材を選びます。</li>
-        <li>各書籍には <span class="font-semibold">章の一覧（目次）</span> があり、クリックで内容を閲覧できます。</li>
-        <li>章ページでは本文を読み進めながら、前後の章に移動できます。</li>
-      </ol>
-    </div>
-
-    <div>
-      <p class="text-sm font-semibold text-slate-500">👀 ポイント</p>
-      <ul class="list-disc ml-6 space-y-1 mt-1">
-        <li>一部の章には「FREE」ラベルがあり、無料で閲覧可能です。</li>
-        <li>基礎から体系的に進められるため、カリキュラム学習の補助にも使えます。</li>
-      </ul>
-    </div>
-  </section>
-
-  <hr class="border-slate-200">
-
-  <!-- まとめ -->
-  <section class="space-y-2">
-    <h2 class="text-xl font-semibold">✅ まとめ</h2>
-    <ul class="list-disc ml-6 space-y-1">
-      <li><span class="font-semibold">Code Editor</span>：その場でコードを実行</li>
-      <li><span class="font-semibold">PreCode</span>：自分のコードメモを保存</li>
-      <li><span class="font-semibold">Code Library</span>：共有ライブラリで学び合い</li>
-      <li><span class="font-semibold">Rails Books</span>：体系的な教材で学習</li>
+    <!-- 各ヒントの間隔と下線（赤）を追加 -->
+    <ul class="text-slate-900 space-y-4">
+      <li class="py-2 border-b border-[#FFBEDA]">
+        📚 Rails Books初級編を一通り学習することで、Railsの基礎知識と全体像を理解できます（Rails入門レベル）。
+      </li>
+      <li class="py-2 border-b border-[#FFBEDA]">
+        📖 Rails Books実践編は、Rails初学者でも簡単にアプリを作成でき、Railsに対する理解度を大幅に上げられます。
+      </li>
+      <li class="py-2 border-b border-[#FFBEDA]">
+        💻 日頃の学習で得た学びを、PreCode機能によって、簡単に問題化でき、効率的に復習できます。
+      </li>
+      <li class="py-2 border-b border-[#FFBEDA]">
+        ✍️ paiza学習で必要なコードを、PreCode & Code Library機能で学習できます。
+      </li>
+      <li class="py-2 border-b border-[#FFBEDA]">
+        📱 Rails Learningは、PC / タブレット / スマホで利用でき、スキマ時間にいつでも学習ができます。
+      </li>
     </ul>
+  </section>
+
+  <!-- =========================
+       主要機能の使い方（各項目クリックで開閉）
+       ========================= -->
+  <section>
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-1 mb-3">
+      主要機能の使い方（クリックで詳細表示）
+    </h2>
+
+    <!-- 1) Rails Books -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">Rails Books（Railsテキスト）</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Rails初学者〜初心者にとって必要な知識を詰め込んだRails学習のための教科書。</p>
+        <p class="mt-1 text-sm text-slate-600">章ごとに整理されており、目次から順番に読み進められます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 主な使い方</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューからRails Booksをタップし、Rails Books画面に遷移します。</li>
+          <li>一覧画面から、学習したい章を選択します（初学者は１章の初級編から）。</li>
+          <li>各章を読み進めながら、学習を進めます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>すべての章の初級編を読み終わってから、各章の中級編（作成中）、上級編（作成中）に取り掛かることを推奨します。</li>
+          <li>一部の章には「FREE」ラベルがあり、未ログイン状態でも閲覧可能です（ログインすれば全ての章を閲覧できます）。</li>
+          <li>Rails初学者〜初心者に向けた、Railsの全体像を知るための教科書で、基礎から体系的に学習を進められます。</li>
+          <li>RUNTEQ生は、Rails入門〜応用の補助に利用できます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", books_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 2) Code Editor -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">Code Editor（コードエディタ）</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Ruby専用のコードエディタ機能。</p>
+        <p class="mt-1 text-sm text-slate-600">初期データを適用することで、効率的に学習を進めることができます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 主な使い方</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>「初期データ」と書かれているプルダウンからサンプルコードを選択します（任意）。</li>
+          <li>コードエディタ欄に自由にコードを入力してください。</li>
+          <li>「実行」ボタンを押すと、下部の出力欄に実行結果が表示されます。</li>
+          <li>テーマ切り替えボタンで、ダーク / ライトモードを切り替えられます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>学習中のコードを気軽に試す場として利用してください。</li>
+          <li>PreCode機能やCode Library機能と併用することで、Rubyやpaiza学習の効率を上げることができます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", editor_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 3) PreCode -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">PreCode（プリコード）</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">「自分専用のコード断片（スニペット）」を作成・保存できる機能。</p>
+        <p class="mt-1 text-sm text-slate-600">頻繁に使うコードや学習メモを整理して保存できます。また、Rubyやpaiza学習用の簡単な問題を作れます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 主な使い方</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューから PreCode をタップし、PreCode 画面に遷移します。</li>
+          <li>画面右上の「PreCode 新規作成」をタップします。</li>
+          <li>「タイトル」「コードの説明（用途や補足）」「コード本体」を入力し、「登録」ボタンをタップします。</li>
+          <li>保存後は一覧に追加され、クリックで詳細を確認できます。</li>
+          <li>詳細画面の「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
+          <li>編集・削除も可能です。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>学習メモや頻繁に使うコードを保存・利用することで学習の効率化が図れます。</li>
+          <li>自分が復習するための<span class="font-semibold">ミニ問題</span>を作成することで、効率的に知識を定着させられます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", pre_codes_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+
+    <!-- 4) Code Library -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">Code Library（コードライブラリ）</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">他ユーザーが作成したPreCodeを「共有ライブラリ」として、閲覧・検索できる機能。</p>
+        <p class="mt-1 text-sm text-slate-600">他人のコードを参考にしたり、他人が作成したコード断片や学習問題を利用することもできます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 主な使い方</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>メニューから CodeLibrary をタップし、Code Library 画面に遷移します。</li>
+          <li>タイトルや説明文をキーワードにして、検索フォームから目的のコードを検索します。</li>
+          <li>並び替えで「人気順」「利用数順」「新着順」を切り替えられます。</li>
+          <li>気になるコードがあればタップして、コードページ（詳細画面）へ遷移しましょう。</li>
+          <li>各コードページで、「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
+        </ol>
+        <p class="pt-3 font-semibold">🎯 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li><span class="font-semibold">コードを理解する → 少し変える → 変化を見る</span>の 3 ステップを繰り返すことで、そのコードに対する理解度が上がります。</li>
+          <li>学習仲間がどんなコードを利用しているのか参考にできます。</li>
+          <li>他ユーザーが作成した問題を利用して、手軽にRubyやpaizaの学習ができます。</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", code_libraries_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+      </div>
+    </details>
+  </section>
+
+  <!-- =========================
+       サブ機能の使い方（カード）
+       ========================= -->
+  <section>
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-1 mb-3">
+      サブ機能の使い方
+    </h2>
+
+    <div class="grid grid-cols-1 gap-4">
+      <!-- いいね -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">いいね機能</p>
+        <p class="text-sm text-slate-800 mt-1">参考になった Code Library の投稿に「いいね！」を押しましょう。</p>
+        <p class="text-sm text-slate-800 mt-1">良質な教材が上位に上がり、<span class="font-semibold">学習の発見コスト</span>が下がります。</p>
+      </div>
+
+      <!-- いいね数・利用数 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">いいね数・利用数の確認</p>
+        <p class="text-sm text-slate-800 mt-1">自分の PreCode が<span class="font-semibold">他ユーザーから</span>どれだけ使われ、支持されたか可視化する機能。</p>
+        <p class="text-sm text-slate-800 mt-1">モチベーションの向上につながります。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===========================
+      よくある質問（FAQ）
+  =========================== -->
+  <section>
+    <h2 class="text-xl font-semibold text-[#CC0000] border-b border-[#CC0000] pb-1 mb-3">
+      よくある質問（FAQ）
+    </h2>
+
+    <!-- Q1 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">Rails初学者です。まずは何から始めれば良いですか？？</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+      </summary>
+      <div class="px-4 py-4 text-sm text-slate-800 space-y-2">
+        <p class="mt-1">まずは、Rails Booksの初級編を一通り行いましょう。</p>
+        <p class="mt-1">第 1 章から順に進めると MVC・ルーティング・ビューなどのRailsの全体像を掴みながら、非常にわかりやすくRails学習を進めることができます。</p>
+        <p class="mt-1">RUNTEQ生であれば、初級編が終わった時点で、Rails入門〜基礎の序盤の内容はおおよそ理解できるようになっています。</p>
+        <p>　</p>
+        <p class="mt-1">その後、実践編でミニアプリを作成し、Railsで実際にアプリを作成する流れを掴みましょう。</p>
+        <p class="mt-1">小さなアプリであっても、一度アプリを作るだけで一気にRailsに対する理解度が上がります。</p>
+      </div>
+    </details>
+
+    <!-- Q2 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">paiza学習のために利用を始めました。まずは何から始めれば良いですか？？</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+      </summary>
+      <div class="px-4 py-4 text-sm text-slate-800 space-y-2">
+        <p class="mt-1">まずは、Code Library機能で自分が学びたいレベルの問題を1つ選んで、解いてみましょう。</p>
+        <p class="mt-1">おすすめは、「🔰 初心者向け」の問題です。</p>
+        <p class="mt-1">慣れてきたら、徐々に難易度の高い問題を解いていけば良いでしょう。</p>
+        <p>　</p>
+        <p class="mt-1">paizaの問題を解いたあとは、新しく学んだコードを Pre Code 機能に保存して、復習しましょう。</p>
+        <p class="mt-1">chat GPTなどの生成AIに、問題を作成してもらい、PreCodeに保存することで、いつでも該当コードの復習を行えます。</p>
+        <p>　</p>
+        <p class="mt-1">paiza C ~ B 級はよく利用されるコードがいくつかあり、そのコードを組み合わせることで問題を解くことができます。</p>
+        <p class="mt-1">ちょっとしたパズルみたいなものです。</p>
+        <p class="mt-1">なので、類似コードが問題として出題されたときに解けるように、復習を重ねましょう。</p>
+        <p class="mt-1">一度出たコードをちゃんと覚えて、使いこなせるようになることが実力向上への近道です。</p>
+      </div>
+    </details>
+
+    <!-- Q3 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">スマホだけでも学習することができますか？</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+      </summary>
+      <div class="px-4 py-4 text-sm text-slate-800 space-y-2">
+        <p class="mt-1">本アプリは、スマホ / タブレット / PC いずれの端末でも利用可能ですが、元々はPCでの利用を想定して作られています。</p>
+        <p class="mt-1">そのため、Code Editor / PreCode / Code Library 機能は、スマホでの利用を推奨しておりません。</p>
+        <p class="mt-1">（利用することは可能ですが、PCでの利用時に比べ、使い勝手が悪いかと思われます）</p>
+        <p>　</p>
+        <p class="mt-1">ただ、Rails Booksのみは、どの端末でも問題なく利用できます。</p>
+        <p class="mt-1">なので、読む学習は スマホ / タブレット / PC、書く学習は PC という利用方法が望ましいでしょう。</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- =========================
+       お問い合わせ
+       ========================= -->
+  <section class="rounded-xl bg-[#FFEEFF] p-8">
+    <h2 class="text-2xl font-semibold text-center text-[#CC0000] pb-2">お困りですか？</h2>
+    <p class="text-center text-slate-900 mt-2 py-2 lg:max-w-xl mx-auto">
+      使い方について質問のある場合や、機能の追加・修正の提案、バグ報告などありましたら、お気軽にお問い合わせください。
+    </p>
+    <div class="mt-4 flex justify-center">
+      <%= link_to "お問い合わせ", contact_path,
+            class: "inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors" %>
+    </div>
   </section>
 </div>

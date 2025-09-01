@@ -1,24 +1,28 @@
-<%# エラー表示（共通パーシャルに委譲） %>
-<%= render "shared/errors", object: @pre_code %>
+<%# エラー表示（共通パーシャル活用） %>
+<%= render "shared/errors", object: pre_code %>
 
-<%= form_with model: @pre_code, class: "space-y-4" do |f| %>
+<%= form_with model: pre_code, class: "space-y-4" do |f| %>
+
   <div>
-    <%= f.label :title, "タイトル", class: "block text-sm mb-1" %>
+    <%# 登録名 %>
+    <%= f.label :title, "登録名", class: "block text-sm mb-1" %>
     <%= f.text_field :title,
+          placeholder: "選択時に表示する名前を入力してください",
           class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
   </div>
 
   <div>
+    <%# コードの説明 %>
     <%= f.label :description, "コードの説明", class: "block text-sm mb-1" %>
 
-    <div
-      data-controller="autosize"
-      data-autosize-min-rows-value="3"
-      data-autosize-max-length-value="2000">
+    <div data-controller="autosize"
+        data-autosize-min-rows-value="3"
+        data-autosize-max-length-value="2000">
       <%= f.text_area :description,
             rows: 3,
             maxlength: 2000,
             data: { autosize_target: "field" },
+            placeholder: "コード内容の説明を簡単に書いてください",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
 
       <div class="mt-1 text-xs text-slate-500">
@@ -27,16 +31,36 @@
     </div>
   </div>
 
+  <%# === 登録コード（CodeMirror） === %>
   <div>
-    <%= f.label :body, "コード", class: "block text-sm mb-1" %>
-    <div data-controller="autosize" data-autosize-min-rows-value="10">
+    <%# タイトル、テーマ切り替えボタン %>
+    <div data-controller="precode-body" data-precode-body-theme-value="light">
+      <div class="flex items-center justify-between">
+        <label class="block text-sm">登録コード</label>
+        <button type="button"
+                data-action="precode-body#toggleTheme"
+                class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm">
+          テーマ切替
+        </button>
+      </div>
+
+      <%# textarea は非表示でフォーム送信用の実体 %>
       <%= f.text_area :body,
-            rows: 10,
-            data: { autosize_target: "field" },
-            class: "w-full font-mono rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+            data:  { precode_body_target: "field" },
+            class: "hidden" %>
+
+      <%# CodeMirror をマウント。角丸なし & スクロールはここに出す %>
+      <style>
+        .cm-editor, .cm-scroller { background: transparent !important; }
+      </style>
+      <div data-precode-body-target="mount"
+          class="w-full min-h-[300px] ring-1 ring-slate-300 rounded-none overflow-hidden"></div>
     </div>
   </div>
 
-  <%= f.submit (@pre_code.new_record? ? "作成する" : "更新する"),
-        class: "rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" %>
+  <%# === 送信ボタン（中央寄せ＆幅広＋赤） === %>
+  <div class="mt-6 flex justify-center">
+    <%= f.submit (pre_code.new_record? ? "登録" : "更新"),
+          class: "inline-flex justify-center w-64 md:w-80 lg:w-96 bg-[#CC0000] text-white px-4 py-2 rounded hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+  </div>
 <% end %>
