@@ -28,7 +28,7 @@ RSpec.describe "Admin Authorization", type: :request do
       end
 
       it "admin はアクセスできる" do
-        sign_in_as(admin)
+        sign_in_as(admin, password: "secret123")
         get public_send(path_helper)
         expect(response).to have_http_status(:ok)
       end

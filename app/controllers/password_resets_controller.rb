@@ -6,25 +6,33 @@ class PasswordResetsController < ApplicationController
   def new; end
 
   def create
-    # 通常ログインユーザーのみ対象（provider が空）
-    if (user = User.find_by(email: params[:email], provider: nil))
+    # 通常ログインユーザー（= 外部連携が無いユーザー）のみ対象
+    user = User.where.missing(:authentications).find_by(email: params[:email])
+
+    if user
       user.generate_reset_token!
       UserMailer.reset_password(user).deliver_later
     end
-    redirect_to root_path, notice: "再設定用メールを送信しました（該当メールが存在する場合）"
+
+    # メールが存在する/しないに関わらず同じメッセージを返すのが一般的
+    redirect_to root_path, notice: "該当メールへパスワード再設定用のメールを送信しました（該当メールが存在する場合）"
   end
 
   def edit
     @user = User.find_by(reset_password_token: params[:id]) # :id = token
-    redirect_to new_password_reset_path, alert: "トークンが無効です" unless @user&.reset_token_valid?
+    unless @user&.reset_token_valid?
+      redirect_to new_password_reset_path, alert: "トークンが無効です"
+    end
   end
 
   def update
     @user = User.find_by(reset_password_token: params[:id])
-    return redirect_to new_password_reset_path, alert: "トークンが無効です" unless @user&.reset_token_valid?
+    unless @user&.reset_token_valid?
+      return redirect_to new_password_reset_path, alert: "トークンが無効です"
+    end
 
-    # 通常ユーザーとして更新（外部ログインは対象外）
-    if @user.update(password_params.merge(provider: nil))
+    # 通常ログインユーザーとして更新（外部ログインは対象外）
+    if @user.uses_password? && @user.update(password_params)
       @user.clear_reset_token!
       redirect_to new_session_path, notice: "パスワードを更新しました。ログインしてください"
     else

@@ -77,10 +77,8 @@ class Admin::BookSectionsController < Admin::BaseController
   def sanitize_content(html)
     sanitize(
       html,
-      # 許可タグは用途に応じて調整。img を許可して DirectUpload の URL を通す
-      tags: %w[p h1 h2 h3 h4 h5 h6 b i u strong em a ul ol li pre code blockquote br span div img],
-      # href/src/class/rel/alt など最低限。必要なら loading / width / height 等を追加
-      attributes: %w[href class target rel src alt]
+      tags: %w[p h1 h2 h3 h4 h5 h6 b i u strong em a ul ol li pre code blockquote br span div img hr],
+      attributes: %w[href class target rel src alt style]
     )
   end
 

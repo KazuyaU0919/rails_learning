@@ -4,7 +4,7 @@ require "rails_helper"
 RSpec.describe "Admin::Books", type: :request do
   let(:admin) { create(:user, admin: true) }
 
-  before { sign_in_as(admin) }
+  before { sign_in_as(admin, password: "secret123") }
 
   it "GET /admin/books works" do
     get admin_books_path
