@@ -1,7 +1,8 @@
+# spec/requests/pre_codes_spec.rb
 require "rails_helper"
 
 RSpec.describe "PreCodes", type: :request do
-  let(:user)  { create(:user, password: "secret123", password_confirmation: "secret123") }
+  let(:user)      { create(:user, password: "secret123", password_confirmation: "secret123") }
   let(:other_user) { create(:user, password: "secret123", password_confirmation: "secret123") }
 
   describe "ガードと所有チェック" do
@@ -11,27 +12,22 @@ RSpec.describe "PreCodes", type: :request do
     end
 
     it "ログイン後 /pre_codes は200で、自分のレコードだけが表示される" do
-      mine_pre_codes = create_list(:pre_code, 2, user: user,  title: "mine")
-      others_pre     = create(:pre_code,       user: other_user, title: "others")
+      mine_pre_codes = create_list(:pre_code, 2, user:, title: "mine")
+      others_pre     = create(:pre_code, user: other_user, title: "others")
 
       sign_in(user)
-
       get pre_codes_path
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("mine")
       expect(response.body).not_to include("others")
     end
 
-    it "他人の /pre_codes/:id を直叩きすると 404 を返す" do
+    it "他人の /pre_codes/:id を叩ききると 404 を返す" do
       record = create(:pre_code, user: other_user)
-
       sign_in(user)
       get pre_code_path(record)
-
-      # 404 を返す実装にしている場合
       expect(response).to have_http_status(:not_found)
-
-      # もし現状は index へリダイレクトする実装なら↓に切り替える
+      # もし実装で index にリダイレクトしているなら下を使う
       # expect(response).to redirect_to(pre_codes_path)
     end
   end
@@ -46,7 +42,7 @@ RSpec.describe "PreCodes", type: :request do
     end
 
     it "edit → update 失敗で 422 とエラー表示" do
-      rec = create(:pre_code, user: user)
+      rec = create(:pre_code, user:)
       patch pre_code_path(rec), params: { pre_code: { title: "" } }
       expect(response).to have_http_status(:unprocessable_entity)
     end
@@ -56,18 +52,18 @@ RSpec.describe "PreCodes", type: :request do
     before { sign_in(user) }
 
     it "index はページネーションされる" do
-      # 1ページ=25件がデフォルトなので、26件作って2ページ目を発生させる
-      create_list(:pre_code, 26, user: user, title: "p")
+      # Kaminari デフォルト 25件想定。26件作って2ページ目を発生させる
+      create_list(:pre_code, 26, user:, title: "p")
 
       # 1ページ目には「次へ」が出るはず
       get pre_codes_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('rel="next"')   # Kaminari の next リンク
+      expect(response.body).to include('rel="next"')
 
       # 2ページ目には「前へ」が出るはず
       get pre_codes_path(page: 2)
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('rel="prev"')   # Kaminari の prev リンク
+      expect(response.body).to include('rel="prev"')
     end
   end
 end

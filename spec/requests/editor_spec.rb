@@ -45,7 +45,7 @@ RSpec.describe "Editor API", type: :request do
   end
 
   describe "GET /pre_codes/:id/body" do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, password: "secret123", password_confirmation: "secret123") }
     let!(:pc)  { create(:pre_code, user:, title: "t", body: "p 'hi'") }
 
     it "対象の body を返す" do

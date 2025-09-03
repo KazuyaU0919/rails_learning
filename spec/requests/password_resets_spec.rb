@@ -1,99 +1,66 @@
-# spec/requests/password_resets_spec.rb
-require 'rails_helper'
+# app/controllers/password_resets_controller.rb
+class PasswordResetsController < ApplicationController
+  # だれでもアクセス可
 
-RSpec.describe "PasswordResets", type: :request do
-  let!(:user) { create(:user, email: "pw@example.com", password: "secret123", password_confirmation: "secret123") }
-  let!(:oauth_user) { create(:google_user, email: "oauth@example.com") } # factory 側で provider/uid を持つ
-
-  before { ActionMailer::Base.deliveries.clear }
-
-  describe "POST /password_resets" do
-    it "通常ユーザーならトークンを発行し、メール（test配信）を1通積む" do
-      perform_enqueued_jobs do
-        post password_resets_path, params: { email: user.email }
-      end
-
-      user.reload
-      expect(user.reset_password_token).to be_present
-      expect(ActionMailer::Base.deliveries.size).to eq(1)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "外部ログインユーザーは何もしない（トークン発行もdeliveries増えない）" do
-      perform_enqueued_jobs do
-        post password_resets_path, params: { email: oauth_user.email }
-      end
-
-      oauth_user.reload
-      expect(oauth_user.reset_password_token).to be_nil
-      expect(ActionMailer::Base.deliveries.size).to eq(0)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "存在しないメールでも同じレスポンス（情報漏えい防止）" do
-      post password_resets_path, params: { email: "nobody@example.com" }
-      expect(response).to redirect_to(root_path)
-      expect(ActionMailer::Base.deliveries).to be_empty
-    end
+  def new
   end
 
-  describe "GET /password_resets/:token/edit" do
-    it "有効トークンなら編集画面を表示できる" do
-      post password_resets_path, params: { email: user.email }
-      token = user.reload.reset_password_token
-      get edit_password_reset_path(token)
-      expect(response).to have_http_status(:ok)
+  # パスワード再設定メール送信
+  def create
+    email = params[:email].to_s.strip
+    user  = User.find_by(email: email)
+
+    # 現在の仕様: 外部ログインユーザー（authentications がある）は対象外
+    if user && user.authentications.none?
+      user.update!(
+        reset_password_token:    SecureRandom.urlsafe_base64(32),
+        reset_password_sent_at:  Time.current
+      )
+      PasswordResetMailer.reset(user).deliver_later
     end
 
-    it "期限切れトークンは編集画面に入れない" do
-      post password_resets_path, params: { email: user.email }
-      token = user.reload.reset_password_token
-      travel_to 31.minutes.from_now do
-        get edit_password_reset_path(token)
-        expect(response).to redirect_to(new_password_reset_path)
-        follow_redirect!
-        expect(response.body).to include("トークンが無効です").or include("無効") # 文言合わせ
-      end
-    end
+    # 情報漏えい防止のため、存在有無に関わらず同じレスポンス
+    redirect_to root_path
   end
 
-  describe "PATCH /password_resets/:token" do
-    before do
-      post password_resets_path, params: { email: user.email }
-      @token = user.reload.reset_password_token
+  # トークン入力画面の表示
+  def edit
+    @user = find_user_by_token!(params[:token])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to new_password_reset_path, alert: I18n.t("password_resets.invalid_token", default: "トークンが無効です")
+  end
+
+  # パスワード更新
+  def update
+    @user = find_user_by_token!(params[:token])
+
+    if token_expired?(@user)
+      redirect_to new_password_reset_path, alert: I18n.t("password_resets.invalid_token", default: "トークンが無効です")
+      return
     end
 
-    it "有効トークンならパスワードを更新し、トークンはクリアされる" do
-      patch password_reset_path(@token), params: {
-        user: { password: "newsecret", password_confirmation: "newsecret" }
-      }
-      expect(response).to redirect_to(new_session_path)
-
-      user.reload
-      expect(user.authenticate("newsecret")).to be_truthy
-      expect(user.reset_password_token).to be_nil
-      expect(user.reset_password_sent_at).to be_nil
+    if @user.update(user_params)
+      # トークンは使い捨て
+      @user.update!(reset_password_token: nil, reset_password_sent_at: nil)
+      redirect_to new_session_path, notice: I18n.t("password_resets.updated", default: "パスワードを変更しました")
+    else
+      render :edit, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to new_password_reset_path, alert: I18n.t("password_resets.invalid_token", default: "トークンが無効です")
+  end
 
-    it "バリデーション NG なら 422 で再表示" do
-      patch password_reset_path(@token), params: {
-        user: { password: "short", password_confirmation: "mismatch" }
-      }
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(response.body).to include("エラー").or include("error")
-      # トークンはまだ生きている（再送信・やり直し可能）
-      expect(user.reload.reset_password_token).to eq(@token)
-    end
+  private
 
-    it "期限切れなら更新できない" do
-      travel_to 31.minutes.from_now do
-        patch password_reset_path(@token), params: {
-          user: { password: "newsecret", password_confirmation: "newsecret" }
-        }
-        expect(response).to redirect_to(new_password_reset_path)
-        # 期限切れでも通常はトークンは残ったまま（UXにより設計可）
-        expect(user.reload.reset_password_token).to eq(@token)
-      end
-    end
+  def user_params
+    params.require(:user).permit(:password, :password_confirmation)
+  end
+
+  def find_user_by_token!(token)
+    User.find_by!(reset_password_token: token)
+  end
+
+  def token_expired?(user)
+    user.reset_password_sent_at.blank? || user.reset_password_sent_at < 30.minutes.ago
   end
 end

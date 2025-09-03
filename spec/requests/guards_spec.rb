@@ -3,7 +3,7 @@ require "rails_helper"
 
 RSpec.describe "Guards", type: :request do
   let(:owner) { create(:user, password: "secret123", password_confirmation: "secret123") }
-  let(:me)    { create(:user,  password: "secret123", password_confirmation: "secret123") }
+  let(:me)    { create(:user, password: "secret123", password_confirmation: "secret123") }
   let(:pc)    { create(:pre_code, user: owner) }
 
   #
@@ -18,7 +18,6 @@ RSpec.describe "Guards", type: :request do
   #
   # 2) CodeLibrary のガード
   #
-
   it "ゲストが Like をPOSTするとログイン画面へ" do
     post likes_path, params: { pre_code_id: pc.id }
     expect(response).to redirect_to(new_session_path)
@@ -29,7 +28,7 @@ RSpec.describe "Guards", type: :request do
     expect {
       post likes_path, params: { pre_code_id: pc.id }
     }.to change(Like, :count).by(1)
-    expect(response).to have_http_status(:redirect).or have_http_status(:ok) # Turbo/HTMLどちらでもOK
+    expect(response).to have_http_status(:redirect).or have_http_status(:ok)
   end
 
   it "自分の投稿は CodeLibrary の詳細で弾かれて pre_codes へリダイレクト" do
@@ -41,12 +40,13 @@ RSpec.describe "Guards", type: :request do
   it "Like の削除は自分の Like のみ可能" do
     sign_in(me)
     my_like = create(:like, user: me, pre_code: pc)
-
     expect {
       delete like_path(my_like)
     }.to change(Like, :count).by(-1)
+  end
 
-    # 他人の Like は 404（RecordNotFound → head :not_found）
+  it "他人の Like は 404" do
+    sign_in(me)
     other_like = create(:like, user: owner, pre_code: pc)
     expect {
       delete like_path(other_like)
@@ -59,13 +59,16 @@ RSpec.describe "Guards", type: :request do
     expect(response).to redirect_to(new_session_path)
   end
 
-  it "ログイン済みは UsedCode を1件作成できる（重複作成なし）" do
+  it "ログイン済みは UsedCode を1件作成できる" do
     sign_in(me)
     expect {
       post used_codes_path, params: { pre_code_id: pc.id }
     }.to change(UsedCode, :count).by(1)
+  end
 
-    # 2回目は find_or_create_by! により増えない
+  it "2回目は find_or_create_by! により増えない" do
+    sign_in(me)
+    create(:used_code, user: me, pre_code: pc)
     expect {
       post used_codes_path, params: { pre_code_id: pc.id }
     }.not_to change(UsedCode, :count)

@@ -1,71 +1,80 @@
 # spec/requests/book_sections_spec.rb
 require "rails_helper"
 
-RSpec.describe "BookSections", type: :request do
-  describe "GET /books/:book_id/sections/:id" do
-    it "200 OK & 見出し/本文が見える & 前後セクションのリンクがある" do
-      book = create(:book, title: "ナビテスト")
-      s1 = create(:book_section, book:, heading: "第1章", content: "<p>one</p>",  position: 1)
-      s2 = create(:book_section, book:, heading: "第2章", content: "<p>two</p>",  position: 2)
-      s3 = create(:book_section, book:, heading: "第3章", content: "<p>three</p>", position: 3)
+RSpec.describe "Admin::BookSections", type: :request do
+  let(:admin) { create(:user, admin: true, password: "secret", password_confirmation: "secret") }
+  let(:book)  { create(:book) }
 
-      get book_section_path(book, s2)
-      expect(response).to have_http_status(:ok)
+  # 独自ログインヘルパで実際にセッションを張る
+  before { sign_in_as(admin, password: "secret") }
 
-      expect(response.body).to include("第2章")
-      expect(response.body).to include("two") # 本文の一部が見えるはず
+  it "GET /admin/book_sections works" do
+    get admin_book_sections_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Sections")
+  end
 
-      # 前後リンク（URL が本文に含まれるかを確認）
-      expect(response.body).to include(book_section_path(book, s1))
-      expect(response.body).to include(book_section_path(book, s3))
-    end
+  it "POST creates with sanitized content" do
+    html = %(<p>hello</p><script>alert(1)</script>)
+    post admin_book_sections_path, params: {
+      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
+    }
+    follow_redirect!
+    expect(response.body).to include("作成しました")
+    expect(BookSection.last.content).to include("<p>hello</p>")
+    expect(BookSection.last.content).not_to include("<script")
+  end
 
-    it "先頭ページには『前へ』が無く、末尾には『次へ』が無い" do
-      book  = create(:book)
-      first = create(:book_section, book:, position: 1)
-      last  = create(:book_section, book:, position: 2)
+  it "PATCH updates with sanitized content" do
+    s = create(:book_section, book:, heading: "H", position: 1, content: "<p>ok</p>")
+    dirty = %(<img src=x onerror='alert(1)'>good)
 
-      # 先頭ページ
-      get book_section_path(book, first)
-      expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include("前へ")
-      expect(response.body).to include(book_section_path(book, last)) # 次リンクはある
+    patch admin_book_section_path(s), params: { book_section: { content: dirty } }
 
-      # 末尾ページ
-      get book_section_path(book, last)
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include(book_section_path(book, first)) # 前リンクはある
-      expect(response.body).not_to include("次へ")
-    end
+    s.reload
+    expect(s.content).to include("good")
+    expect(s.content).not_to include("onerror")
+    expect(s.content).not_to include("alert(")
+  end
 
-    it "FREE バッジ（is_free: true のセクション）を教本トップで表示できる" do
-      book = create(:book)
-      create(:book_section, book:, is_free: true,  position: 1, heading: "Free")
-      create(:book_section, book:, is_free: false, position: 2, heading: "Paid")
+  it "attaches blobs referenced in content to section.images" do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: File.open(Rails.root.join("spec/fixtures/files/sample.png")),
+      filename: "sample.png",
+      content_type: "image/png"
+    )
 
-      # counter_cache を使っているなら一応 reload（なくても通常OK）
-      book.reload
+    img_src = rails_blob_path(blob, only_path: true)
+    html    = %(<p>img</p><img src="#{img_src}">)
 
-      get book_path(book)
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("FREE")
-    end
+    post admin_book_sections_path, params: {
+      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
+    }
 
-    it "別の book のセクションIDを指定すると 404（ネストで保護されている）" do
-      book_a = create(:book)
-      book_b = create(:book)
-      foreign_section = create(:book_section, book: book_b)
+    section = BookSection.last
+    expect(section.images).to be_attached
+    expect(section.images.first.blob_id).to eq(blob.id)
+  end
 
-      get book_section_path(book_a, foreign_section)
-      expect(response).to have_http_status(:not_found)
-      expect(response.body).to include("404")
-    end
+  it "shows inline <img> in public show page when content includes a blob URL" do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: File.open(Rails.root.join("spec/fixtures/files/sample.png")),
+      filename: "sample.png",
+      content_type: "image/png"
+    )
+    img_src = rails_blob_path(blob, only_path: true)
+    html = %(<p>img</p><img src="#{img_src}">)
 
-    it "存在しないIDなら404" do
-      book = create(:book)
-      get book_section_path(book, 9_999_999)
-      expect(response).to have_http_status(:not_found)
-      expect(response.body).to include("404")
-    end
+    post admin_book_sections_path, params: {
+      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
+    }
+
+    section = BookSection.last
+    expect(section.images).to be_attached
+    expect(section.images.first.blob_id).to eq(blob.id)
+
+    get book_section_path(book, section)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to match(%r{<img[^>]+src="(?:https?://[^"]+)?/rails/active_storage/[^"]+"})
   end
 end

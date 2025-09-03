@@ -2,7 +2,7 @@
 require "rails_helper"
 
 RSpec.describe "Admin::Books", type: :request do
-  let(:admin) { create(:user, admin: true) }
+  let(:admin) { create(:user, admin: true, password: "secret123", password_confirmation: "secret123") }
 
   before { sign_in_as(admin, password: "secret123") }
 

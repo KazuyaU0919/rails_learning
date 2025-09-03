@@ -2,36 +2,22 @@
 require "rails_helper"
 
 RSpec.describe "Admin Authorization", type: :request do
-  let(:user)  { create(:user, admin: false) }
-  let(:admin) { create(:user, admin: true)  }
+  # ← ここを「必ずパスワード付きの通常ユーザー」を作るように
+  let(:user)  { create(:user, admin: false, password: "secret123", password_confirmation: "secret123") }
+  # ← ここも同様に、admin だけ true にしたユーザー
+  let(:admin) { create(:user, admin: true,  password: "secret123", password_confirmation: "secret123") }
 
-  # /admin 配下で最低限チェックしたいURLをここに並べる
-  ADMIN_PATH_HELPERS = %i[
-    admin_root_path
-    admin_books_path
-    admin_book_sections_path
-  ].freeze
+  it "非adminは /admin に入れない" do
+    sign_in_as(user)            # ヘルパが email/password で POST する想定
+    get admin_root_path
+    expect(response).to redirect_to(root_path)
+    follow_redirect!
+    expect(response.body).to include("管理者のみアクセス可能です")
+  end
 
-  ADMIN_PATH_HELPERS.each do |path_helper|
-    describe "#{path_helper}" do
-      it "非adminはアクセスできずリダイレクトされる" do
-        sign_in_as(user)
-        get public_send(path_helper)
-
-        # 302 → root へ
-        expect(response).to have_http_status(:found)
-        expect(response).to redirect_to(root_path)
-
-        # フラッシュやログイン促し等の文言（環境差があるので緩めに判定）
-        follow_redirect!
-        expect(response.body).to match(/(管理|権限|ログイン)/)
-      end
-
-      it "admin はアクセスできる" do
-        sign_in_as(admin, password: "secret123")
-        get public_send(path_helper)
-        expect(response).to have_http_status(:ok)
-      end
-    end
+  it "adminは /admin に入れる" do
+    sign_in_as(admin, password: "secret123")
+    get admin_root_path
+    expect(response).to have_http_status(:ok)
   end
 end

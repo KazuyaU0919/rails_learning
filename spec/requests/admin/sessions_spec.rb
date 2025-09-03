@@ -1,8 +1,8 @@
-# spec/requests/admin/sessions_spec.rb（ざっくりでOK）
+# spec/requests/admin/sessions_spec.rb
 require "rails_helper"
 
 RSpec.describe "Admin::Sessions", type: :request do
-  let(:admin) { create(:user, admin: true, password: "secret", password_confirmation: "secret") }
+  let(:admin) { create(:user, admin: true,  password: "secret", password_confirmation: "secret") }
   let(:user)  { create(:user, admin: false, password: "secret", password_confirmation: "secret") }
 
   it "admin はログインできる" do
