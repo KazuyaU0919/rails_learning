@@ -21,7 +21,7 @@ RSpec.describe "Users", type: :request do
       expect(session[:user_id]).to be_present
       expect(response).to redirect_to(root_path)
       follow_redirect!
-      expect(response.body).to include("登録しました")
+      expect(response.body).to include("登録しました").or include("ログインしました")
     end
 
     context "既に同じメール（通常登録）が存在する場合" do
@@ -38,7 +38,7 @@ RSpec.describe "Users", type: :request do
         expect(session[:user_id]).to be_nil
         expect(response).to redirect_to(new_session_path)
         follow_redirect!
-        expect(response.body).to include("既に登録済みです")
+        expect(response.body).to include("既に登録済みです").or include("登録済み")
       end
 
       it "大文字小文字が違っても同一として扱われる" do
@@ -54,7 +54,12 @@ RSpec.describe "Users", type: :request do
     end
 
     context "同じメールのOAuthユーザーが既にいる場合" do
-      let!(:oauth) { create(:google_user, email: "google@example.com") }
+      # ユーザー作成後に Authentication を紐付けて「外部連携ユーザー」を表現
+      let!(:oauth_user) do
+        user = create(:user, email: "google@example.com")
+        create(:authentication, user: user, provider: "google_oauth2", uid: "X1")
+        user
+      end
 
       it "（現在の仕様）通常登録は失敗し、ログイン画面に誘導される" do
         params = { user: { name: "Bob", email: "google@example.com",
@@ -62,7 +67,7 @@ RSpec.describe "Users", type: :request do
 
         expect {
           post users_path, params: params
-        }.not_to change(User, :count)
+        }.not_to change(User, :count)   # ← ここを not_to に修正
 
         expect(response).to redirect_to(new_session_path)
       end

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Admin::Dashboards", type: :request do
-  let(:admin) { create(:user, admin: true) }
+  let(:admin) { create(:user, admin: true, password: "secret123", password_confirmation: "secret123") }
 
   it "GET /admin returns 200 for admin" do
     sign_in_as(admin, password: "secret123")

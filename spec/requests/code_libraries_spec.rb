@@ -3,12 +3,12 @@ require "rails_helper"
 
 RSpec.describe "CodeLibraries", type: :request do
   let(:me)    { create(:user, password: "secret123", password_confirmation: "secret123") }
-  let(:other) { create(:user) }
+  let(:other) { create(:user, password: "secret123", password_confirmation: "secret123") }
 
   # 基本データ
-  let!(:mine)    { create(:pre_code, user: me,    title: "my code", description: "mine") }
-  let!(:other_a) { create(:pre_code, user: other, title: "alpha",  description: "foo bar") }
-  let!(:other_b) { create(:pre_code, user: other, title: "bravo",  description: "baz buzz") }
+  let!(:mine)   { create(:pre_code, user: me,    title: "my code", description: "mine") }
+  let!(:other_a) { create(:pre_code, user: other, title: "alpha",   description: "foo bar") }
+  let!(:other_b) { create(:pre_code, user: other, title: "bravo",   description: "baz buzz") }
 
   describe "GET /code_libraries (index)" do
     it "ゲストでも200が返り、一覧が表示される" do
@@ -33,7 +33,7 @@ RSpec.describe "CodeLibraries", type: :request do
     end
 
     it "人気順（like_count）と利用数順（use_count）で並び替えできる" do
-      users = create_list(:user, 5)
+      users = create_list(:user, 5, password: "secret123", password_confirmation: "secret123")
 
       # いいね: other_b を3、other_a を1
       users.first(3).each { |u| create(:like, user: u, pre_code: other_b) }
