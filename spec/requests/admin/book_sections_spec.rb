@@ -2,10 +2,10 @@
 require "rails_helper"
 
 RSpec.describe "Admin::BookSections", type: :request do
-  let(:admin) { create(:user, admin: true) }
+  let(:admin) { create(:user, admin: true,  password: "secret123", password_confirmation: "secret123") }
   let(:book)  { create(:book) }
 
-  before { sign_in_as(admin) }
+  before { sign_in_as(admin, password: "secret123") }
 
   it "GET /admin/book_sections works" do
     get admin_book_sections_path

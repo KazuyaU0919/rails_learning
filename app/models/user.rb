@@ -1,13 +1,13 @@
 # app/models/user.rb
 class User < ApplicationRecord
-  # bcrypt
-  has_secure_password validations: false
-
   # ---------- アソシエーション ----------
   has_many :pre_codes, dependent: :destroy
   has_many :likes,      dependent: :destroy
   has_many :used_codes, dependent: :destroy
   has_many :authentications, dependent: :destroy
+
+  # bcrypt
+  has_secure_password validations: false
 
   # ---------- 正規化 ----------
   before_validation :normalize_email
@@ -16,21 +16,15 @@ class User < ApplicationRecord
   # 共通
   validates :name, presence: true, length: { maximum: 50 }
 
-  # 通常ログイン（provider が空のとき）
+  # ★ 一意性は「パスワード方式 (= 外部連携なし)」の場合のみチェック
   validates :email,
     presence: true,
     length:  { maximum: 255 },
     format:  { with: URI::MailTo::EMAIL_REGEXP },
     uniqueness: { case_sensitive: false },
-    if: -> { provider.blank? }
+    if: :email_uniqueness_required?
 
   validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
-
-  # 外部ログイン（provider があるとき）
-  with_options if: -> { provider.present? } do
-    validates :provider, presence: true
-    validates :uid,      presence: true
-  end
 
   # ---------- パスワード再設定 ----------
   def generate_reset_token!
@@ -49,20 +43,34 @@ class User < ApplicationRecord
     update!(reset_password_token: nil, reset_password_sent_at: nil)
   end
 
-  # ---------- OmniAuth ユーザー作成/取得 ----------
+  # --------- OmniAuth ユーザー作成/取得（authentications 経由） ----------
   # auth は OmniAuth::AuthHash 想定
   def self.find_or_create_from_omniauth(auth)
-    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid)
+    authentication = Authentication.find_or_initialize_by(
+      provider: auth.provider, uid: auth.uid
+    )
 
-    # 名前・メール（GitHub等はメールが取れない場合あり）
-    user.name  ||= auth.dig(:info, :name).presence || auth.dig(:info, :nickname).presence || "User"
+    user = authentication.user ||
+           User.find_by(email: auth.dig(:info, :email)) ||
+           User.new
+
+    user.name  ||= auth.dig(:info, :name).presence ||
+                   auth.dig(:info, :nickname).presence || "User"
     user.email ||= auth.dig(:info, :email)
-
-    # パスワード未設定ならダミーを入れておく（has_secure_passwordの都合）
     user.password = SecureRandom.hex(16) if user.password_digest.blank?
-
     user.save!
+
+    if authentication.user_id != user.id
+      authentication.user = user
+      authentication.save!
+    end
+
     user
+  end
+
+  # 外部連携が無い (= authentications が空) ユーザーはパスワード方式を使う
+  def uses_password?
+    authentications.blank?
   end
 
   private
@@ -71,8 +79,13 @@ class User < ApplicationRecord
     self.email = email.to_s.strip.downcase.presence
   end
 
-  # 「通常ログイン」かつ「新規作成 or パスワードを入力しているとき」だけ必須
+  # 「通常ログイン (= 外部連携なし) で、新規作成 or パスワード入力があるとき」だけ必須
   def password_required?
-    provider.blank? && (new_record? || password.present?)
+    uses_password? && (new_record? || password.present?)
+  end
+
+  # ★ email 一意性チェックを実行するか
+  def email_uniqueness_required?
+    uses_password?
   end
 end
