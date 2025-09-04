@@ -1,11 +1,11 @@
-# spec/requests/book_sections_spec.rb
+# spec/requests/admin/book_sections_spec.rb
 require "rails_helper"
 
 RSpec.describe "Admin::BookSections", type: :request do
   let(:admin) { create(:user, admin: true, password: "secret", password_confirmation: "secret") }
   let(:book)  { create(:book) }
 
-  # 独自ログインヘルパで実際にセッションを張る
+  # 管理画面の動作確認は実際にログインして行う
   before { sign_in_as(admin, password: "secret") }
 
   it "GET /admin/book_sections works" do
@@ -56,25 +56,40 @@ RSpec.describe "Admin::BookSections", type: :request do
     expect(section.images.first.blob_id).to eq(blob.id)
   end
 
-  it "shows inline <img> in public show page when content includes a blob URL" do
+  # ==== 公開側の表示に関するテスト（FREE 機能）==============================
+
+  it "FREE のセクションは未ログインでも表示できる" do
+    # 画像を本文に含めた FREE セクションを作成
     blob = ActiveStorage::Blob.create_and_upload!(
       io: File.open(Rails.root.join("spec/fixtures/files/sample.png")),
       filename: "sample.png",
       content_type: "image/png"
     )
     img_src = rails_blob_path(blob, only_path: true)
-    html = %(<p>img</p><img src="#{img_src}">)
+    html    = %(<p>img</p><img src="#{img_src}">)
 
     post admin_book_sections_path, params: {
-      book_section: { book_id: book.id, heading: "H", position: 1, content: html }
+      book_section: { book_id: book.id, heading: "H", position: 1, is_free: true, content: html }
     }
-
     section = BookSection.last
     expect(section.images).to be_attached
-    expect(section.images.first.blob_id).to eq(blob.id)
+
+    # 未ログイン扱いにする（current_user を nil に stub）
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
 
     get book_section_path(book, section)
     expect(response).to have_http_status(:ok)
     expect(response.body).to match(%r{<img[^>]+src="(?:https?://[^"]+)?/rails/active_storage/[^"]+"})
+  end
+
+  it "FREE でないセクションは未ログインだとログイン画面にリダイレクトされる" do
+    section = create(:book_section, book:, heading: "Secret", position: 1, is_free: false, content: "<p>secret</p>")
+
+    # 未ログイン扱いにする
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
+
+    get book_section_path(book, section)
+    expect(response).to have_http_status(:found)
+    expect(response).to redirect_to(new_session_path)
   end
 end

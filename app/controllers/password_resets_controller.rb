@@ -6,8 +6,7 @@ class PasswordResetsController < ApplicationController
   def new; end
 
   def create
-    # 通常ログインユーザー（= 外部連携が無いユーザー）のみ対象
-    user = User.where.missing(:authentications).find_by(email: params[:email])
+    user = User.find_by(email: params[:email])
 
     if user
       user.generate_reset_token!
@@ -32,7 +31,7 @@ class PasswordResetsController < ApplicationController
     end
 
     # 通常ログインユーザーとして更新（外部ログインは対象外）
-    if @user.uses_password? && @user.update(password_params)
+    if @user.update(password_params)
       @user.clear_reset_token!
       redirect_to new_session_path, notice: "パスワードを更新しました。ログインしてください"
     else

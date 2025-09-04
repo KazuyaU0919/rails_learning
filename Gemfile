@@ -93,6 +93,9 @@ group :development do
 
   # N+1 クエリ検出・不要 eager load 警告（開発支援用）
   gem "bullet"
+
+  # letter_opener
+  gem "letter_opener_web"
 end
 
 group :test do
