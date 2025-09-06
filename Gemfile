@@ -18,10 +18,6 @@ gem "stimulus-rails"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
-# tailwindcss
-gem "tailwindcss-rails"
-gem "tailwindcss-ruby"
-
 # 認証の土台
 gem "bcrypt"                           # has_secure_password 用
 gem "omniauth"

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* 本文レンダリング用。Tailwindのリセットを上書き */
 .content-body h1 { font-size: 1.75rem; font-weight: 700; margin: 1.25rem 0 .75rem; }
