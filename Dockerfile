@@ -10,7 +10,7 @@ FROM ruby:3.3
 # - rm -rf /var/lib/apt/lists/* : APT キャッシュを削除してイメージを軽量化
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
-      nodejs \
+      nodejs npm \
       postgresql-client \
       libvips \
       libvips-dev && \

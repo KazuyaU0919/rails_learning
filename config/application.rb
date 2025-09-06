@@ -21,6 +21,8 @@ module RailsLearning
     config.time_zone = "Asia/Tokyo"
     config.active_record.default_timezone = :utc
     config.time_zone_aware_attributes = true
+    config.assets.paths << Rails.root.join("app/assets/builds")
+    config.assets.paths.unshift Rails.root.join("app/assets/builds")
 
     config.generators do |g|
       g.test_framework :rspec,

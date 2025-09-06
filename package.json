@@ -1,0 +1,32 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Rails Learning",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@tailwindcss/typography": "^0.5.16",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.13"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "postcss app/assets/stylesheets/application.tailwind.css -o app/assets/builds/application.css",
+    "watch:css": "postcss -w app/assets/stylesheets/application.tailwind.css -o app/assets/builds/application.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KazuyaU0919/rails_learning.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KazuyaU0919/rails_learning/issues"
+  },
+  "homepage": "https://github.com/KazuyaU0919/rails_learning#readme"
+}

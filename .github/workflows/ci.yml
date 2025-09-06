@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -69,7 +69,6 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USER: postgres
       DB_PASSWORD: postgres
-      # Judge0 API 環境変数
       JUDGE0_BASE_URL: https://judge0-ce.p.rapidapi.com
       JUDGE0_RAPIDAPI_KEY: ${{ secrets.JUDGE0_RAPIDAPI_KEY }}
       JUDGE0_HOST_HEADER: judge0-ce.p.rapidapi.com
@@ -84,13 +83,25 @@ jobs:
           ldconfig -p | grep libvips || true
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: Build CSS (Tailwind v4 via PostCSS)
+        run: npm run build:css
 
       - name: Prepare DB
         run: bin/rails db:prepare
