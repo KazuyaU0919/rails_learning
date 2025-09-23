@@ -21,7 +21,7 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 # ================================
 
 # axios (HTTP 通信ライブラリ)
-pin "axios", to: "https://cdn.jsdelivr.net/npm/axios@1.8.2/+esm"
+pin "axios", to: "https://cdn.jsdelivr.net/npm/axios@1.12.0/+esm"
 
 # ================================
 # CodeMirror 6 minimal set
