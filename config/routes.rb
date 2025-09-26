@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     resource  :session,   only: %i[new create destroy]
     resources :books
     resources :book_sections, except: %i[show]
+    resources :pre_codes, only: %i[index show edit update destroy]
     resources :users, only: [ :index, :destroy ] do
       member do
         patch :toggle_editor

@@ -1,0 +1,57 @@
+<% content_for :title, "PreCode詳細" %>
+
+<div class="mx-auto w-full max-w-3xl space-y-6">
+
+  <!-- 登録名 -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
+    <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
+      <p class="text-base text-slate-900"><%= @pre_code.title %></p>
+    </div>
+  </section>
+
+  <!-- コードの説明 -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">コードの説明</h2>
+    <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
+      <div class="prose prose-slate max-w-none text-slate-800">
+        <%= simple_format @pre_code.description %>
+      </div>
+    </div>
+  </section>
+
+  <!-- 登録コード + 最終更新 -->
+  <section>
+    <div class="flex items-baseline justify-between">
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録コード</h2>
+      <p class="text-xs text-slate-500">
+        最終更新日：<%= l @pre_code.updated_at.in_time_zone, format: :ymd_hm %>
+      </p>
+    </div>
+
+    <!-- CodeMirror（閲覧専用） -->
+    <style>
+      .cm-editor, .cm-scroller { background: transparent !important; }
+    </style>
+    <div
+      data-controller="code-view"
+      data-code-view-theme-value="light"
+      class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white overflow-hidden"
+    >
+      <textarea data-code-view-target="field" class="hidden"><%= @pre_code.body %></textarea>
+      <div data-code-view-target="mount" class="w-full min-h-[200px]"></div>
+    </div>
+  </section>
+
+  <!-- 操作（右下寄せ） -->
+  <div class="flex justify-end gap-3 pt-2">
+    <%= link_to "編集",
+          edit_pre_code_path(@pre_code),
+          class: "px-5 py-2 rounded-md bg-[#00AA00] text-white hover:bg-[#009900] active:bg-[#008800]" %>
+
+    <%= link_to "削除",
+          @pre_code,
+          data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+          class: "px-5 py-2 rounded-md bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+  </div>
+</div>
