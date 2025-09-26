@@ -1,3 +1,4 @@
+<!-- app/views/pre_codes/index.html.erb -->
 <% breadcrumb :pre_codes %>
 <%= render "shared/breadcrumbs" %>
 <% content_for :title, "My PreCodes" %>
@@ -16,10 +17,22 @@
     <div class="flex gap-2 justify-end">
       <%= search_form_for @q, url: pre_codes_path, method: :get,
             html: { class: "flex gap-2" } do |f| %>
-        <%= f.search_field :title_or_description_cont,
-              value: @q.title_or_description_cont,
-              placeholder: "検索（タイトル／説明）",
-              class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64" %>
+
+        <div data-controller="autocomplete"
+            data-autocomplete-list-url-value="<%= pre_codes_path %>"
+            data-autocomplete-sort-value="<%= (params[:sort].presence || 'id_desc') %>">
+          <%= f.search_field :title_or_description_cont,
+                value: @q.title_or_description_cont,
+                placeholder: "検索（タイトル／説明）",
+                class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64",
+                data: {
+                  autocomplete_target: "input",
+                  action: "input->autocomplete#onInput focus->autocomplete#onFocus blur->autocomplete#onBlur"
+                } %>
+          <div data-autocomplete-target="panel"
+              class="hidden mt-1 w-full max-w-[20rem] rounded border border-slate-200 bg-white shadow-md"></div>
+        </div>
+
         <%= f.submit "検索",
               class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
       <% end %>

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "terms",   to: "static_pages#terms"
   get "privacy", to: "static_pages#privacy"
   get "contact", to: "static_pages#contact"
+  get "/search/suggest", to: "searches#suggest"  # オートコンプリートAPI
   get "tests/index"
 
   # Render のヘルスチェック用

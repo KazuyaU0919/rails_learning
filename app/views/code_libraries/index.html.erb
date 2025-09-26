@@ -17,16 +17,26 @@
       <%= search_form_for @q, url: code_libraries_path, method: :get,
             html: { class: "flex gap-2" } do |f| %>
 
-        <%= f.search_field :title_or_description_cont,
-              value: @q.title_or_description_cont,
-              placeholder: "検索（タイトル／説明）",
-              class: "px-3 py-2 rounded ring-1 ring-slate-300 min-w-0 w-40 sm:w-56 md:w-72 lg:w-80" %>
+        <div data-controller="autocomplete"
+            data-autocomplete-list-url-value="<%= code_libraries_path %>"
+            data-autocomplete-sort-value="<%= params[:sort].presence || 'popular' %>">
+          <%= f.search_field :title_or_description_cont,
+                value: @q.title_or_description_cont,
+                placeholder: "検索（タイトル／説明）",
+                class: "px-3 py-2 rounded ring-1 ring-slate-300 min-w-0 w-40 sm:w-56 md:w-72 lg:w-80",
+                data: {
+                  autocomplete_target: "input",
+                  action: "input->autocomplete#onInput focus->autocomplete#onFocus blur->autocomplete#onBlur"
+                } %>
+
+          <!-- dropdown panel -->
+          <div data-autocomplete-target="panel"
+              class="hidden mt-1 w-full max-w-[20rem] rounded border border-slate-200 bg-white shadow-md"></div>
+        </div>
 
         <%= select_tag :sort,
-              options_for_select(
-                [["人気順", "popular"], ["利用数順", "used"], ["新着順", "newest"]],
-                params[:sort].presence || "popular"
-              ),
+              options_for_select([["人気順","popular"],["利用数順","used"],["新着順","newest"]],
+                                params[:sort].presence || "popular"),
               class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
 
         <%= f.submit "検索",
