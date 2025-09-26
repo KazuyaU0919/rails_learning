@@ -1,6 +1,7 @@
+# app/controllers/sessions_controller.rb
 class SessionsController < ApplicationController
-  before_action :require_guest!,  only: %i[new create]
-  before_action :require_login!,  only: %i[destroy]
+  before_action :require_guest!, only: %i[new create]
+  before_action :require_login!, only: %i[destroy]
   before_action :use_gray_bg
 
   def new; end
@@ -8,7 +9,14 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:email])
 
-    # 通常ログイン：外部連携アカウント（authenticationsあり）はパスワード不要/不可
+    # ユーザーが存在する場合のみBANチェック
+    if user&.banned?
+      flash.now[:alert] = "このアカウントは凍結されています"
+      render :new, status: :forbidden
+      return
+    end
+
+    # 通常ログイン：外部連携アカウント(authenticationsあり)はパスワード不要
     if user&.uses_password? && user&.authenticate(params[:password])
       reset_session
       session[:user_id] = user.id

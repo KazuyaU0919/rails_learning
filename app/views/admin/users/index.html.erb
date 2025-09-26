@@ -1,0 +1,103 @@
+<!-- app/views/admin/users/index.html.erb -->
+<h1 class="text-xl font-semibold text-slate-900 mb-4">ユーザー管理</h1>
+
+<%= form_with url: admin_users_path, method: :get, local: true, class: "mb-6" do %>
+  <div class="flex flex-wrap items-end gap-3">
+    <div class="grow min-w-[220px]">
+      <%= text_field_tag :q, params[:q],
+            placeholder: "名前またはメールを検索",
+            class: "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900" %>
+    </div>
+
+    <div>
+      <%= select_tag :filter,
+            options_for_select([["すべて", ""], ["編集者のみ", "editors"], ["凍結中のみ", "banned"]], params[:filter]),
+            class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900" %>
+    </div>
+
+    <div>
+      <%= submit_tag "検索",
+            class: "inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="overflow-x-auto rounded-lg ring-1 ring-slate-200 bg-white">
+  <table class="min-w-full divide-y divide-slate-200">
+    <thead class="bg-slate-50">
+      <tr>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">名前</th>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">メール</th>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">編集者</th>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">状態</th>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">操作</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100 text-sm">
+      <% @users.each do |u| %>
+        <tr class="hover:bg-slate-50/60">
+          <td class="px-4 py-2 font-medium text-slate-900"><%= u.name %></td>
+          <td class="px-4 py-2 text-slate-700"><%= u.email %></td>
+
+          <!-- 編集者バッジ -->
+          <td class="px-4 py-2">
+            <% if u.editor? %>
+              <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">編集者</span>
+            <% else %>
+              <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-200">一般</span>
+            <% end %>
+          </td>
+
+          <!-- 凍結/有効バッジ -->
+          <td class="px-4 py-2">
+            <% if u.banned? %>
+              <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-medium text-rose-700 ring-1 ring-inset ring-rose-200">凍結中</span>
+            <% else %>
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">有効</span>
+            <% end %>
+          </td>
+
+          <!-- 操作 -->
+          <td class="px-4 py-2">
+            <% unless u.admin? %>
+              <div class="flex flex-wrap gap-2">
+                <%= button_to "編集者切替",
+                      toggle_editor_admin_user_path(u),
+                      method: :patch,
+                      class: "inline-flex items-center rounded-md bg-white px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50" %>
+
+                <%#-- 凍結ボタンの表示ラベルと色を先に決める --%>
+                <% ban_label = u.banned? ? "解除" : "凍結" %>
+                <% ban_color = u.banned? ? "bg-emerald-600 hover:bg-emerald-700 ring-emerald-600"
+                                         : "bg-rose-600 hover:bg-rose-700 ring-rose-600" %>
+
+                <%= button_to ban_label,
+                      toggle_ban_admin_user_path(u),
+                      method: :patch,
+                      params: { ban_reason: "手動操作" },
+                      data: { turbo_confirm: (u.banned? ? "凍結を解除します。よろしいですか？" : "このユーザーを凍結します。よろしいですか？") },
+                      class: "inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium text-white ring-1 #{ban_color}" %>
+
+                <%= button_to "削除",
+                      admin_user_path(u),
+                      method: :delete,
+                      data: { turbo_confirm: "このユーザーと関連データを削除します（復元不可）。よろしいですか？" },
+                      class: "inline-flex items-center rounded-md bg-white px-3 py-1.5 text-xs font-medium text-rose-700 ring-1 ring-rose-300 hover:bg-rose-50" %>
+              </div>
+            <% else %>
+              <span class="text-xs text-slate-400">管理者は操作不可</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @users.blank? %>
+    <div class="p-6 text-center text-sm text-slate-500">該当するユーザーが見つかりませんでした。</div>
+  <% end %>
+</div>
+
+<div class="mt-6">
+  <%= paginate @users %>
+</div>

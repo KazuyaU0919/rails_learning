@@ -35,6 +35,7 @@
           <%= link_to "Dashboard", admin_root_path %>
           <%= link_to "Books",     admin_books_path %>
           <%= link_to "Sections",  admin_book_sections_path %>
+          <%= link_to "Users",     admin_users_path %>
 
           <% if current_user&.admin? %>
             <%= button_to "Logout",
