@@ -31,6 +31,24 @@
     </div>
   </section>
 
+  <!-- ヒント -->
+  <% if @pre_code.hint.present? %>
+    <section data-controller="reveal" class="space-y-2">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-sm font-semibold tracking-wider text-slate-500">ヒント</h2>
+        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+                data-reveal-target="button" data-action="reveal#toggle">表示する</button>
+      </div>
+
+      <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
+          data-reveal-target="content">
+        <%= sanitize(@pre_code.hint,
+                    tags: %w[b i em strong code pre br p ul ol li a],
+                    attributes: %w[href]) %>
+      </div>
+    </section>
+  <% end %>
+
   <!-- 登録コード + 最終更新 -->
   <section>
     <div class="flex items-baseline justify-between">
@@ -53,6 +71,37 @@
       <div data-code-view-target="mount" class="w-full min-h-[120px]"></div>
     </div>
   </section>
+
+  <!-- 解答 -->
+  <% if @pre_code.answer.present? || @pre_code.answer_code.present? %>
+    <section data-controller="reveal" class="space-y-2">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-sm font-semibold tracking-wider text-slate-500">解答</h2>
+        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+                data-reveal-target="button" data-action="reveal#toggle">表示する</button>
+      </div>
+
+      <% if @pre_code.answer.present? %>
+        <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
+            data-reveal-target="content">
+          <%= sanitize(@pre_code.answer,
+                      tags: %w[b i em strong code pre br p ul ol li a],
+                      attributes: %w[href]) %>
+        </div>
+      <% end %>
+
+      <% if @pre_code.answer_code.present? %>
+        <div class="hidden" data-reveal-target="content">
+          <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
+          <div data-controller="code-view" data-code-view-theme-value="light"
+              class="rounded-xl ring-1 ring-slate-300 overflow-hidden">
+            <textarea data-code-view-target="field" class="hidden"><%= @pre_code.answer_code %></textarea>
+            <div data-code-view-target="mount" class="w-full min-h-[120px]"></div>
+          </div>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
 
   <!-- === 利用ボタン（中央固定・カウントなし） === -->
   <section class="-mt-2">

@@ -79,7 +79,12 @@
 
         <div class="flex justify-between">
           <div class="flex-1 pr-4">
-            <div class="font-semibold"><%= pc.title %></div>
+            <div class="font-semibold flex items-center gap-2">
+              <%= pc.title %>
+              <% if pc.answer.present? %>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-800">QUIZ</span>
+              <% end %>
+            </div>
 
             <%# タイトルの下に「静的」タグピルを表示（リンクなし・ネスト事故回避） %>
             <div class="mt-2">
