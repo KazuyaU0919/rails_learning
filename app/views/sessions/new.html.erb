@@ -20,6 +20,11 @@
                class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" />
       </div>
 
+      <div class="mt-2 flex items-center gap-2">
+        <%= check_box_tag :remember_me, "1", false, id: "remember_me" %>
+        <%= label_tag :remember_me, "ログイン状態を保持する", class: "text-sm text-slate-600" %>
+      </div>
+
       <%# ログインボタン：赤 %>
       <%= f.submit "ログイン",
             class: "w-full bg-[#CC0000] text-white py-2 rounded-xl hover:bg-[#BB0000] active:bg-[#AA0000]" %>

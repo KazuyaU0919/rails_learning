@@ -1,10 +1,10 @@
 <div class="space-y-2">
-  <%= link_to "/auth/google_oauth2",
+  <%= link_to "/auth/google_oauth2?remember=1",
       class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white ring-1 ring-slate-200 px-4 py-2 hover:bg-slate-50" do %>
     <span class="font-medium text-slate-700">Google でログイン</span>
   <% end %>
 
-  <%= link_to "/auth/github",
+  <%= link_to "/auth/github?remember=1",
       class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" do %>
     <span class="font-medium">GitHub でログイン</span>
   <% end %>

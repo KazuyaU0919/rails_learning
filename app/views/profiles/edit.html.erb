@@ -55,4 +55,16 @@
       <%= render "profiles/oauth_link_buttons" %>
     </div>
   </section>
+
+  <!-- セクション4：他端末ログアウト -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">セキュリティ</h2>
+    <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
+      <%= button_to "他の端末のログイン状態を解除",
+            revoke_remember_profile_path,
+            method: :post,
+            form: { data: { turbo_confirm: "現在利用している端末以外のすべての端末のログイン状態を解除します。よろしいですか？" } },
+            class: "rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-500" %>
+    </div>
+  </section>
 </div>

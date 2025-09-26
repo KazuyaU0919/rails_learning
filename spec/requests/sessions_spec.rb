@@ -47,5 +47,43 @@ RSpec.describe "Sessions", type: :request do
         expect(response.body).to include("凍結")
       end
     end
+
+    # ===== Remember me 追加分 =====
+    context "Remember me" do
+      it "チェックONでRememberクッキーが発行される" do
+        post session_path, params: { email: "a@example.com", password: "secret123", remember_me: "1" }
+        expect(response).to redirect_to(root_path)
+        expect(cookies['remember_me']).to be_present
+      end
+
+      it "チェックOFFではRememberクッキーは発行されない" do
+        post session_path, params: { email: "a@example.com", password: "secret123" }
+        expect(cookies['remember_me']).to be_blank
+      end
+
+      it "Rememberクッキーから自動ログインできる" do
+        # 1) 発行させる
+        post session_path, params: { email: "a@example.com", password: "secret123", remember_me: "1" }
+        expect(cookies['remember_me']).to be_present
+
+        # 2) セッションだけ破棄（ブラウザ再起動相当）
+        session_key = Rails.application.config.session_options[:key]
+        cookies.delete(session_key)
+
+        # 3) 保護ページへアクセス → remember から復帰
+        get profile_path
+        expect(response).to have_http_status(:ok)
+        expect(session[:user_id]).to eq(user.id)
+      end
+
+      it "ログアウトでRememberクッキーも削除される" do
+        post session_path, params: { email: "a@example.com", password: "secret123", remember_me: "1" }
+        expect(cookies['remember_me']).to be_present
+
+        delete session_path
+        expect(response).to redirect_to(root_path)
+        expect(cookies['remember_me']).to be_blank
+      end
+    end
   end
 end

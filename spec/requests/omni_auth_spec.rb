@@ -83,6 +83,17 @@ RSpec.describe "OmniAuth", type: :request do
         }.not_to change(User, :count)
       end
     end
+
+    # ===== Remember 発行の確認（追加） =====
+    it "provider ログイン成功時に remember=1 でRememberクッキーが発行される" do
+      user = create(:user, email: "foo@example.com")
+      mock_omniauth(provider: "github", uid: "u1", email: "foo@example.com")
+
+      get omni_auth_callback_path(provider: "github", remember: "1")
+
+      expect(response).to redirect_to(root_path)
+      expect(cookies['remember_me']).to be_present
+    end
   end
 
   describe "GET /auth/failure" do

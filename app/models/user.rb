@@ -108,6 +108,50 @@ class User < ApplicationRecord
     authentications.blank?
   end
 
+  # ===== Remember me =====
+  # 乱数トークンを生成して返す（プレーン）
+  def self.new_remember_token
+    SecureRandom.urlsafe_base64(32)
+  end
+
+  # 与えられた文字列をBCryptダイジェスト化
+  def self.digest(str)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    BCrypt::Password.create(str, cost: cost)
+  end
+
+  # 発行：digest保存 + 発行時刻
+  def remember!
+    token = User.new_remember_token
+    update_columns(
+      remember_digest:     User.digest(token),
+      remember_created_at: Time.current,
+      updated_at:          Time.current
+    )
+    token
+  end
+
+  # 検証：プレーントークンがdigestと一致するか
+  def authenticated_remember?(token)
+    return false if remember_digest.blank?
+    BCrypt::Password.new(remember_digest).is_password?(token)
+  end
+
+  # 失効（この端末 or 全端末）
+  def forget!
+    update_columns(remember_digest: nil, remember_created_at: nil, updated_at: Time.current)
+  end
+
+  # パスワード更新時：全端末強制失効（ProfilesController から呼ぶ想定）
+  def revoke_all_remember!
+    forget!
+  end
+
+  # Rememberの有効期限（30日）
+  def remember_expired?(ttl: 30.days)
+    remember_created_at.blank? || remember_created_at < ttl.ago
+  end
+
   private
 
   def normalize_email
