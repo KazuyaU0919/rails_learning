@@ -5,6 +5,7 @@ class PreCode < ApplicationRecord
   has_many :used_codes, dependent: :destroy
   has_many :pre_code_taggings, dependent: :destroy
   has_many :tags, through: :pre_code_taggings
+  has_many :bookmarks, dependent: :destroy
 
   validates :title,
             presence: true,

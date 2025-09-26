@@ -34,12 +34,20 @@
       <% end %>
     </div>
 
-    <%# ← ここが追加：Code Library 向けのタグ検索（送り先を指定） %>
+    <%# Code Library 向けのタグ検索（送り先を指定） %>
     <div class="flex mt-2 justify-end">
       <%= render "shared/tag_filter", url: code_libraries_path %>
     </div>
 
-    <div class="flex mt-2 justify-end">
+    <div class="flex mt-2 justify-end gap-2">
+      <% keep = request.query_parameters.except(:only_bookmarked, :page) %>
+      <% on = params[:only_bookmarked].present? %>
+      <% url = on ? url_for(keep) : url_for(keep.merge(only_bookmarked: 1)) %>
+
+      <%= link_to (on ? "ブックマークのみ：ON" : "ブックマークのみ"),
+            url,
+            class: "px-3 py-2 rounded #{on ? 'bg-blue-600 text-white' : 'ring-1 ring-slate-300'}" %>
+
       <%= link_to "使い方", help_path,
             class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
     </div>
@@ -81,7 +89,8 @@
           <div class="pointer-events-auto z-20">
             <%= render "actions",
                   pre_code: pc,
-                  current_like: (logged_in? ? pc.likes.find_by(user_id: current_user.id) : nil) %>
+                  current_like: (logged_in? ? pc.likes.find_by(user_id: current_user.id) : nil),
+                  current_bookmark: (logged_in? ? pc.bookmarks.find_by(user_id: current_user.id) : nil) %>
           </div>
         </div>
       </li>

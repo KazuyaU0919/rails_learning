@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   resources :likes,      only: %i[create destroy]
   resources :used_codes, only: %i[create]
 
+  # ブックマーク機能
+  resources :bookmarks, only: %i[create destroy]
+
   # タグ
   resources :tags, only: %i[index show]
 

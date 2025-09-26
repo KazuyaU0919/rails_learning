@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_26_085337) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_26_184449) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,6 +63,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_085337) do
     t.datetime "updated_at", null: false
     t.index ["book_id", "position"], name: "index_book_sections_on_book_id_and_position", unique: true
     t.index ["book_id"], name: "index_book_sections_on_book_id"
+  end
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "pre_code_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pre_code_id"], name: "index_bookmarks_on_pre_code_id"
+    t.index ["user_id", "pre_code_id"], name: "index_bookmarks_on_user_id_and_pre_code_id", unique: true
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "books", force: :cascade do |t|
@@ -168,6 +178,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_085337) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authentications", "users", on_delete: :cascade
   add_foreign_key "book_sections", "books"
+  add_foreign_key "bookmarks", "pre_codes", on_delete: :cascade
+  add_foreign_key "bookmarks", "users"
   add_foreign_key "likes", "pre_codes"
   add_foreign_key "likes", "users"
   add_foreign_key "pre_code_taggings", "pre_codes", on_delete: :cascade
