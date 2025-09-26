@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :likes,      dependent: :destroy
   has_many :used_codes, dependent: :destroy
   has_many :authentications, dependent: :destroy
+  has_many :bookmarks, dependent: :destroy
+  has_many :bookmarked_pre_codes, through: :bookmarks, source: :pre_code
 
   # bcrypt
   has_secure_password validations: false
@@ -150,6 +152,17 @@ class User < ApplicationRecord
   # Rememberの有効期限（30日）
   def remember_expired?(ttl: 30.days)
     remember_created_at.blank? || remember_created_at < ttl.ago
+  end
+
+  # ---------- ブックマーク設定 ----------
+  # その PreCode をブックマーク済みか？
+  def bookmarked?(pre_code)
+    bookmarks.exists?(pre_code_id: pre_code.id)
+  end
+
+  # その PreCode のブックマークオブジェクトを返す（なければ nil）
+  def bookmark_for(pre_code)
+    bookmarks.find_by(pre_code_id: pre_code.id)
   end
 
   private
