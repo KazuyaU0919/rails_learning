@@ -26,6 +26,41 @@ class User < ApplicationRecord
 
   validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
 
+  # ---------- スコープ（検索/フィルタ） ----------
+  # 部分一致（大/小文字・全角半角の差を吸収するため、ここでは downcase のみ。
+  # さらに高度な正規化が必要なら unaccent や独自正規化を検討）
+  scope :search, ->(q) {
+    if q.present?
+      where("LOWER(name) LIKE :q OR LOWER(email) LIKE :q", q: "%#{q.to_s.downcase}%")
+    end
+  }
+
+  # 編集者のみ
+  scope :editors, -> { where(editor: true) }
+
+  # 凍結中のみ（banned_at が NULL でない）
+  scope :banned,  -> { where.not(banned_at: nil) }
+
+  # ---------- 管理用インスタンスメソッド ----------
+  # 凍結中か？
+  def banned?
+    banned_at.present?
+  end
+
+  # 編集者フラグのトグル（true/false を切替）
+  def toggle_editor!
+    update!(editor: !editor)
+  end
+
+  # BAN のトグル（理由は任意。設定→解除をトグル）
+  def toggle_ban!(reason = nil)
+    if banned?
+      update!(banned_at: nil, ban_reason: nil)
+    else
+      update!(banned_at: Time.current, ban_reason: reason)
+    end
+  end
+
   # ---------- パスワード再設定 ----------
   def generate_reset_token!
     self.reset_password_token   = SecureRandom.urlsafe_base64(32)

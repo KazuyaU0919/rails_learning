@@ -23,5 +23,20 @@ RSpec.describe "Sessions", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
       expect(session[:user_id]).to be_blank
     end
+
+    context "BAN中ユーザーの場合" do
+      let!(:banned) do
+        # 既存Factoryに :banned trait を追加済みなのでそれを利用
+        create(:user, :banned, email: "b@example.com", password: "secret123", password_confirmation: "secret123")
+      end
+
+      it "403で拒否し、セッションはセットされない" do
+        post session_path, params: { email: "b@example.com", password: "secret123" }
+        expect(response).to have_http_status(:forbidden)
+        expect(session[:user_id]).to be_blank
+        # メッセージの確認（文言は実装に合わせて）
+        expect(response.body).to include("凍結")
+      end
+    end
   end
 end

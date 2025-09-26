@@ -48,6 +48,12 @@ Rails.application.routes.draw do
     resource  :session,   only: %i[new create destroy]
     resources :books
     resources :book_sections, except: %i[show]
+    resources :users, only: [ :index, :destroy ] do
+      member do
+        patch :toggle_editor
+        patch :toggle_ban
+      end
+    end
   end
 
   # letter_opener
