@@ -5,12 +5,13 @@ ja:
       default: "%Y/%m/%d"
       short:   "%m/%d"
       long:    "%Y年%-m月%-d日(%a)"
+      ymd_hm: "%Y/%m/%d %H:%M"
   time:
     formats:
       default: "%Y/%m/%d %H:%M"
       short:   "%m/%d %H:%M"
       long:    "%Y年%-m月%-d日 %H:%M"
-      ymd_hm: "%Y/%m/%d %H:%M"
+      ymd_hm:  "%Y/%m/%d %H:%M"
   activerecord:
     attributes:
       book_section:
@@ -23,13 +24,34 @@ ja:
       pre_code:
         title: "タイトル"
         body: "コードの説明"
+      book:
+        title: "タイトル"
+        description: "説明"
+        position: "並び順"
     models:
       pre_code: "PreCode"
+      book: "教本"
+    errors:
+      models:
+        book:
+          attributes:
+            position:
+              blank: "を入力してください"
+              not_a_number: "は数値で入力してください"
+              greater_than: "は%{count}より大きい値にしてください"
+              taken: "はすでに使用されています"
   helpers:
     submit:
       book_section:
         create: "作成する"
         update: "更新する"
+      user:
+        update: "更新"
   errors:
     messages:
       blank: "を入力してください"
+  bookmarks:
+    limit_reached: "300件以上のブックマーク登録はできません"
+  search:
+    no_items: "候補はありません"
+    error: "通信エラー"
