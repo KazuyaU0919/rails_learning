@@ -1,4 +1,4 @@
-<!-- app/views/code_libraries/show.html.erb -->
+<%# app/views/code_libraries/show.html.erb %>
 <% breadcrumb :code_libraries %>
 <% breadcrumb :code_library, @pre_code %>
 <%= render "shared/breadcrumbs" %>
@@ -11,6 +11,14 @@
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
       <p class="text-base"><%= @pre_code.title %></p>
+    </div>
+  </section>
+
+  <!-- タグ -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">タグ</h2>
+    <div class="mt-1">
+      <%= render "shared/tag_pills_static", record: @pre_code %>
     </div>
   </section>
 
@@ -31,23 +39,17 @@
       </p>
     </div>
 
-    <!-- CodeMirror（閲覧専用） -->
-    <style>
-      .cm-editor, .cm-scroller { background: transparent !important; }
-    </style>
-    <div
-      data-controller="code-view"
-      data-code-view-theme-value="light"
-      class="mt-1 rounded-xl ring-1 ring-slate-300 overflow-hidden">
+    <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
+    <div data-controller="code-view" data-code-view-theme-value="light"
+         class="mt-1 rounded-xl ring-1 ring-slate-300 overflow-hidden">
       <textarea data-code-view-target="field" class="hidden"><%= @pre_code.body %></textarea>
       <div data-code-view-target="mount" class="w-full min-h-[120px]"></div>
     </div>
   </section>
 
-  <!-- 利用ボタン ＋ いいねボタン（同一行・中央固定） -->
+  <!-- 利用ボタン ＋ いいねボタン -->
   <section class="-mt-2">
     <div class="grid grid-cols-3 items-center">
-      <!-- 中央：利用ボタン（PreCode送信ボタンと同じサイズ） -->
       <div class="col-start-2 justify-self-center">
         <%= button_to "このデータを利用する",
               used_codes_path(pre_code_id: @pre_code.id,
@@ -59,7 +61,6 @@
                       hover:bg-[#BB0000] active:bg-[#AA0000]" %>
       </div>
 
-      <!-- 右端：いいねボタン -->
       <div class="col-start-3 justify-self-end">
         <% current_like = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id) : nil %>
         <%= render "actions", pre_code: @pre_code, current_like: current_like %>

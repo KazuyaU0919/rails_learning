@@ -1,0 +1,22 @@
+<%# 目次ページ上部に置くタグ検索フォーム（GET ...?tags= に送る） %>
+<% target_url = local_assigns[:url] || pre_codes_path %>
+
+<%= form_with url: target_url,
+              method: :get,
+              local: true,
+              html: { class: "mb-0 ml-auto flex gap-2 items-center" } do %>
+  <input type="text"
+         name="tags"
+         value="<%= params[:tags].to_s %>"
+         placeholder="タグ検索（例: ruby, array）"
+         class="px-3 py-2 rounded ring-1 ring-slate-300 w-64"
+         data-controller="tag-token"
+         data-action="input->tag-token#suggest" />
+
+  <button type="submit"
+          class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
+    検索
+  </button>
+<% end %>
+
+<div id="tag-suggest" class="mt-1 text-sm text-slate-500"></div>

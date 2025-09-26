@@ -1,0 +1,9 @@
+<%# record は .tags を持つ（PreCode など） %>
+<div class="flex flex-wrap gap-1.5">
+  <% Array(record.tags).each do |t| %>
+    <% bg = tag_rgba_bg(t.color) %>
+    <%= content_tag :span, t.name,
+          class: "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border",
+          style: "color: #{t.color}; border-color: #{t.color}; background-color: #{bg}" %>
+  <% end %>
+</div>

@@ -11,6 +11,15 @@
           class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
   </div>
 
+  <%# === タグ === %>
+  <div class="mt-4">
+    <label class="block text-sm mb-1">タグ（最大10個）</label>
+    <input id="tag-input" name="tag_names" value="<%= @pre_code.tags.map(&:name).join(',') %>"
+          class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2"
+          placeholder="例: ruby, array, sql" data-controller="tag-token" data-action="input->tag-token#suggest">
+    <div id="tag-suggest" class="mt-1 text-sm text-slate-500"></div>
+  </div>
+
   <div>
     <%# コードの説明 %>
     <%= f.label :description, "コードの説明", class: "block text-sm mb-1" %>
