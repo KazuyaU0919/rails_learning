@@ -15,7 +15,29 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id])
+    # ① 通常セッションから取得
+    if session[:user_id].present?
+      @current_user ||= User.find_by(id: session[:user_id])
+      return @current_user if @current_user
+    end
+
+    # ② Rememberクッキーから自動復帰
+    if cookies.encrypted[:remember_me].present?
+      payload = cookies.encrypted[:remember_me] # { "user_id" => ..., "token" => ... }
+      user = User.find_by(id: payload["user_id"])
+
+      if user && user.authenticated_remember?(payload["token"]) && !user.remember_expired?
+        reset_session
+        session[:user_id] = user.id
+        user.update_column(:last_login_at, Time.current)
+        @current_user = user
+      else
+        # トークン期限切れ/不一致 → クッキー破棄
+        cookies.delete(:remember_me, same_site: :lax, secure: Rails.env.production?)
+      end
+    end
+
+    @current_user
   end
 
   def logged_in?

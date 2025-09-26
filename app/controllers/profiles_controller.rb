@@ -28,6 +28,8 @@ class ProfilesController < ApplicationController
         return render :edit, status: :unprocessable_entity
       end
       if @user.update(password_params)
+        @user.revoke_all_remember!
+        cookies.delete(:remember_me, same_site: :lax, secure: Rails.env.production?)
         redirect_to profile_path, notice: "パスワードを更新しました"
       else
         render :edit, status: :unprocessable_entity
@@ -35,6 +37,11 @@ class ProfilesController < ApplicationController
     else
       head :bad_request
     end
+  end
+
+  def revoke_remember
+    current_user.revoke_all_remember!
+    redirect_to profile_path, notice: "他の端末のログイン状態をすべて解除しました"
   end
 
   private
