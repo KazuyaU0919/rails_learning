@@ -1,0 +1,84 @@
+<%# app/views/admin/tags/index.html.erb %>
+
+<h1 class="text-xl font-bold mb-4">Tags</h1>
+
+<%= form_with url: admin_tags_path, method: :get, local: true, class: "mb-4 flex gap-2" do %>
+  <input type="text"
+         name="q"
+         value="<%= params[:q].to_s %>"
+         placeholder="名前で検索"
+         class="flex-1 rounded-xl ring-1 ring-slate-300 px-3 py-2" />
+  <button class="rounded-xl px-4 py-2 ring-1 ring-slate-300">検索</button>
+<% end %>
+
+<div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50">
+      <tr>
+        <th class="p-2 text-right w-16">ID</th>
+        <th class="p-2 text-left">Name</th>
+        <th class="p-2 text-left">Slug</th>
+        <th class="p-2 text-left">Color</th>
+        <th class="p-2 text-right">Used</th>
+        <th class="p-2">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @tags.each do |t| %>
+        <tr class="border-t">
+          <td class="p-2 text-right font-mono"><%= t.id %></td>
+          <td class="p-2"><%= t.name %></td>
+          <td class="p-2"><%= t.slug %></td>
+          <td class="p-2">
+            <%# 色スウォッチ + HEX 表示（背景色は直接指定） %>
+            <span class="inline-block w-4 h-4 rounded align-middle"
+                  style="background-color: '<%= t.color.presence || '#6B7280' %>'"></span>
+            <code class="ml-1 text-xs align-middle"><%= t.color %></code>
+          </td>
+          <td class="p-2 text-right"><%= t.taggings_count %></td>
+          <td class="p-2">
+            <% if t.taggings_count.zero? %>
+              <%= link_to "削除",
+                          admin_tag_path(t),
+                          data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+                          class: "text-red-600 underline" %>
+            <% else %>
+              <span class="text-slate-400">削除不可</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%# === 統合フォーム === %>
+<div class="mt-6 p-4 rounded-xl ring-1 ring-slate-200">
+  <h2 class="font-semibold mb-2">統合</h2>
+
+  <%= form_with url: merge_admin_tags_path, method: :post, local: true, class: "flex flex-wrap gap-3 items-end" do %>
+    <div class="flex-1 min-w-[16rem]">
+      <label class="text-xs text-slate-500">From（統合元ID）</label>
+      <input type="number" name="from_id" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" required />
+    </div>
+
+    <div class="flex-1 min-w-[16rem]">
+      <label class="text-xs text-slate-500">To（統合先ID）</label>
+      <input type="number" name="to_id" class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" required />
+    </div>
+
+    <button class="rounded-xl px-4 py-2 ring-1 ring-slate-300">統合</button>
+
+    <div class="basis-full text-xs text-slate-500 mt-1">
+      ※ 統合を実行すると、
+      <span class="font-semibold">From（統合元）タグ</span> に紐づく PreCode との関連は、
+      <span class="font-semibold">To（統合先）タグ</span> に移管され、重複は自動で除去されます。<br>
+      ※ 統合後に統合元のタグが未使用になった場合は自動で削除されます。
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-4">
+  <%= paginate @tags if respond_to?(:paginate) %>
+</div>

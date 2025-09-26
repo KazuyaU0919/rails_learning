@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_26_083054) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_26_085337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -85,6 +85,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_083054) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "pre_code_taggings", force: :cascade do |t|
+    t.bigint "pre_code_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pre_code_id", "tag_id"], name: "index_pre_code_taggings_on_pre_code_id_and_tag_id", unique: true
+    t.index ["pre_code_id"], name: "index_pre_code_taggings_on_pre_code_id"
+    t.index ["tag_id"], name: "index_pre_code_taggings_on_tag_id"
+  end
+
   create_table "pre_codes", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "title", null: false
@@ -108,6 +118,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_083054) do
     t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name", limit: 30, null: false
+    t.string "name_norm", limit: 60, null: false
+    t.string "slug", limit: 80, null: false
+    t.string "color", limit: 7
+    t.integer "taggings_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name_norm"], name: "index_tags_on_name_norm", unique: true
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
+    t.check_constraint "color IS NULL OR color::text ~ '^#[0-9A-Fa-f]{6}$'::text", name: "tags_color_hex"
   end
 
   create_table "used_codes", force: :cascade do |t|
@@ -147,6 +170,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_083054) do
   add_foreign_key "book_sections", "books"
   add_foreign_key "likes", "pre_codes"
   add_foreign_key "likes", "users"
+  add_foreign_key "pre_code_taggings", "pre_codes", on_delete: :cascade
+  add_foreign_key "pre_code_taggings", "tags"
   add_foreign_key "pre_codes", "users"
   add_foreign_key "used_codes", "pre_codes"
   add_foreign_key "used_codes", "users"

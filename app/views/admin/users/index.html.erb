@@ -41,10 +41,18 @@
 
           <!-- 編集者バッジ -->
           <td class="px-4 py-2">
-            <% if u.editor? %>
-              <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">編集者</span>
+            <% if u.admin? %>
+              <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
+                管理者
+              </span>
+            <% elsif u.editor? %>
+              <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">
+                編集者
+              </span>
             <% else %>
-              <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-200">一般</span>
+              <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-200">
+                一般
+              </span>
             <% end %>
           </td>
 

@@ -25,6 +25,10 @@
       <% end %>
     </div>
 
+    <div class="flex mt-2 justify-end">
+      <%= render "shared/tag_filter" %>
+    </div>
+
     <div class="flex gap-2 mt-2 justify-end">
       <%= link_to "使い方", help_path,
             class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
@@ -45,8 +49,16 @@
           <div class="flex justify-between">
             <!-- 左：タイトル／説明 -->
             <div class="flex-1 pr-4">
+              <!-- タイトル -->
               <div class="font-semibold"><%= pc.title %></div>
-              <p class="text-sm text-slate-500 mt-1"><%= truncate(pc.description, length: 120) %></p>
+
+              <!-- タグピル（タイトルの下） -->
+              <div class="mt-2">
+                <%= render "shared/tag_pills_static", record: pc %>
+              </div>
+
+              <!-- 説明（ピルの下） -->
+              <p class="text-sm text-slate-500 mt-2"><%= truncate(pc.description, length: 120) %></p>
             </div>
 
             <!-- 右：メトリクス（いいね数・利用数） -->
