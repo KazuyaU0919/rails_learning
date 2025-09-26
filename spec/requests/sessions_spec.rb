@@ -24,6 +24,15 @@ RSpec.describe "Sessions", type: :request do
       expect(session[:user_id]).to be_blank
     end
 
+    it "ログイン成功時に last_login_at が更新される" do
+      expect(user.last_login_at).to be_nil
+
+      post session_path, params: { email: "a@example.com", password: "secret123" }
+
+      expect(response).to redirect_to(root_path)
+      expect(user.reload.last_login_at).to be_present
+    end
+
     context "BAN中ユーザーの場合" do
       let!(:banned) do
         # 既存Factoryに :banned trait を追加済みなのでそれを利用

@@ -1,4 +1,4 @@
-# spec/requests/omniauth_spec.rb
+# spec/requests/omni_auth_spec.rb
 require "rails_helper"
 
 RSpec.describe "OmniAuth", type: :request do
@@ -30,6 +30,15 @@ RSpec.describe "OmniAuth", type: :request do
         }.to change(User, :count).by(0).and change(Authentication, :count).by(0)
         expect(response).to redirect_to(root_path)
       end
+
+      it "ログイン成功時に last_login_at が更新される" do
+        mock_omniauth(provider: "google_oauth2", uid: "U-1", email: auth.user.email)
+
+        get omni_auth_callback_path(provider: "google_oauth2")
+
+        expect(response).to redirect_to(root_path)
+        expect(auth.user.reload.last_login_at).to be_present
+      end
     end
 
     context "既存ユーザーとメールが一致する場合は認証が紐付く" do
@@ -43,6 +52,15 @@ RSpec.describe "OmniAuth", type: :request do
         }.to change(Authentication, :count).by(1)
         expect(Authentication.last.user_id).to eq(user.id)
         expect(response).to redirect_to(root_path)
+      end
+
+      it "紐付け成功時に last_login_at が更新される" do
+        mock_omniauth(provider: "google_oauth2", uid: "NEW-UID", email: user.email)
+
+        get omni_auth_callback_path(provider: "google_oauth2")
+
+        expect(response).to redirect_to(root_path)
+        expect(user.reload.last_login_at).to be_present
       end
     end
 
