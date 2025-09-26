@@ -1,0 +1,20 @@
+<!-- app/views/profiles/_oauth_link_buttons.html.erb -->
+<div class="space-y-2">
+  <% unless current_user.authentications.exists?(provider: "google_oauth2") %>
+    <%= link_to "/auth/google_oauth2?link=1",
+        class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white ring-1 ring-slate-200 px-4 py-2 hover:bg-slate-50" do %>
+      <span class="font-medium text-slate-700">Google に接続</span>
+    <% end %>
+  <% else %>
+    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">Google 接続済み</span>
+  <% end %>
+
+  <% unless current_user.authentications.exists?(provider: "github") %>
+    <%= link_to "/auth/github?link=1",
+        class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 hover:bg-slate-800" do %>
+      <span class="font-medium">GitHub に接続</span>
+    <% end %>
+  <% else %>
+    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">GitHub 接続済み</span>
+  <% end %>
+</div>

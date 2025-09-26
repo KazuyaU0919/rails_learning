@@ -1,0 +1,58 @@
+<!-- app/views/profiles/edit.html.erb -->
+<% content_for :title, "プロフィール編集" %>
+<h1 class="text-xl font-semibold mb-4">プロフィール編集</h1>
+
+<div class="mx-auto w-full max-w-2xl space-y-8">
+
+  <!-- セクション1：プロフィール -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">プロフィール</h2>
+    <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
+      <%= form_with model: current_user, url: profile_path, method: :patch, local: true do |f| %>
+        <div class="space-y-3">
+          <div>
+            <%= f.label :name, "表示名", class: "block text-sm mb-1" %>
+            <%= f.text_field :name, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
+          </div>
+          <div class="pt-2">
+            <%= f.submit "プロフィール更新", class: "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- セクション2：パスワード -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード変更</h2>
+    <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
+      <%= form_with model: current_user, url: profile_path, method: :patch, local: true do |f| %>
+        <div class="space-y-3">
+          <div>
+            <%= f.label :current_password, "現在のパスワード", class: "block text-sm mb-1" %>
+            <%= f.password_field :current_password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+          </div>
+          <div>
+            <%= f.label :password, "新しいパスワード", class: "block text-sm mb-1" %>
+            <%= f.password_field :password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+          </div>
+          <div>
+            <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
+            <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+          </div>
+          <div class="pt-2">
+            <%= f.submit "パスワード更新", class: "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- セクション3：外部連携 -->
+  <section>
+    <h2 class="text-sm font-semibold tracking-wider text-slate-500">外部連携</h2>
+    <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
+      <%= render "profiles/oauth_link_buttons" %>
+    </div>
+  </section>
+</div>

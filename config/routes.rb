@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "profiles/show"
+  get "profiles/edit"
+  get "profiles/update"
   # 静的ページ
   get "help",    to: "static_pages#help"
   get "terms",   to: "static_pages#terms"
@@ -13,6 +16,9 @@ Rails.application.routes.draw do
   resources :users, only: %i[new create]               # 登録フォーム/登録処理
   resource  :session, only: %i[new create destroy]     # ログイン/ログアウト
   resources :password_resets, only: %i[new create edit update]  # パス再設定用
+
+  # ユーザープロフィール
+  resource :profile, only: %i[show edit update]
 
   # PreCode機能
   concern :paginatable do

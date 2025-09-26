@@ -20,6 +20,7 @@ class SessionsController < ApplicationController
     if user&.uses_password? && user&.authenticate(params[:password])
       reset_session
       session[:user_id] = user.id
+      user.update_column(:last_login_at, Time.current)
       redirect_to root_path, notice: "ログインしました"
     else
       flash.now[:alert] = "メールまたはパスワードが正しくありません"

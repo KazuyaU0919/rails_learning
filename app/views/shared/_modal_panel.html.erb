@@ -15,20 +15,18 @@
        class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-slate-900
               max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-3.5rem)] lg:max-h-none overflow-y-auto">
 
-    <!-- タイトル + × -->
-    <div class="mb-4 flex items-center justify-center">
-      <h2 id="user-menu-title" class="text-xl font-semibold">メニュー</h2>
-      <button class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
-              data-action="click->modal#close" aria-label="閉じる">
-        <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
-      </button>
-    </div>
+    <!-- タイトルは削除、×だけ残す -->
+    <button class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+            data-action="click->modal#close" aria-label="閉じる">
+      <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
+    </button>
 
     <%# ================= PC用（lg以上だけ表示） ================= %>
     <div class="hidden lg:block">
       <% if logged_in? %>
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "お問い合わせ",     contact_path,  class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "利用規約",         terms_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -64,14 +62,15 @@
     <div class="lg:hidden">
       <% if logged_in? %>
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
-          <li><%= link_to "Code Editor",  editor_path,       class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "Rails Books",  books_path,        class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "PreCode",      pre_codes_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Code Editor",  editor_path,         class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Rails Books",  books_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "PreCode",      pre_codes_path,      class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Code Library", code_libraries_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "お問い合わせ",     contact_path,  class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "利用規約",         terms_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -89,14 +88,15 @@
         </ul>
 
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
-          <li><%= link_to "Code Editor",  editor_path,       class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "Rails Books",  books_path,        class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "PreCode",      pre_codes_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Code Editor",  editor_path,         class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Rails Books",  books_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "PreCode",      pre_codes_path,      class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Code Library", code_libraries_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "お問い合わせ",     contact_path,  class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "利用規約",         terms_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
