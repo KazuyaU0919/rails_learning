@@ -36,6 +36,7 @@
           <%= link_to "Books",     admin_books_path %>
           <%= link_to "Sections",  admin_book_sections_path %>
           <%= link_to "Users",     admin_users_path %>
+          <%= link_to "PreCode管理",     admin_pre_codes_path %>
 
           <% if current_user&.admin? %>
             <%= button_to "Logout",
