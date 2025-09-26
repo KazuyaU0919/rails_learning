@@ -14,6 +14,9 @@ class PreCode < ApplicationRecord
 
   validates :description, length: { maximum: 2000 }, allow_blank: true
   validates :body, presence: true
+  validates :hint,   length: { maximum: 1000 }, allow_blank: true
+  validates :answer, presence: true, length: { maximum: 2000 }
+  validates :answer_code, length: { maximum: 2000 }
 
   # === 一覧・並び替え向けスコープ ===
   scope :except_user, ->(uid) { uid.present? ? where.not(user_id: uid) : all }
