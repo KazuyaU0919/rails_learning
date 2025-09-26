@@ -58,6 +58,9 @@ export default class extends Controller {
     // 入力欄コンテナの色をテーマと同期
     this.#applyContainerTheme()
 
+    // loading コントローラ（同じ要素に data-controller="loading" を付与している想定）
+    this.loadingCtrl = this.application.getControllerForElementAndIdentifier(this.element, "loading")
+
     // ===== pre_code_id=... で来たときの自動読込 =====
     const params = new URLSearchParams(window.location.search)
     const pid = params.get("pre_code_id")
@@ -74,20 +77,36 @@ export default class extends Controller {
   async run (event) {
     const btn = event?.currentTarget || this.element.querySelector('[data-action="editor#run"]')
     btn?.setAttribute("disabled", "disabled")
+    btn?.setAttribute("aria-disabled", "true")
     this.outputTarget.textContent = "実行中…"
 
-    try {
+    const perform = async (signal) => {
       const code = this.view.state.doc.toString()
-      const res  = await axios.post("/editor", { code })
+      const config = signal ? { signal } : undefined
+      const res = await axios.post("/editor", { code }, config)
       if (res.data.stderr && res.data.stderr.length > 0) {
         this.outputTarget.textContent = res.data.stderr
       } else {
         this.outputTarget.textContent = res.data.stdout
       }
+    }
+
+    try {
+      if (this.loadingCtrl?.withOverlay) {
+        await this.loadingCtrl.withOverlay(async (signal) => {
+          await perform(signal)
+        })
+      } else {
+        // フォールバック：ローダー未装着でも動作
+        await perform()
+      }
     } catch (e) {
-      this.outputTarget.textContent = `Error: ${e.response?.data?.stderr || e}`
+      // Abort/ネットワーク/5xx など
+      const msg = e?.response?.data?.stderr || (e?.message || e)
+      this.outputTarget.textContent = `Error: ${msg}`
     } finally {
       btn?.removeAttribute("disabled")
+      btn?.removeAttribute("aria-disabled")
     }
   }
 

@@ -13,7 +13,7 @@
   .cm-editor, .cm-scroller { background: transparent !important; }
 </style>
 
-<div class="w-full space-y-6 bg-white" data-controller="editor">
+<div class="w-full space-y-6 bg-white" data-controller="editor loading">
   <h1 class="text-2xl font-semibold"><%= yield :title %></h1>
 
   <!-- 入力欄（CodeMirror をここにマウント） -->
@@ -51,6 +51,7 @@
       <!-- 実行ボタン（既存の見た目はそのまま） -->
       <button type="button"
               data-action="editor#run"
+              data-editor-target="runButton"
               class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
         実行 ▶
       </button>
