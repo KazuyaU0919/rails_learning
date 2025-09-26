@@ -5,7 +5,7 @@ class BooksController < ApplicationController
     @books = Book
       .select(:id, :title, :description, :updated_at, :book_sections_count)
       .includes(:book_sections)                # N+1回避
-      .order(updated_at: :desc)
+      .order(position: :asc, updated_at: :desc)
       .page(params[:page])
   end
 

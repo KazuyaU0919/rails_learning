@@ -2,7 +2,7 @@ class Admin::BooksController < Admin::BaseController
   layout "admin"
 
   def index
-    @books = Book.order(updated_at: :desc).page(params[:page])
+    @books = Book.order(position: :asc, updated_at: :desc).page(params[:page])
   end
 
   def new
@@ -38,6 +38,6 @@ class Admin::BooksController < Admin::BaseController
 
   private
   def book_params
-    params.require(:book).permit(:title, :description)
+    params.require(:book).permit(:title, :description, :position)
   end
 end
