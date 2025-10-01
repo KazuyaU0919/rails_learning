@@ -5,9 +5,9 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "toggle", "titleLabel", "descLabel",
-    "quizBlock",          // 複数（ヒントブロック／解答ブロック）
-    "answerField",        // textarea[name="pre_code[answer]"]
-    "answerCodeField"     // textarea[name="pre_code[answer_code]"]
+    "quizBlock",
+    "answerField", "answerCodeField",
+    "modeField" // ← hidden の pre_code[quiz_mode]
   ]
   static values  = { mode: String } // "normal" | "quiz"
 
@@ -28,20 +28,29 @@ export default class extends Controller {
     if (this.hasTitleLabelTarget) this.titleLabelTarget.textContent = quiz ? "問題タイトル" : "登録名"
     if (this.hasDescLabelTarget)  this.descLabelTarget.textContent  = quiz ? "問題文"       : "コードの説明"
 
-    // ヒント／解答ブロックの表示非表示（複数ターゲット）
+    // ヒント／解答ブロックの表示非表示
     if (this.hasQuizBlockTarget) {
       this.quizBlockTargets.forEach(el => el.classList.toggle("hidden", !quiz))
     }
 
-    // answer を問題モード時のみ required・有効にする
+    // 必須/有効
     if (this.hasAnswerFieldTarget) {
       this.answerFieldTarget.toggleAttribute("required", quiz)
       this.answerFieldTarget.disabled = !quiz
     }
-    // answer_code も問題モード時のみ有効に（必須にはしない）
     if (this.hasAnswerCodeFieldTarget) {
       this.answerCodeFieldTarget.disabled = !quiz
     }
+
+    // hidden へ現在モードを反映（"true"/"false"）
+    if (this.hasModeFieldTarget) {
+      this.modeFieldTarget.value = quiz ? "true" : "false"
+    }
+
+    // 表示切替後に autosize に再計算を依頼
+    this.element
+      .querySelectorAll('[data-controller~="autosize"]')
+      .forEach(el => el.dispatchEvent(new Event("autosize:refresh")))
 
     // トグルボタン表示
     if (this.hasToggleTarget) {

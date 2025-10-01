@@ -1,5 +1,8 @@
 # app/models/pre_code.rb
 class PreCode < ApplicationRecord
+  # --- 仮想属性（保存しない） ---
+  attr_accessor :quiz_mode
+
   belongs_to :user
   has_many :likes,      dependent: :destroy
   has_many :used_codes, dependent: :destroy
@@ -14,9 +17,12 @@ class PreCode < ApplicationRecord
 
   validates :description, length: { maximum: 2000 }, allow_blank: true
   validates :body, presence: true
-  validates :hint,   length: { maximum: 1000 }, allow_blank: true
-  validates :answer, presence: true, length: { maximum: 2000 }
-  validates :answer_code, length: { maximum: 2000 }
+  validates :hint,        length: { maximum: 1000 }, allow_blank: true
+  validates :answer,      length: { maximum: 2000 }, allow_blank: true
+  validates :answer_code, length: { maximum: 2000 }, allow_blank: true
+
+  # Quiz モードのときだけ answer を必須にする
+  validates :answer, presence: true, if: :quiz_mode?
 
   # === 一覧・並び替え向けスコープ ===
   scope :except_user, ->(uid) { uid.present? ? where.not(user_id: uid) : all }
@@ -37,5 +43,10 @@ class PreCode < ApplicationRecord
 
   def self.ransackable_associations(_auth = nil)
     %w[user]
+  end
+
+  # boolean キャストして判定（"true"/"1"/true を true に）
+  def quiz_mode?
+    ActiveModel::Type::Boolean.new.cast(@quiz_mode)
   end
 end

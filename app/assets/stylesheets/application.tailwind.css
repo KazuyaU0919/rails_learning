@@ -45,3 +45,12 @@
          active:bg-black
          focus:outline-none focus:ring-2 focus:ring-slate-500;
 }
+
+/* Quill ツールバーを画面上部に固定 */
+.ql-toolbar {
+  position: sticky;
+  top: 0;               /* 画面の一番上に固定 */
+  z-index: 50;          /* ヘッダーより上に出すなら調整 */
+  background: #fff;     /* 背景色を固定しないと透ける */
+  border-bottom: 1px solid #e5e7eb; /* 下線を追加して区切り感を出す */
+}
