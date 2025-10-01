@@ -7,6 +7,24 @@
 
 <div class="mx-auto w-full max-w-2xl space-y-8">
 
+  <!-- 右上：Xシェア＆URLコピー -->
+  <div class="flex justify-end gap-2 mb-2"
+      data-controller="share"
+      data-share-url-value="<%= code_library_url(@pre_code) %>">
+    <button type="button"
+            data-action="share#openTwitter"
+            data-text="<%= "#{@pre_code.title} をシェア #RailsLearning" %>"
+            class="btn-dark">
+      Xでシェア
+    </button>
+
+    <button type="button"
+            data-action="share#copy"
+            class="btn-dark">
+      URLコピー
+    </button>
+  </div>
+
   <!-- 登録名 -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
