@@ -6,6 +6,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
 
+    <%# 共通OGP設定 %>
+    <meta property="og:title" content="Rails Learning">
+    <meta property="og:description" content="Rails学習をもっと楽しく、効率的に。">
+    <meta property="og:image" content="<%= image_url("ogp.png") %>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= request.original_url %>">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
