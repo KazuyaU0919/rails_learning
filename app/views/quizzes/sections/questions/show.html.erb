@@ -27,11 +27,11 @@
       <%= submit_tag "この回答で送信", class: "px-4 py-2 rounded bg-[#CC0000] text-white" %>
     </div>
   <% end %>
-
-  <% if can_edit?(@question) %>
-    <div class="mb-3">
-      <%= link_to "この問題を編集", edit_quiz_section_question_path(@quiz, @section, @question),
-            class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
-    </div>
-  <% end %>
 </div>
+
+<% if can_edit?(@question) %>
+  <div class="mb-3">
+    <%= link_to "この問題を編集", edit_quiz_section_question_path(@quiz, @section, @question),
+          class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
+  </div>
+<% end %>
