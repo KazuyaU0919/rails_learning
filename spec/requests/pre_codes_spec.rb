@@ -66,4 +66,23 @@ RSpec.describe "PreCodes", type: :request do
       expect(response.body).to include('rel="prev"')
     end
   end
+
+  describe "通常モード（answer 未送信）でも作成できる" do
+  it "通常モード（answer 未送信）でも作成できる" do
+    sign_in(user)
+    params = {
+      pre_code: {
+        title: "Hello!",
+        description: "説明",
+        hint: "",           # 任意
+        body: 'puts "こんにちは"'
+        # answer は送らない（通常モードでは disabled）
+      }
+    }
+    post pre_codes_path, params: params
+    expect(response).to redirect_to(pre_code_path(PreCode.last))
+    follow_redirect!
+    expect(response.body).to include("PreCode を作成しました").or include("Hello!")
+  end
+  end
 end

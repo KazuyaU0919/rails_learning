@@ -1,5 +1,10 @@
 <!-- app/views/code_libraries/_actions.html.erb -->
-<%# locals: pre_code:, current_like: %>
+<%# locals: pre_code:, current_like:, current_bookmark: %>
+
+<%# === local が渡ってこないケースでも nil を入れて落ちないように === %>
+<% current_like     = local_assigns.fetch(:current_like, nil) %>
+<% current_bookmark = local_assigns.fetch(:current_bookmark, nil) %>
+
 <div id="<%= dom_id(pre_code, :actions) %>" class="flex gap-2">
   <% if logged_in? %>
     <%# === いいね === %>

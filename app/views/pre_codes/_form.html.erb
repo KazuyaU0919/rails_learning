@@ -1,10 +1,21 @@
 <!-- app/views/pre_codes/_form.html.erb -->
 <%= render "shared/errors", object: pre_code %>
 
-<%= form_with model: pre_code, class: "space-y-6" do |f| %>
+<%
+  # 管理側から呼ばれたときだけ admin ネームスペースに送る
+  admin_namespace = (local_assigns[:namespace] == :admin)
+  form_model      = admin_namespace ? [:admin, pre_code] : pre_code
+%>
+
+<%= form_with model: form_model, class: "space-y-6" do |f| %>
   <div data-controller="precode-mode"
        data-precode-mode-mode-value="normal"
        class="space-y-6">
+
+    <!-- モードの現在値を送る hidden -->
+    <%= f.hidden_field :quiz_mode,
+          value: "false",
+          data: { "precode-mode-target": "modeField" } %>
 
     <div class="flex items-center justify-end">
       <button type="button"
@@ -27,7 +38,7 @@
     <!-- タグ -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500">タグ（最大10個）</label>
-      <input id="tag-input" name="tag_names" value="<%= @pre_code.tags.map(&:name).join(',') %>"
+      <input id="tag-input" name="tag_names" value="<%= pre_code.tags.map(&:name).join(',') %>"
              class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2"
              placeholder="例: ruby, array, sql"
              data-controller="tag-token"
@@ -35,13 +46,18 @@
       <div id="tag-suggest" class="text-sm text-slate-500"></div>
     </div>
 
-    <!-- 説明 -->
+    <!-- 説明（通常モードの“問題文”相当） -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500"
              data-precode-mode-target="descLabel">コードの説明</label>
       <%= f.text_area :description, rows: 3,
             placeholder: "コード内容の説明を簡単に書いてください",
-            class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
+            data: {
+              controller: "autosize",
+              "autosize-target": "field",
+              "autosize-min-rows-value": 3
+            } %>
     </div>
 
     <!-- ▼ ヒント（問題モード時のみ表示） -->
@@ -49,7 +65,12 @@
       <label class="block text-sm font-semibold text-slate-500">ヒント（任意）</label>
       <%= f.text_area :hint, rows: 3,
             placeholder: "ヒント本文（1000文字まで）",
-            class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
+            data: {
+              controller: "autosize",
+              "autosize-target": "field",
+              "autosize-min-rows-value": 3
+            } %>
     </div>
 
     <!-- ▼ 登録コード（常に表示） -->
@@ -69,7 +90,12 @@
       <%= f.text_area :answer, rows: 4,
             placeholder: "解答本文（2000文字まで）",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
-            data: { "precode-mode-target": "answerField" } %>
+            data: {
+              controller: "autosize",
+              "autosize-target": "field",
+              "autosize-min-rows-value": 4,
+              "precode-mode-target": "answerField"
+            } %>
 
       <div class="space-y-2">
         <label class="block text-sm font-semibold text-slate-500">解答用コード（任意）</label>

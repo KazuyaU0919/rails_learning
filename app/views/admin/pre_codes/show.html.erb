@@ -10,6 +10,18 @@
     </div>
   </section>
 
+  <!-- タグ -->
+  <% if PreCode.reflect_on_association(:tags) %>
+    <section>
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">タグ</h2>
+      <div class="mt-1 px-1 flex flex-wrap gap-1">
+        <% @pre_code.tags.each do |t| %>
+          <span class="rounded bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700"><%= t.name %></span>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <!-- コードの説明 -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">コードの説明</h2>
@@ -20,6 +32,18 @@
     </div>
   </section>
 
+  <!-- ヒント（問題モード時） -->
+  <% if @pre_code.hint.present? %>
+    <section>
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">ヒント</h2>
+      <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
+        <%= sanitize(@pre_code.hint,
+                     tags: %w[b i em strong code pre br p ul ol li a],
+                     attributes: %w[href]) %>
+      </div>
+    </section>
+  <% end %>
+
   <!-- 登録コード + 最終更新 -->
   <section>
     <div class="flex items-baseline justify-between">
@@ -29,28 +53,46 @@
       </p>
     </div>
 
-    <!-- CodeMirror（閲覧専用） -->
-    <style>
-      .cm-editor, .cm-scroller { background: transparent !important; }
-    </style>
-    <div
-      data-controller="code-view"
-      data-code-view-theme-value="light"
-      class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white overflow-hidden"
-    >
+    <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
+    <div data-controller="code-view" data-code-view-theme-value="light"
+         class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white overflow-hidden">
       <textarea data-code-view-target="field" class="hidden"><%= @pre_code.body %></textarea>
       <div data-code-view-target="mount" class="w-full min-h-[200px]"></div>
     </div>
   </section>
 
+  <!-- 解答（問題モード時） -->
+  <% if @pre_code.answer.present? || @pre_code.answer_code.present? %>
+    <section class="space-y-2">
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">解答</h2>
+
+      <% if @pre_code.answer.present? %>
+        <div class="rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
+          <%= sanitize(@pre_code.answer,
+                       tags: %w[b i em strong code pre br p ul ol li a],
+                       attributes: %w[href]) %>
+        </div>
+      <% end %>
+
+      <% if @pre_code.answer_code.present? %>
+        <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
+        <div data-controller="code-view" data-code-view-theme-value="light"
+             class="rounded-xl ring-1 ring-slate-300 overflow-hidden">
+          <textarea data-code-view-target="field" class="hidden"><%= @pre_code.answer_code %></textarea>
+          <div data-code-view-target="mount" class="w-full min-h-[160px]"></div>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
   <!-- 操作（右下寄せ） -->
   <div class="flex justify-end gap-3 pt-2">
     <%= link_to "編集",
-          edit_pre_code_path(@pre_code),
+          [:edit, :admin, @pre_code],
           class: "px-5 py-2 rounded-md bg-[#00AA00] text-white hover:bg-[#009900] active:bg-[#008800]" %>
 
     <%= link_to "削除",
-          @pre_code,
+          [:admin, @pre_code],
           data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
           class: "px-5 py-2 rounded-md bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
   </div>

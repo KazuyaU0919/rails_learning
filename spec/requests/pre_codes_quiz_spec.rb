@@ -6,12 +6,6 @@ RSpec.describe "PreCodes (Quiz)", type: :request do
 
   before { sign_in user }
 
-  it "解答が空だと 422 で失敗する" do
-    params = attributes_for(:pre_code).merge(answer: nil, hint: "h")
-    post pre_codes_path, params: { pre_code: params }
-    expect(response).to have_http_status(:unprocessable_entity)
-  end
-
   it "作成時に hint/answer が保存される" do
     params = attributes_for(:pre_code).merge(hint: "ヒント", answer: "解答")
     post pre_codes_path, params: { pre_code: params }
