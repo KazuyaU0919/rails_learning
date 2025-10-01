@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   helper_method :current_user, :logged_in?
 
+  before_action :set_paper_trail_whodunnit
+
   rescue_from ActiveRecord::RecordNotFound do
     respond_to do |f|
       # HTMLアクセス時 → public/404.html を返す

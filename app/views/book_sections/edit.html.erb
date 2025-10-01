@@ -1,0 +1,17 @@
+<!-- app/views/book_sections/edit.html.erb -->
+<% content_for :title, "セクション編集" %>
+<h1 class="text-xl font-semibold mb-4"><%= @book.title %> / <%= @section.heading %> を編集</h1>
+
+<%= form_with model: @section, url: book_section_path(@book, @section),
+              method: :patch, data: { controller: "quill" } do |f| %>
+  <%= f.hidden_field :lock_version %>
+  <div class="space-y-2">
+    <%= f.label :content, class: "block text-sm text-slate-600" %>
+    <div id="quill-editor" class="bg-white rounded min-h-[18rem] mb-6 ql-container ql-snow"></div>
+    <%= f.hidden_field :content, id: "content_field", autocomplete: "off" %>
+  </div>
+  <div class="mt-4">
+    <%= f.submit "更新する", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "戻る", book_section_path(@book, @section), class: "ml-2 underline" %>
+  </div>
+<% end %>

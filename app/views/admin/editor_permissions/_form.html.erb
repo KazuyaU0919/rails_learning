@@ -1,0 +1,90 @@
+<!-- app/views/admin/editor_permissions/_form.html.erb -->
+<%= form_with model: @perm, url: @perm.new_record? ? admin_editor_permissions_path : admin_editor_permission_path(@perm),
+              method: @perm.new_record? ? :post : :patch, local: true, class: "space-y-5" do |f| %>
+  <div>
+    <%= f.label :user_id, "User", class: "block text-sm text-slate-600 mb-1" %>
+    <%= f.collection_select :user_id, User.order(:name), :id, :name, {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "editor_permission_user_id" %>
+    <div id="user_role_notice" class="mt-2 text-sm"></div>
+  </div>
+
+  <!-- 必要に応じて隠す -->
+  <div id="perm_fields_block">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-4">
+        <%= f.label :target_type, "Target type", class: "block text-sm text-slate-600 mb-1" %>
+        <%= f.select :target_type, [["BookSection","BookSection"],["QuizQuestion","QuizQuestion"]],
+                    {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "target_type" %>
+      </div>
+      <div class="lg:col-span-4">
+        <%= f.label :target_id, "Target ID", class: "block text-sm text-slate-600 mb-1" %>
+        <%= f.number_field :target_id, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "target_id" %>
+      </div>
+      <div class="lg:col-span-4">
+        <%= f.label :role, "Role", class: "block text-sm text-slate-600 mb-1" %>
+        <%= f.select :role, EditorPermission.roles.keys.map { |r| [r, r] }, {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+      </div>
+    </div>
+
+    <div class="rounded border bg-slate-50 p-3 text-sm mt-2" id="target_preview">Target プレビュー: -</div>
+  </div>
+
+  <div class="flex gap-2">
+    <%= f.submit @perm.new_record? ? "付与する" : "更新する", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "一覧に戻る", admin_editor_permissions_path, class: "px-4 py-2 rounded ring-1 ring-slate-300 bg-white" %>
+  </div>
+<% end %>
+
+<script>
+  (function(){
+    const typeEl  = document.getElementById("target_type");
+    const idEl    = document.getElementById("target_id");
+    const prevEl  = document.getElementById("target_preview");
+    const userEl  = document.getElementById("editor_permission_user_id");
+    const blockEl = document.getElementById("perm_fields_block");
+    const noteEl  = document.getElementById("user_role_notice");
+
+    async function refreshPreview() {
+      const t = typeEl?.value, i = idEl?.value;
+      if(!t || !i){ if(prevEl){ prevEl.textContent = "Target プレビュー: -"; } return; }
+      try {
+        const res = await fetch("<%= describe_target_admin_editor_permissions_path %>?target_type=" + encodeURIComponent(t) + "&target_id=" + encodeURIComponent(i));
+        const json = await res.json();
+        if(prevEl){ prevEl.textContent = "Target プレビュー: " + json.label; }
+      } catch(e) {
+        if(prevEl){ prevEl.textContent = "Target プレビュー: 取得失敗"; }
+      }
+    }
+
+    async function refreshUserRole() {
+      const uid = userEl?.value;
+      if(!uid){ showBlock(true); noteEl.textContent = ""; return; }
+      try {
+        const res  = await fetch("<%= user_status_admin_editor_permissions_path %>?user_id=" + encodeURIComponent(uid));
+        const json = await res.json();
+        if(json.ok && (json.admin || json.editor)) {
+          const label = json.admin ? "管理者" : "編集者";
+          noteEl.innerHTML = `<span class="text-amber-700 bg-amber-50 ring-1 ring-amber-200 rounded px-2 py-1">このユーザーは${label}です。</span>`;
+          showBlock(false); // 隠す
+        } else {
+          noteEl.textContent = "";
+          showBlock(true);  // 表示
+        }
+      } catch(e) {
+        noteEl.textContent = "";
+        showBlock(true);
+      }
+    }
+
+    function showBlock(show){
+      if(!blockEl) return;
+      blockEl.style.display = show ? "" : "none";
+    }
+
+    typeEl?.addEventListener("change", refreshPreview);
+    idEl?.addEventListener("input", refreshPreview);
+    userEl?.addEventListener("change", ()=>{ refreshUserRole(); setTimeout(refreshPreview, 0); });
+
+    document.addEventListener("turbo:load", ()=>{ refreshUserRole(); refreshPreview(); });
+    document.addEventListener("DOMContentLoaded", ()=>{ refreshUserRole(); refreshPreview(); });
+  })();
+</script>

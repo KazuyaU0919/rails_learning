@@ -1,13 +1,37 @@
 # app/controllers/quizzes/sections/questions_controller.rb
 class Quizzes::Sections::QuestionsController < ApplicationController
+  include EditPermission
   before_action :set_quiz_and_section
   before_action :ensure_access!
+  before_action :set_question, only: %i[show edit update answer answer_page]
 
   def show
-    @question = @section.quiz_questions.find(params[:id])
-    @next_q   = @section.quiz_questions.where("position > ?", @question.position).order(:position).first
-    @prev_q   = @section.quiz_questions.where("position < ?", @question.position).order(position: :desc).first
-    @answer_state = scores[@question.id.to_s] # true/false/nil
+    @next_q = @section.quiz_questions.where("position > ?", @question.position).order(:position).first
+    @prev_q = @section.quiz_questions.where("position < ?", @question.position).order(position: :desc).first
+    @answer_state = scores[@question.id.to_s]
+  end
+
+  def edit
+    nil unless require_edit_permission!(@question)
+  end
+
+  def update
+    return unless require_edit_permission!(@question)
+
+    attrs = question_params.slice(*@question.editable_attributes).merge(lock_version: question_params[:lock_version])
+    @question.assign_attributes(attrs)
+
+    begin
+      if @question.save
+        redirect_to quiz_section_question_path(@quiz, @section, @question),
+                    notice: "問題を更新しました"
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::StaleObjectError
+      flash.now[:alert] = "他の編集と競合しました。最新の内容を確認して再度保存してください。"
+      render :edit, status: :conflict
+    end
   end
 
   # POST /.../questions/:id/answer
@@ -36,6 +60,16 @@ class Quizzes::Sections::QuestionsController < ApplicationController
   def set_quiz_and_section
     @quiz    = Quiz.find(params[:quiz_id])
     @section = @quiz.quiz_sections.find(params[:section_id])
+  end
+
+  def set_question
+    @question = @section.quiz_questions.find(params[:id])
+  end
+
+  def question_params
+    params.require(:quiz_question).permit(
+      :question, :choice1, :choice2, :choice3, :choice4, :correct_choice, :explanation, :lock_version
+    )
   end
 
   def ensure_access!

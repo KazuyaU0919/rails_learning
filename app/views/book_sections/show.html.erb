@@ -8,6 +8,13 @@
     <%= link_to "← #{@book.title} に戻る", book_path(@book), class: "text-slate-600 hover:underline" %>
   </nav>
 
+  <% if can_edit?(@section) %>
+    <div class="mb-4">
+      <%= link_to "編集", edit_book_section_path(@book, @section),
+            class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
+    </div>
+  <% end %>
+
   <h1 class="text-2xl font-bold mb-3">
     <span class="text-slate-400 mr-2"><%= @section.position %>.</span>
     <%= @section.heading %>
@@ -33,4 +40,11 @@
       <% end %>
     </div>
   </div>
+
+  <% if can_edit?(@section) %>
+    <div class="mb-4">
+      <%= link_to "編集", edit_book_section_path(@book, @section),
+            class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
+    </div>
+  <% end %>
 </div>

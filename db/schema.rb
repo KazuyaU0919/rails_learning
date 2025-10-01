@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,6 +61,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "lock_version", default: 0, null: false
     t.index ["book_id", "position"], name: "index_book_sections_on_book_id_and_position", unique: true
     t.index ["book_id"], name: "index_book_sections_on_book_id"
   end
@@ -83,6 +84,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
     t.integer "book_sections_count", default: 0, null: false
     t.integer "position", null: false
     t.index ["position"], name: "index_books_on_position", unique: true
+  end
+
+  create_table "editor_permissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "target_type", null: false
+    t.bigint "target_id", null: false
+    t.integer "role", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["target_type", "target_id"], name: "index_editor_permissions_on_target_type_and_target_id"
+    t.index ["user_id", "target_type", "target_id"], name: "index_editor_permissions_on_user_and_target", unique: true
+    t.index ["user_id"], name: "index_editor_permissions_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -135,6 +148,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "lock_version", default: 0, null: false
     t.index ["quiz_id"], name: "index_quiz_questions_on_quiz_id"
     t.index ["quiz_section_id", "position"], name: "index_quiz_questions_on_quiz_section_id_and_position"
     t.index ["quiz_section_id"], name: "index_quiz_questions_on_quiz_section_id"
@@ -215,12 +229,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token_unique", unique: true
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
+    t.datetime "created_at"
+    t.text "object_changes"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authentications", "users", on_delete: :cascade
   add_foreign_key "book_sections", "books"
   add_foreign_key "bookmarks", "pre_codes", on_delete: :cascade
   add_foreign_key "bookmarks", "users"
+  add_foreign_key "editor_permissions", "users"
   add_foreign_key "likes", "pre_codes"
   add_foreign_key "likes", "users"
   add_foreign_key "pre_code_taggings", "pre_codes", on_delete: :cascade

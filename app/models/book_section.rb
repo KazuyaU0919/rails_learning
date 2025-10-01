@@ -1,5 +1,6 @@
 # app/models/book_section.rb
 class BookSection < ApplicationRecord
+  has_paper_trail
   belongs_to :book, counter_cache: true, touch: true
   has_many_attached :images
 
@@ -24,5 +25,12 @@ class BookSection < ApplicationRecord
 
   def next
     book.book_sections.where("position > ?", position).order(position: :asc).first
+  end
+
+  # =======================
+  # 編集権限チェック
+  # =======================
+  def editable_attributes
+    %i[content] # 画像は本文内のsigned_idをattachする既存仕組みで取り込み
   end
 end

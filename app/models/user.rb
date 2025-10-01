@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :authentications, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_pre_codes, through: :bookmarks, source: :pre_code
+  has_many :editor_permissions, dependent: :destroy
 
   # bcrypt
   has_secure_password validations: false
@@ -163,6 +164,34 @@ class User < ApplicationRecord
   # その PreCode のブックマークオブジェクトを返す（なければ nil）
   def bookmark_for(pre_code)
     bookmarks.find_by(pre_code_id: pre_code.id)
+  end
+
+  # ---------- 共同編集の認可 ----------
+  # 管理者 or editor フラグ保持者は全ページ編集可
+  # それ以外は editor_permissions に該当があれば該当ページのみ編集可
+  def can_edit?(record)
+    return false if record.nil?
+    return true  if admin?
+    return true  if editor?
+
+    EditorPermission.exists?(
+      user_id: id,
+      target_type: record.class.name,
+      target_id: record.id
+    )
+  end
+
+  # sub_editor 相当か？（admin/editor ではなく、個別権限を持っている）
+  def sub_editor?
+    !admin? && !editor? && editor_permissions.exists?
+  end
+
+  # 画面表示用の有効ロール（優先順: admin > editor > sub_editor > general）
+  def effective_role
+    return :admin       if admin?
+    return :editor      if editor?
+    return :sub_editor  if editor_permissions.exists?
+    :general
   end
 
   private

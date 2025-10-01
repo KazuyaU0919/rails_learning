@@ -1,0 +1,28 @@
+<!-- app/views/quizzes/sections/questions/edit.html.erb -->
+<% content_for :title, "問題を編集" %>
+<h1 class="text-xl font-semibold mb-4"><%= @quiz.title %> / <%= @section.heading %> / Q<%= @question.position %> を編集</h1>
+
+<%= form_with model: @question, url: quiz_section_question_path(@quiz, @section, @question), method: :patch, local: true, class: "space-y-4" do |f| %>
+  <%= f.hidden_field :lock_version %>
+  <div>
+    <%= f.label :question, "問題文" %>
+    <%= f.text_area :question, rows: 3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div><%= f.label :choice1 %><%= f.text_field :choice1, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :choice2 %><%= f.text_field :choice2, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :choice3 %><%= f.text_field :choice3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
+    <div><%= f.label :choice4 %><%= f.text_field :choice4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <div><%= f.label :correct_choice, "正解(1..4)" %><%= f.number_field :correct_choice, min: 1, max: 4, class: "w-24 rounded ring-1 ring-slate-300 px-3 py-2" %></div>
+  </div>
+  <div>
+    <%= f.label :explanation, "解説" %>
+    <%= f.text_area :explanation, rows: 4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+  <div>
+    <%= f.submit "更新する", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "戻る", quiz_section_question_path(@quiz, @section, @question), class: "ml-2 underline" %>
+  </div>
+<% end %>

@@ -28,7 +28,7 @@
       <tr>
         <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">名前</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">メール</th>
-        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">編集者</th>
+        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">権限</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">状態</th>
         <th class="px-4 py-2 text-left text-xs font-semibold text-slate-600">操作</th>
       </tr>
@@ -39,22 +39,8 @@
           <td class="px-4 py-2 font-medium text-slate-900"><%= u.name %></td>
           <td class="px-4 py-2 text-slate-700"><%= u.email %></td>
 
-          <!-- 編集者バッジ -->
-          <td class="px-4 py-2">
-            <% if u.admin? %>
-              <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
-                管理者
-              </span>
-            <% elsif u.editor? %>
-              <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">
-                編集者
-              </span>
-            <% else %>
-              <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-200">
-                一般
-              </span>
-            <% end %>
-          </td>
+          <!-- 権限バッジ（admin > editor > sub_editor > 一般） -->
+          <td class="px-4 py-2"><%= role_badge_for(u) %></td>
 
           <!-- 凍結/有効バッジ -->
           <td class="px-4 py-2">
@@ -74,7 +60,6 @@
                       method: :patch,
                       class: "inline-flex items-center rounded-md bg-white px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50" %>
 
-                <%#-- 凍結ボタンの表示ラベルと色を先に決める --%>
                 <% ban_label = u.banned? ? "解除" : "凍結" %>
                 <% ban_color = u.banned? ? "bg-emerald-600 hover:bg-emerald-700 ring-emerald-600"
                                          : "bg-rose-600 hover:bg-rose-700 ring-rose-600" %>

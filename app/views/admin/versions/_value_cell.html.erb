@@ -1,0 +1,16 @@
+<%# 値の見せ方をユースケース別に切替 %>
+<% case v %>
+<% when Time, Date, ActiveSupport::TimeWithZone %>
+  <%= l v, format: :long %>
+<% when TrueClass, FalseClass, Integer, Float %>
+  <%= v %>
+<% when NilClass %>
+  <span class="text-slate-400">nil</span>
+<% else %>
+  <% str = v.to_s %>
+  <% if str.strip.start_with?("<") && str.include?("</") %>
+    <%= simple_format(h(strip_tags(str))) %>
+  <% else %>
+    <pre class="whitespace-pre-wrap"><%= str %></pre>
+  <% end %>
+<% end %>
