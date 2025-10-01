@@ -37,6 +37,14 @@
           </span>
         <% end %>
 
+        <%= link_to quizzes_path,
+          class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
+          <span class="flex flex-col items-center justify-center leading-4">
+            <span class="mt-1 text-sm font-medium whitespace-nowrap">Quizzes</span>
+            <span class="text-[10px] opacity-90 whitespace-nowrap">- 教本クイズ -</span>
+          </span>
+        <% end %>
+
         <%= link_to pre_codes_path,
           class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
           <span class="flex flex-col items-center justify-center leading-4">

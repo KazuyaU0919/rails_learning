@@ -1,0 +1,14 @@
+<!-- app/views/quizzes/index.html.erb -->
+<div class="mb-6 text-center">
+  <h1 class="text-2xl font-semibold">Quizzes</h1>
+  <p class="mt-1 text-sm text-slate-500">~ 教本連動クイズ ~</p>
+</div>
+
+<ul class="divide-y divide-slate-200 rounded-lg border bg-white">
+  <%= render partial: "quiz", collection: @quizzes, as: :quiz %>
+</ul>
+
+<%# ページネーション %>
+<div class="mt-4">
+  <%= paginate @quizzes if respond_to?(:paginate) %>
+</div>

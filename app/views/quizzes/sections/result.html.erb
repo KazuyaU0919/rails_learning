@@ -1,0 +1,9 @@
+<!-- app/views/quizzes/sections/result.html.erb -->
+<% content_for :title, "#{@section.heading} - 結果" %>
+<h1 class="text-2xl font-semibold mb-2"><%= @section.heading %> の結果</h1>
+<p class="text-xl mb-4"><span class="font-bold"><%= @correct %></span> / <%= @total %> 正解</p>
+
+<div class="flex gap-3">
+  <%= link_to "もう一度解く", quiz_section_path(@quiz, @section), class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
+  <%= link_to "セクション一覧へ戻る", quiz_path(@quiz), class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
+</div>

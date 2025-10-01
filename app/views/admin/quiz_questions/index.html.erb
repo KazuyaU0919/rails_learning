@@ -1,0 +1,40 @@
+<h1 class="text-xl font-bold mb-4">Quiz Questions</h1>
+
+<div class="mb-3">
+  <%= link_to "＋ 新規作成", new_admin_quiz_question_path,
+        class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+</div>
+
+<table class="w-full text-sm border rounded overflow-hidden">
+  <thead class="bg-slate-50">
+    <tr>
+      <th class="p-2 text-right w-20">ID</th>
+      <th class="p-2">Quiz</th>
+      <th class="p-2">Section</th>
+      <th class="p-2">Q（先頭20字）</th>
+      <th class="p-2 w-20">正解</th>
+      <th class="p-2 w-20">位置</th>
+      <th class="p-2 w-40"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @questions.each do |q| %>
+      <tr class="border-t">
+        <td class="p-2 text-right font-mono"><%= q.id %></td>
+        <td class="p-2"><%= q.quiz.title %></td>
+        <td class="p-2"><%= q.quiz_section.heading %></td>
+        <td class="p-2"><%= truncate(q.question, length: 20) %></td>
+        <td class="p-2"><%= q.correct_choice %></td>
+        <td class="p-2"><%= q.position %></td>
+        <td class="p-2 text-right">
+          <%= link_to "編集", edit_admin_quiz_question_path(q), class: "underline mr-3" %>
+          <%= link_to "削除", admin_quiz_question_path(q),
+                data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+                class: "underline text-red-600" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="mt-4"><%= paginate @questions if respond_to?(:paginate) %></div>

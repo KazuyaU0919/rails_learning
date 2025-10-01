@@ -1,0 +1,2 @@
+module Quizzes::SectionsHelper
+end
