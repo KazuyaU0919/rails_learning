@@ -1,0 +1,92 @@
+<!-- app/views/admin/versions/index.html.erb -->
+<h1 class="text-2xl font-bold mb-6">変更履歴</h1>
+
+<%= form_with url: admin_versions_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-12 gap-3 items-end mb-5" do %>
+  <div class="md:col-span-5">
+    <label class="block text-sm text-slate-600 mb-1">対象モデル</label>
+    <input type="text" name="item_type" value="<%= params[:item_type] %>"
+           placeholder="例: BookSection / QuizQuestion"
+           class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+  </div>
+  <div class="md:col-span-3">
+    <label class="block text-sm text-slate-600 mb-1">対象ID</label>
+    <input type="text" name="item_id" value="<%= params[:item_id] %>"
+           placeholder="ID"
+           class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+  </div>
+  <div class="md:col-span-4 flex gap-2">
+    <button type="submit"
+            class="flex-1 rounded bg-slate-900 text-white px-5 py-2 text-center whitespace-nowrap">
+      絞り込み
+    </button>
+
+    <%= link_to "リセット", admin_versions_path,
+          class: "flex-1 rounded ring-1 ring-slate-300 px-5 py-2 text-center bg-white whitespace-nowrap" %>
+  </div>
+<% end %>
+
+<%= form_with url: bulk_destroy_admin_versions_path, method: :delete, data: { turbo_confirm: "選択した版を削除します。よろしいですか？" }, local: true do %>
+  <div class="mb-3 flex items-center gap-2">
+    <button class="px-3 py-2 rounded bg-rose-600 text-white text-sm">選択を削除</button>
+    <span class="text-xs text-slate-500">※ 削除は元に戻せません（レコード自体には影響しません）</span>
+  </div>
+
+  <div class="overflow-x-auto rounded border">
+    <table class="min-w-full text-sm">
+      <thead class="bg-slate-50 text-slate-600">
+        <tr>
+          <th class="p-2 w-10 text-center">
+            <input type="checkbox" id="check_all">
+          </th>
+          <th class="p-2 text-left w-48">日時</th>
+          <th class="p-2 text-left">タイプ</th>
+          <th class="p-2 text-right w-24">ID</th>
+          <th class="p-2 text-left w-28">イベント</th>
+          <th class="p-2 text-right w-24">ユーザー</th>
+          <th class="p-2 w-36"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <% @versions.each do |v| %>
+          <tr class="hover:bg-slate-50">
+            <td class="p-2 text-center">
+              <input type="checkbox" name="version_ids[]" value="<%= v.id %>" class="row-check">
+            </td>
+            <td class="p-2 whitespace-nowrap"><%= l v.created_at, format: :long %></td>
+            <td class="p-2 font-mono"><%= v.item_type %></td>
+            <td class="p-2 text-right"><%= v.item_id %></td>
+            <td class="p-2">
+              <% badge = case v.event
+                when "create" then "bg-emerald-100 text-emerald-700"
+                when "update" then "bg-amber-100 text-amber-700"
+                when "destroy" then "bg-rose-100 text-rose-700"
+                else "bg-slate-100 text-slate-700"
+              end %>
+              <span class="px-2 py-0.5 rounded text-xs <%= badge %>"><%= v.event %></span>
+            </td>
+            <td class="p-2 text-right"><%= v.whodunnit.presence || "-" %></td>
+            <td class="p-2 text-right whitespace-nowrap">
+              <%= link_to "詳細", admin_version_path(v),
+                    class: "inline-block rounded px-3 py-1 bg-slate-900 text-white text-xs" %>
+              <%= link_to "削除", admin_version_path(v),
+                    data: { turbo_method: :delete, turbo_confirm: "この版を削除します。よろしいですか？" },
+                    class: "inline-block rounded px-3 py-1 text-rose-600 text-xs" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4"><%= paginate @versions if respond_to?(:paginate) %></div>
+<% end %>
+
+<script>
+  (function(){
+    const all = document.getElementById("check_all");
+    const rows = () => Array.from(document.querySelectorAll(".row-check"));
+    if(all){
+      all.addEventListener("change", ()=> rows().forEach(cb => cb.checked = all.checked));
+    }
+  })();
+</script>

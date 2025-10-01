@@ -1,0 +1,82 @@
+<!-- app/views/admin/editor_permissions/index.html.erb -->
+<h1 class="text-2xl font-bold mb-6">Editor Permissions</h1>
+
+<div class="flex flex-wrap gap-3 mb-4">
+  <%= link_to "＋ 新規付与", new_admin_editor_permission_path, class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+  <%= link_to "⇅ 一括付与", bulk_new_admin_editor_permissions_path, class: "px-3 py-2 rounded ring-1 ring-slate-300 bg-white" %>
+</div>
+
+<%= form_with url: admin_editor_permissions_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-12 gap-3 items-end mb-5" do %>
+  <div class="md:col-span-5">
+    <label class="block text-sm text-slate-600 mb-1">User</label>
+    <select name="user_id" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+      <option value="">(すべて)</option>
+      <% User.order(:name).each do |u| %>
+        <option value="<%= u.id %>" <%= "selected" if params[:user_id].to_s == u.id.to_s %>><%= u.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="md:col-span-3">
+    <label class="block text-sm text-slate-600 mb-1">Target type</label>
+    <select name="target_type" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+      <option value="">(すべて)</option>
+      <% ["BookSection","QuizQuestion"].each do |t| %>
+        <option value="<%= t %>" <%= "selected" if params[:target_type] == t %>><%= t %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="md:col-span-2">
+    <label class="block text-sm text-slate-600 mb-1">Role</label>
+    <select name="role" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+      <option value="">(すべて)</option>
+      <% EditorPermission.roles.keys.each do |r| %>
+        <option value="<%= r %>" <%= "selected" if params[:role] == r %>><%= r %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="md:col-span-2">
+    <button class="w-full rounded bg-slate-900 text-white px-3 py-2">絞り込み</button>
+  </div>
+  <div class="md:col-span-0">
+    <%= link_to "リセット", admin_editor_permissions_path,
+        class: "rounded ring-1 ring-slate-300 px-4 py-2 bg-white" %>
+  </div>
+<% end %>
+
+<div class="overflow-x-auto rounded border bg-white">
+  <table class="min-w-full text-sm">
+    <thead class="bg-slate-50 text-slate-600">
+      <tr>
+        <th class="p-2 text-left w-48">User</th>
+        <th class="p-2 text-left">Target</th>
+        <th class="p-2 text-left w-28">Role</th>
+        <th class="p-2 text-left w-48">作成日時</th>
+        <th class="p-2 w-40"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y">
+      <% @perms.each do |p| %>
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 whitespace-nowrap"><%= p.user.name %></td>
+          <td class="p-2">
+            <%= type_badge(p.target_type) %>
+            <span class="ml-2"><%= p.target_human_label %></span>
+          </td>
+          <td class="p-2"><%= role_badge(p.role) %></td>
+          <td class="p-2 whitespace-nowrap"><%= l p.created_at, format: :long %></td>
+          <td class="p-2 text-right whitespace-nowrap">
+            <%= link_to "詳細", admin_editor_permission_path(p),
+                  class: "inline-block rounded px-3 py-1 bg-slate-900 text-white text-xs" %>
+            <%= link_to "編集", edit_admin_editor_permission_path(p),
+                  class: "inline-block rounded px-3 py-1 ring-1 ring-slate-300 bg-white text-xs" %>
+            <%= link_to "削除", admin_editor_permission_path(p),
+                  data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+                  class: "inline-block rounded px-3 py-1 text-rose-600 text-xs" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4"><%= paginate @perms if respond_to?(:paginate) %></div>

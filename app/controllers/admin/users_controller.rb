@@ -1,3 +1,4 @@
+# app/controllers/admin/users_controller.rb
 class Admin::UsersController < Admin::BaseController
   layout "admin"
 
@@ -9,7 +10,8 @@ class Admin::UsersController < Admin::BaseController
 
     @users = User.search(@q)
                  .yield_self { |u| @filter == "editors" ? u.editors : u }
-                 .yield_self { |u| @filter == "banned" ? u.banned : u }
+                 .yield_self { |u| @filter == "banned"  ? u.banned  : u }
+                 .includes(:editor_permissions)
                  .order(created_at: :desc)
                  .page(params[:page]).per(50)
   end

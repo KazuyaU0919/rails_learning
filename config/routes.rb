@@ -1,13 +1,4 @@
 Rails.application.routes.draw do
-  namespace :quizzes do
-    namespace :sections do
-      get "questions/show"
-    end
-    get "sections/index"
-    get "sections/show"
-  end
-  get "quizzes/index"
-  get "quizzes/show"
   # 静的ページ
   get "help",    to: "static_pages#help"
   get "terms",   to: "static_pages#terms"
@@ -59,13 +50,13 @@ Rails.application.routes.draw do
 
   # Rails Books
   resources :books, only: %i[index show] do
-    resources :sections, only: :show, controller: :book_sections
+    resources :sections, only: %i[show edit update], controller: :book_sections
   end
 
   # クイズ機能
   resources :quizzes, only: %i[index show] do
     resources :sections, only: %i[index show], module: :quizzes do
-      resources :questions, only: %i[show], module: :sections do
+      resources :questions, only: %i[show edit update], module: :sections do
         post :answer, on: :member
         get  :answer_page, on: :member
       end
@@ -75,27 +66,10 @@ Rails.application.routes.draw do
 
   # 管理画面
   namespace :admin do
-    get "quiz_questions/index"
-    get "quiz_questions/show"
-    get "quiz_questions/new"
-    get "quiz_questions/create"
-    get "quiz_questions/edit"
-    get "quiz_questions/update"
-    get "quiz_questions/destroy"
-    get "quiz_sections/index"
-    get "quiz_sections/show"
-    get "quiz_sections/new"
-    get "quiz_sections/create"
-    get "quiz_sections/edit"
-    get "quiz_sections/update"
-    get "quiz_sections/destroy"
-    get "quizzes/index"
-    get "quizzes/show"
-    get "quizzes/new"
-    get "quizzes/create"
-    get "quizzes/edit"
-    get "quizzes/update"
-    get "quizzes/destroy"
+    get "editor_permissions/index"
+    get "editor_permissions/new"
+    get "editor_permissions/create"
+    get "editor_permissions/destroy"
     root "dashboards#index"
 
     resource  :session,   only: %i[new create destroy]
@@ -115,6 +89,22 @@ Rails.application.routes.draw do
 
     resources :tags, only: %i[index destroy] do
       post :merge, on: :collection
+    end
+
+    resources :editor_permissions do
+      collection do
+        get  :bulk_new
+        post :bulk_create
+        get  :describe_target
+        get  :user_status
+      end
+    end
+
+    resources :versions, only: %i[index show destroy] do
+      post :revert, on: :member
+      collection do
+        delete :bulk_destroy
+      end
     end
   end
 

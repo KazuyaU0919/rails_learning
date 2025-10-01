@@ -40,6 +40,9 @@ gem "gretel"
 # アイコン
 gem "heroicon-rails"
 
+# 変更履歴管理（バージョン管理・復元・監査ログ）
+gem "paper_trail", "~> 14.0"
+
 gem "image_processing", "~> 1.12"  # ActiveStorageで画像のリサイズやサムネイル生成を行うGem
 gem "mini_magick"                  # 画像処理ライブラリImageMagickのRubyラッパー
 

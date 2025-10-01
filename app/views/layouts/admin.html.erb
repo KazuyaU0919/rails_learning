@@ -41,6 +41,8 @@
           <%= link_to "Quizzes",        admin_quizzes_path %>
           <%= link_to "Quiz Sections",  admin_quiz_sections_path %>
           <%= link_to "Quiz Questions", admin_quiz_questions_path %>
+          <%= link_to "Editor Permissions", admin_editor_permissions_path %>
+          <%= link_to "Versions", admin_versions_path %>
 
           <% if current_user&.admin? %>
             <%= button_to "Logout",

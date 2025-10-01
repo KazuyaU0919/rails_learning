@@ -3,15 +3,16 @@ ja:
   date:
     formats:
       default: "%Y/%m/%d"
-      short:   "%m/%d"
-      long:    "%Y年%-m月%-d日(%a)"
+      short: "%m/%d"
+      long: "%Y年%-m月%-d日(%a)"
       ymd_hm: "%Y/%m/%d %H:%M"
   time:
     formats:
       default: "%Y/%m/%d %H:%M"
-      short:   "%m/%d %H:%M"
-      long:    "%Y年%-m月%-d日 %H:%M"
-      ymd_hm:  "%Y/%m/%d %H:%M"
+      short: "%m/%d %H:%M"
+      long: "%Y年%-m月%-d日 %H:%M"
+      ymd_hm: "%Y/%m/%d %H:%M"
+
   activerecord:
     models:
       pre_code: "PreCode"
@@ -19,6 +20,7 @@ ja:
       quiz: "クイズ"
       quiz_section: "クイズセクション"
       quiz_question: "クイズ問題"
+
     attributes:
       book_section:
         book_id: "対象の教本"
@@ -27,6 +29,7 @@ ja:
         heading: "見出し"
         content: "本文"
         images: "画像（複数可）"
+        lock_version: "更新番号"
       pre_code:
         title: "タイトル"
         body: "コードの説明"
@@ -40,7 +43,6 @@ ja:
         position: "位置"
         created_at: "作成日時"
         updated_at: "更新日時"
-
       quiz_section:
         quiz: "クイズ"
         quiz_id: "クイズ"
@@ -49,7 +51,6 @@ ja:
         position: "位置"
         created_at: "作成日時"
         updated_at: "更新日時"
-
       quiz_question:
         quiz: "クイズ"
         quiz_id: "クイズ"
@@ -63,8 +64,10 @@ ja:
         correct_choice: "正解"
         explanation: "解説"
         position: "位置"
+        lock_version: "更新番号"
         created_at: "作成日時"
         updated_at: "更新日時"
+
     errors:
       models:
         book:
@@ -127,6 +130,7 @@ ja:
               not_a_number: "は数値で入力してください"
               not_an_integer: "は整数で入力してください"
               greater_than: "は%{count}より大きい値にしてください"
+
   helpers:
     submit:
       book_section:
@@ -143,6 +147,7 @@ ja:
       quiz_question:
         create: "作成する"
         update: "更新する"
+
   errors:
     messages:
       blank: "を入力してください"
@@ -165,8 +170,10 @@ ja:
       other_than: "は%{count}以外の値にしてください"
       odd: "は奇数を指定してください"
       even: "は偶数を指定してください"
+
   bookmarks:
     limit_reached: "300件以上のブックマーク登録はできません"
+
   search:
     no_items: "候補はありません"
     error: "通信エラー"

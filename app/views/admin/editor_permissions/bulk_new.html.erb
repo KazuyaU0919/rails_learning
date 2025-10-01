@@ -1,0 +1,68 @@
+<!-- app/views/admin/editor_permissions/bulk_new.html.erb -->
+<h1 class="text-2xl font-bold mb-6">編集権限を一括付与</h1>
+
+<%= form_with url: bulk_create_admin_editor_permissions_path, method: :post, local: true, class: "space-y-5" do |f| %>
+  <div>
+    <label class="block text-sm text-slate-600 mb-1">User</label>
+    <select name="editor_permission[user_id]" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+      <% User.order(:name).each do |u| %>
+        <option value="<%= u.id %>"><%= u.name %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div>
+      <label class="block text-sm text-slate-600 mb-1">Target type</label>
+      <select name="editor_permission[target_type]" id="bulk_type" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+        <option value="BookSection">BookSection</option>
+        <option value="QuizQuestion">QuizQuestion</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm text-slate-600 mb-1">Role</label>
+      <select name="editor_permission[role]" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
+        <% EditorPermission.roles.keys.each do |r| %>
+          <option value="<%= r %>"><%= r %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-sm text-slate-600 mb-1">Target IDs（カンマ/空白/改行区切り）</label>
+    <textarea id="bulk_ids" name="target_ids_text" rows="6" class="w-full rounded ring-1 ring-slate-300 px-3 py-2" placeholder="例） 1,2,3  または  1 2 3  または  改行で 1行1 ID"></textarea>
+    <div id="bulk_preview" class="mt-2 text-sm text-slate-600"></div>
+  </div>
+
+  <div class="flex gap-2">
+    <button class="px-4 py-2 rounded bg-slate-900 text-white">一括付与する</button>
+    <%= link_to "一覧に戻る", admin_editor_permissions_path, class: "px-4 py-2 rounded ring-1 ring-slate-300 bg-white" %>
+  </div>
+<% end %>
+
+<script>
+  (function(){
+    const typeEl = document.getElementById("bulk_type");
+    const idsEl  = document.getElementById("bulk_ids");
+    const outEl  = document.getElementById("bulk_preview");
+
+    async function refresh(){
+      const t = typeEl.value;
+      const ids = (idsEl.value.match(/\d+/g) || []).slice(0, 20); // プレビューは最大20件
+      if(ids.length === 0){ outEl.textContent = "プレビュー: 0 件"; return; }
+      outEl.textContent = "プレビュー取得中…";
+      const labels = await Promise.all(ids.map(async (id)=>{
+        try{
+          const res = await fetch(`<%= describe_target_admin_editor_permissions_path %>?target_type=${encodeURIComponent(t)}&target_id=${encodeURIComponent(id)}`);
+          const j = await res.json(); return j.label;
+        }catch(e){ return `${t}#${id}`; }
+      }));
+      outEl.innerHTML = `プレビュー: ${ids.length}件<br>` + labels.map(l=>`・${l}`).join("<br>");
+    }
+    typeEl && typeEl.addEventListener("change", refresh);
+    idsEl  && idsEl.addEventListener("input", refresh);
+    document.addEventListener("turbo:load", refresh);
+    document.addEventListener("DOMContentLoaded", refresh);
+  })();
+</script>
