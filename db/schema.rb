@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_26_192936) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_01_022057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,6 +122,44 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_192936) do
     t.index ["user_id"], name: "index_pre_codes_on_user_id"
   end
 
+  create_table "quiz_questions", force: :cascade do |t|
+    t.bigint "quiz_id", null: false
+    t.bigint "quiz_section_id", null: false
+    t.text "question", null: false
+    t.string "choice1", null: false
+    t.string "choice2", null: false
+    t.string "choice3", null: false
+    t.string "choice4", null: false
+    t.integer "correct_choice", null: false
+    t.text "explanation", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_id"], name: "index_quiz_questions_on_quiz_id"
+    t.index ["quiz_section_id", "position"], name: "index_quiz_questions_on_quiz_section_id_and_position"
+    t.index ["quiz_section_id"], name: "index_quiz_questions_on_quiz_section_id"
+  end
+
+  create_table "quiz_sections", force: :cascade do |t|
+    t.bigint "quiz_id", null: false
+    t.string "heading", null: false
+    t.boolean "is_free", default: false, null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_id", "position"], name: "index_quiz_sections_on_quiz_id_and_position"
+    t.index ["quiz_id"], name: "index_quiz_sections_on_quiz_id"
+  end
+
+  create_table "quizzes", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_quizzes_on_position"
+  end
+
   create_table "solid_cache_entries", id: false, force: :cascade do |t|
     t.binary "key", null: false
     t.binary "value", null: false
@@ -188,6 +226,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_192936) do
   add_foreign_key "pre_code_taggings", "pre_codes", on_delete: :cascade
   add_foreign_key "pre_code_taggings", "tags"
   add_foreign_key "pre_codes", "users"
+  add_foreign_key "quiz_questions", "quiz_sections"
+  add_foreign_key "quiz_questions", "quizzes"
+  add_foreign_key "quiz_sections", "quizzes"
   add_foreign_key "used_codes", "pre_codes"
   add_foreign_key "used_codes", "users"
 end

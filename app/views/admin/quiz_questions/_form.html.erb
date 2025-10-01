@@ -1,0 +1,75 @@
+<%= form_with model: @question,
+              url: (@question.new_record? ? admin_quiz_questions_path : admin_quiz_question_path(@question)),
+              method: (@question.new_record? ? :post : :patch),
+              local: true,
+              class: "space-y-4" do |f| %>
+  <% if @question.errors.any? %>
+    <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+      <p><strong><%= @question.errors.count %></strong> 件のエラーがあります：</p>
+      <ul class="list-disc pl-5 mt-1">
+        <% @question.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :quiz_id, "Quiz", class: "block text-sm text-slate-600" %>
+    <%= f.collection_select :quiz_id, Quiz.order(:position), :id, :title,
+          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2",
+          data: { controller: "quiz-form" } %>
+  </div>
+
+  <div>
+    <%= f.label :quiz_section_id, "Section", class: "block text-sm text-slate-600" %>
+    <%= f.collection_select :quiz_section_id, QuizSection.includes(:quiz).order("quizzes.position, quiz_sections.position"),
+          :id, ->(s){ "[#{s.quiz.title}] #{s.heading}" },
+          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.label :question, "問題文", class: "block text-sm text-slate-600" %>
+    <%= f.text_area :question, rows: 3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div>
+      <%= f.label :choice1, "選択肢1", class: "block text-sm text-slate-600" %>
+      <%= f.text_field :choice1, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+    <div>
+      <%= f.label :choice2, "選択肢2", class: "block text-sm text-slate-600" %>
+      <%= f.text_field :choice2, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+    <div>
+      <%= f.label :choice3, "選択肢3", class: "block text-sm text-slate-600" %>
+      <%= f.text_field :choice3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+    <div>
+      <%= f.label :choice4, "選択肢4", class: "block text-sm text-slate-600" %>
+      <%= f.text_field :choice4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <%= f.label :correct_choice, "正解（1..4）", class: "block text-sm text-slate-600" %>
+      <%= f.number_field :correct_choice, min: 1, max: 4, class: "w-32 rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+    <div>
+      <%= f.label :position, "位置", class: "block text-sm text-slate-600" %>
+      <%= f.number_field :position, min: 1, step: 1, class: "w-32 rounded ring-1 ring-slate-300 px-3 py-2" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :explanation, "解説", class: "block text-sm text-slate-600" %>
+    <%= f.text_area :explanation, rows: 4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.submit (@question.new_record? ? "作成する" : "更新する"),
+          class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "一覧に戻る", admin_quiz_questions_path,
+          class: "ml-2 px-4 py-2 rounded ring-1 ring-slate-300" %>
+  </div>
+<% end %>

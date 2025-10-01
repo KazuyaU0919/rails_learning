@@ -38,6 +38,9 @@
           <%= link_to "Users",     admin_users_path %>
           <%= link_to "PreCode管理",     admin_pre_codes_path %>
           <%= link_to "Tags",       admin_tags_path %>
+          <%= link_to "Quizzes",        admin_quizzes_path %>
+          <%= link_to "Quiz Sections",  admin_quiz_sections_path %>
+          <%= link_to "Quiz Questions", admin_quiz_questions_path %>
 
           <% if current_user&.admin? %>
             <%= button_to "Logout",

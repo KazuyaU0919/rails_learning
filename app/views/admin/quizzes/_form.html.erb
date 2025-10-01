@@ -1,0 +1,38 @@
+<!-- app/views/admin/quizzes/_form.html.erb -->
+<%= form_with model: @quiz,
+              url: (@quiz.new_record? ? admin_quizzes_path : admin_quiz_path(@quiz)),
+              method: (@quiz.new_record? ? :post : :patch),
+              local: true,
+              class: "space-y-4" do |f| %>
+  <% if @quiz.errors.any? %>
+    <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+      <p><strong><%= @quiz.errors.count %></strong> 件のエラーがあります：</p>
+      <ul class="list-disc pl-5 mt-1">
+        <% @quiz.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm text-slate-600" %>
+    <%= f.text_field :title, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.label :description, class: "block text-sm text-slate-600" %>
+    <%= f.text_area :description, rows: 3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.label :position, class: "block text-sm text-slate-600" %>
+    <%= f.number_field :position, min: 1, step: 1,
+          class: "w-40 rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.submit (@quiz.new_record? ? "作成する" : "更新する"),
+          class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "一覧に戻る", admin_quizzes_path,
+          class: "ml-2 px-4 py-2 rounded ring-1 ring-slate-300" %>
+  </div>
+<% end %>

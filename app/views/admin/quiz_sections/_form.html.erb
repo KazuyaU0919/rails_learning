@@ -1,0 +1,45 @@
+<%= form_with model: @section,
+              url: (@section.new_record? ? admin_quiz_sections_path : admin_quiz_section_path(@section)),
+              method: (@section.new_record? ? :post : :patch),
+              local: true,
+              class: "space-y-4" do |f| %>
+  <% if @section.errors.any? %>
+    <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+      <p><strong><%= @section.errors.count %></strong> 件のエラーがあります：</p>
+      <ul class="list-disc pl-5 mt-1">
+        <% @section.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :quiz_id, "Quiz", class: "block text-sm text-slate-600" %>
+    <%= f.collection_select :quiz_id, Quiz.order(:position), :id, :title,
+          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.label :heading, "見出し", class: "block text-sm text-slate-600" %>
+    <%= f.text_field :heading, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <label class="inline-flex items-center gap-2">
+      <%= f.check_box :is_free %>
+      <span>FREE（未ログインでも解ける）</span>
+    </label>
+  </div>
+
+  <div>
+    <%= f.label :position, "位置", class: "block text-sm text-slate-600" %>
+    <%= f.number_field :position, min: 1, step: 1,
+          class: "w-40 rounded ring-1 ring-slate-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= f.submit (@section.new_record? ? "作成する" : "更新する"),
+          class: "px-4 py-2 rounded bg-slate-900 text-white" %>
+    <%= link_to "一覧に戻る", admin_quiz_sections_path,
+          class: "ml-2 px-4 py-2 rounded ring-1 ring-slate-300" %>
+  </div>
+<% end %>
