@@ -20,10 +20,11 @@ class User < ApplicationRecord
     uniqueness: { case_sensitive: false },
     if: :email_uniqueness_required?
 
-  validates :password,
-    presence: true,
-    length: { minimum: 6, maximum: 19 },
-    if: :password_required?
+  # ---- パスワード検証を分離 ----
+  # ① 「必須」は従来どおり、パスワード方式のユーザーだけ
+  validates :password, presence: true, if: :password_required?
+  # ② 入力されたときは長さチェックを常に実行（外部認証ユーザーの初回設定も担保）
+  validates :password, length: { minimum: 6, maximum: 19 }, allow_nil: true
 
   scope :search, ->(q) {
     if q.present?
@@ -34,7 +35,6 @@ class User < ApplicationRecord
   scope :banned,  -> { where.not(banned_at: nil) }
 
   def banned? = banned_at.present?
-
   def toggle_editor! = update!(editor: !editor)
 
   def toggle_ban!(reason = nil)
@@ -109,7 +109,6 @@ class User < ApplicationRecord
   end
 
   def forget! = update_columns(remember_digest: nil, remember_created_at: nil, updated_at: Time.current)
-
   def revoke_all_remember! = forget!
 
   def remember_expired?(ttl: 30.days)
@@ -117,7 +116,6 @@ class User < ApplicationRecord
   end
 
   def bookmarked?(pre_code) = bookmarks.exists?(pre_code_id: pre_code.id)
-
   def bookmark_for(pre_code) = bookmarks.find_by(pre_code_id: pre_code.id)
 
   def can_edit?(record)
@@ -136,13 +134,17 @@ class User < ApplicationRecord
     :general
   end
 
-  # 外部連携が無い (= authentications が空) ユーザーはパスワード方式を使う
+  # ❶ 外部連携の有無（＝従来の「パスワード方式ユーザか？」）
   def uses_password? = authentications.blank?
+
+  # ❷ パスワードがDBに存在するか（今回新設。画面表示やログイン判定はこちらを使う）
+  def has_password? = password_digest.present?
 
   private
 
   def normalize_email = self.email = email.to_s.strip.downcase.presence
 
+  # 「必須」かどうかは “従来のパスワード方式ユーザ” のみ
   def password_required?
     uses_password? && (new_record? || password.present?)
   end

@@ -53,30 +53,58 @@
   </section>
 
   <!-- セクション2：パスワード -->
-  <section>
-    <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード変更</h2>
-    <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
-      <%= form_with model: current_user, url: profile_path, method: :patch, local: true do |f| %>
-        <div class="space-y-3">
-          <div>
-            <%= f.label :current_password, "現在のパスワード", class: "block text-sm mb-1" %>
-            <%= f.password_field :current_password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+  <% if current_user.has_password? %>
+    <!-- 既存：パスワード変更 -->
+    <section>
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード変更</h2>
+      <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
+        <%= form_with model: current_user, url: profile_path, method: :patch, local: true do |f| %>
+          <div class="space-y-3">
+            <div>
+              <%= f.label :current_password, "現在のパスワード", class: "block text-sm mb-1" %>
+              <%= f.password_field :current_password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            </div>
+            <div>
+              <%= f.label :password, "新しいパスワード", class: "block text-sm mb-1" %>
+              <%= f.password_field :password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            </div>
+            <div>
+              <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
+              <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            </div>
+            <div class="pt-2 flex justify-center">
+              <%= f.submit "パスワード更新", class: "btn-solid-red--wide" %>
+            </div>
           </div>
+        <% end %>
+      </div>
+    </section>
+  <% else %>
+    <!-- 新規：パスワード未設定ユーザー向け “パスワード新規作成” -->
+    <section>
+      <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード新規作成</h2>
+      <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4 space-y-3">
+        <p class="text-sm text-slate-500 text-center">
+          ユーザーは外部認証でアカウント作成をしたため、パスワードが設定されておりません。<br>
+          以下のフォームからパスワードを新規作成してください。
+        </p>
+
+        <%= form_with url: password_setup_profile_path, method: :post, local: true, class: "space-y-3" do %>
           <div>
-            <%= f.label :password, "新しいパスワード", class: "block text-sm mb-1" %>
-            <%= f.password_field :password, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
+            <label for="setup_email" class="block text-sm mb-1">メールアドレス</label>
+            <input type="email" id="setup_email" name="email"
+                   class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500"
+                   placeholder="登録メールアドレスを入力してください" />
+            <p class="text-xs text-slate-500 mt-1">※ 登録済みのメールアドレスと一致する必要があります。</p>
           </div>
-          <div>
-            <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
-            <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
-          </div>
+
           <div class="pt-2 flex justify-center">
-            <%= f.submit "パスワード更新", class: "btn-solid-red--wide" %>
+            <button type="submit" class="btn-solid-red--wide">パスワード新規作成</button>
           </div>
-        </div>
-      <% end %>
-    </div>
-  </section>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
 
   <!-- セクション3：外部連携 -->
   <section>

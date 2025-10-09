@@ -39,10 +39,24 @@
       <div class="text-sm text-slate-500">ユーザー名</div>
       <div class="col-span-2"><%= current_user.name %></div>
     </div>
+
     <div class="grid grid-cols-3 gap-4 px-4 py-3">
       <div class="text-sm text-slate-500">メール</div>
       <div class="col-span-2"><%= current_user.email %></div>
     </div>
+
+    <!-- ▼ パスワード有無（has_password? を使用） -->
+    <div class="grid grid-cols-3 gap-4 px-4 py-3">
+      <div class="text-sm text-slate-500">パスワード</div>
+      <div class="col-span-2">
+        <% if current_user.has_password? %>
+          <span>設定済み</span>
+        <% else %>
+          <span class="text-red-600 font-medium">パスワードが未設定です</span>
+        <% end %>
+      </div>
+    </div>
+
     <div class="grid grid-cols-3 gap-4 px-4 py-3">
       <div class="text-sm text-slate-500">外部連携</div>
       <div class="col-span-2 flex flex-wrap gap-2">
@@ -58,6 +72,7 @@
         <% end %>
       </div>
     </div>
+
     <div class="grid grid-cols-3 gap-4 px-4 py-3">
       <div class="text-sm text-slate-500">登録日</div>
       <div class="col-span-2"><%= l current_user.created_at, format: :ymd_hm %></div>
@@ -69,7 +84,6 @@
   </div>
 
   <div class="flex items-center justify-end">
-    <%= link_to "編集", edit_profile_path,
-          class: "btn-change is-edit" %>
+    <%= link_to "編集", edit_profile_path, class: "btn-change is-edit" %>
   </div>
 </div>
