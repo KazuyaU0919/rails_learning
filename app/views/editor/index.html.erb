@@ -20,7 +20,7 @@
     data-reveal-close-label-value="🔰 説明を閉じる">
     <div class="flex justify-end">
       <button type="button"
-              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              class="btn-toggle"
               data-reveal-target="button"
               data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
@@ -112,7 +112,7 @@ Ruby学習の効率化を図りましょう！！！
     <div data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
         <h3 class="text-sm font-semibold text-slate-500">ヒント</h3>
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
       <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
@@ -167,14 +167,14 @@ Ruby学習の効率化を図りましょう！！！
     <div class="flex gap-2 pt-2 md:pt-0 md:ml-auto">
       <button type="button"
               data-action="editor#toggleTheme"
-              class="px-3 py-2 rounded ring-1 ring-slate-300">
+              class="btn-bg-white">
         テーマ切替
       </button>
 
       <button type="button"
               data-action="editor#run"
               data-editor-target="runButton"
-              class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
+              class="btn-solid-red">
         実行 ▶
       </button>
     </div>
@@ -190,7 +190,7 @@ Ruby学習の効率化を図りましょう！！！
     <div data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
         <h3 class="text-sm font-semibold text-slate-500">解答</h3>
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
       <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
@@ -200,7 +200,7 @@ Ruby学習の効率化を図りましょう！！！
     <div data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
         <h3 class="text-sm font-semibold text-slate-500">解答コード</h3>
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
 

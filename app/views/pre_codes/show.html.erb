@@ -54,7 +54,7 @@
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
         <h2 class="text-sm font-semibold tracking-wider text-slate-500">ヒント</h2>
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
 
@@ -95,7 +95,7 @@
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
         <h2 class="text-sm font-semibold tracking-wider text-slate-500">解答</h2>
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
 
@@ -123,25 +123,19 @@
 
   <!-- === 利用ボタン（中央固定・カウントなし） === -->
   <section class="-mt-2">
-    <div class="grid grid-cols-3 items-center">
-      <div></div>
-      <div class="justify-self-center">
-        <%= link_to "このデータを利用する",
-                    editor_path(pre_code_id: @pre_code.id),
-                    class: "inline-flex justify-center w-64 md:w-80 lg:w-96
-                            bg-[#CC0000] text-white px-4 py-2 rounded
-                            hover:bg-[#BB0000] active:bg-[#AA0000]" %>
-      </div>
-      <div></div>
+    <div class="items-center flex justify-center">
+      <%= link_to "このデータを利用する",
+                  editor_path(pre_code_id: @pre_code.id),
+                  class: "btn-solid-red--wide" %>
     </div>
   </section>
 
   <!-- 操作（右下寄せ） -->
   <div class="-mt-2 flex justify-end space-x-3">
     <%= link_to "編集", edit_pre_code_path(@pre_code),
-          class: "px-5 py-2 rounded-md bg-[#00AA00] text-white hover:bg-[#009900] active:bg-[#008800]" %>
+          class: "btn-change is-edit" %>
     <%= link_to "削除", @pre_code,
           data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
-          class: "px-5 py-2 rounded-md bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+          class: "btn-change is-delete" %>
   </div>
 </div>

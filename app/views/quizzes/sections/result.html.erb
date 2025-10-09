@@ -4,65 +4,67 @@
 <% breadcrumb :quiz_section_result, @quiz, @section %>
 <%= render "shared/breadcrumbs" %>
 
-<% content_for :title, "#{@section.heading} - 結果" %>
+<div class="mx-auto w-full max-w-3xl pt-2 px-4 md:px-6 lg:px-8">
+  <% content_for :title, "#{@section.heading} - 結果" %>
 
-<h1 class="text-2xl font-semibold mb-2"><%= @section.heading %> の結果</h1>
-<p class="text-xl mb-4">
-  <span class="font-bold"><%= @correct %></span> / <%= @total %> 正解
-</p>
+  <h1 class="text-2xl font-semibold mb-2"><%= @section.heading %> の結果</h1>
+  <p class="text-2xl text-center text-red-500 pt-3 mb-4">
+    <span class="font-bold"><%= @correct %> / <%= @total %>問 正解</span>
+  </p>
 
-<%# ===== 正答率に応じた 画像 + メッセージ ===== %>
-<%
-  percent = @total.to_i.positive? ? (@correct.to_f / @total) : 0.0
+  <%# ===== 正答率に応じた 画像 + メッセージ ===== %>
+  <%
+    percent = @total.to_i.positive? ? (@correct.to_f / @total) : 0.0
 
-  if @total.to_i.positive? && @correct == @total
-    msg = "おめでとう！！全問正解だよ！！"
-    img = "全問正解.png"
-  elsif percent >= 0.8
-    msg = "おしい！あと少しだ！！Fight！！！"
-    img = "８割以上.png"
-  elsif percent >= 0.6
-    msg = "まずまずと言ったところ… もう少しテキストの内容を理解しよう！！"
-    img = "６割以上.png"
-  elsif percent >= 0.3
-    msg = "不正解が多いね… もう一度テキストを読み直そう！"
-    img = "３割以上.png"
-  else
-    msg = "不正解がかなり多いね… もう一度テキストを読み直そう！"
-    img = "３割未満.png"
-  end
-%>
+    if @total.to_i.positive? && @correct == @total
+      msg = "おめでとう！！全問正解だよ！！"
+      img = "全問正解.png"
+    elsif percent >= 0.8
+      msg = "おしい！あと少しだ！！Fight！！！"
+      img = "８割以上.png"
+    elsif percent >= 0.6
+      msg = "まずまずと言ったところ… もう少しテキストの内容を理解しよう！！"
+      img = "６割以上.png"
+    elsif percent >= 0.3
+      msg = "不正解が多いね… もう一度テキストを読み直そう！"
+      img = "３割以上.png"
+    else
+      msg = "不正解がかなり多いね… もう一度テキストを読み直そう！"
+      img = "３割未満.png"
+    end
+  %>
 
-<div class="mb-6">
-  <div class="flex flex-col items-center gap-4">
-    <p class="text-lg font-semibold text-slate-800 text-center"><%= msg %></p>
-    <%= image_tag img, alt: msg, class: "max-w-full rounded shadow-sm w-full md:w-3/4" %>
+  <div class="mb-4">
+    <div class="flex flex-col items-center gap-2">
+      <p class="text-lg font-semibold text-slate-800 text-center"><%= msg %></p>
+      <%= image_tag img, alt: msg, class: "max-w-full rounded shadow-sm w-full md:w-3/4" %>
+    </div>
   </div>
-</div>
 
-<div class="flex justify-center mt-6"
-     data-controller="share"
-     data-share-url-value="<%= quizzes_url %>">
-  <button type="button"
-          data-action="share#openTwitter"
-          data-text="<%= "Rails Learning クイズで #{@correct}/#{@total} を獲得！ #RailsLearning" %>"
-          class="btn-dark">
-    Xでシェア
-  </button>
-</div>
-
-<div class="flex gap-3 mt-4">
-  <%= link_to "もう一度解く", quiz_section_path(@quiz, @section), class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
-  <%= link_to "セクション一覧へ戻る", quiz_path(@quiz), class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
-</div>
-
-<% if @section.book_section.present? %>
-  <div class="mt-8 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
-    <p class="text-lg font-semibold mb-2">もう一度、テキストを読み直す？</p>
-    <p class="text-slate-600 mb-4">このクイズで出題された内容に対応するテキストへ戻れます。</p>
-
-    <%= link_to "Rails Booksへ",
-          book_section_path(@section.book_section.book, @section.book_section),
-          class: "inline-flex items-center rounded-md bg-slate-900 px-5 py-2 text-white hover:bg-black" %>
+  <div class="flex justify-center mt-2"
+      data-controller="share"
+      data-share-url-value="<%= quizzes_url %>">
+    <button type="button"
+            data-action="share#openTwitter"
+            data-text="<%= "Rails Learning クイズで #{@correct}/#{@total} を獲得！ #RailsLearning" %>"
+            class="btn-dark">
+      Xでシェア
+    </button>
   </div>
-<% end %>
+
+  <div class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <%= link_to "＜ セクション一覧へ戻る", quiz_path(@quiz), class: "btn-pill is-mint" %>
+    <%= link_to "もう一度解く ＞", quiz_section_path(@quiz, @section), class: "btn-pill is-mint" %>
+  </div>
+
+  <% if @section.book_section.present? %>
+    <div class="mt-3 p-5 rounded-xl ring-1 ring-slate-200 bg-white text-center">
+      <p class="text-lg font-semibold mb-2">もう一度、テキストを読み直す？</p>
+      <p class="text-slate-600 mb-4">このクイズで出題された内容に対応するテキストへ戻れます。</p>
+
+      <%= link_to "Rails Booksへ",
+            book_section_path(@section.book_section.book, @section.book_section),
+            class: "btn-pill is-red" %>
+    </div>
+  <% end %>
+</div>

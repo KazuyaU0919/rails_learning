@@ -15,7 +15,7 @@
     data-reveal-close-label-value="🔰 説明を閉じる">
     <div class="flex justify-end">
       <button type="button"
-              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              class="btn-toggle"
               data-reveal-target="button"
               data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
@@ -44,8 +44,8 @@
             <%= f.label :name, "表示名", class: "block text-sm mb-1" %>
             <%= f.text_field :name, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
           </div>
-          <div class="pt-2">
-            <%= f.submit "プロフィール更新", class: "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800" %>
+          <div class="pt-2 flex justify-center">
+            <%= f.submit "プロフィール更新", class: "btn-solid-red--wide" %>
           </div>
         </div>
       <% end %>
@@ -70,8 +70,8 @@
             <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
             <%= f.password_field :password_confirmation, class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2" %>
           </div>
-          <div class="pt-2">
-            <%= f.submit "パスワード更新", class: "rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800" %>
+          <div class="pt-2 flex justify-center">
+            <%= f.submit "パスワード更新", class: "btn-solid-red--wide" %>
           </div>
         </div>
       <% end %>

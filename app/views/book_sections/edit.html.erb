@@ -15,8 +15,7 @@
     <div id="quill-editor" class="bg-white rounded min-h-[18rem] mb-6 ql-container ql-snow"></div>
     <%= f.hidden_field :content, id: "content_field", autocomplete: "off" %>
   </div>
-  <div class="mt-4">
-    <%= f.submit "更新する", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
-    <%= link_to "戻る", book_section_path(@book, @section), class: "ml-2 underline" %>
+  <div class="mt-6 flex justify-center">
+    <%= f.submit "更新する", class: "btn-solid-red--wide" %>
   </div>
 <% end %>

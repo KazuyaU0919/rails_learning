@@ -71,3 +71,181 @@
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
 }
+
+/* ===========================
+   Reveal系トグルボタンの共通クラス
+   （「🔰 初めての方へ」「表示/非表示」など）
+   =========================== */
+@layer components {
+  .btn-toggle{
+    @apply px-3 py-1 rounded text-sm ring-1 ring-slate-300 transition;
+  }
+  .btn-toggle:hover{
+    @apply bg-black text-white ring-black;
+  }
+  .btn-toggle:active{
+    @apply bg-slate-900;
+  }
+  .btn-toggle:focus-visible{
+    @apply outline-none ring-2 ring-slate-400;
+  }
+}
+
+/* 既存テンプレが残っていても hover だけは効かせたい場合の保険（任意） */
+button[data-reveal-target="button"] {
+  @apply transition;
+}
+button[data-reveal-target="button"]:hover {
+  @apply bg-black text-white ring-black;
+}
+button[data-reveal-target="button"]:active {
+  @apply bg-slate-900;
+}
+button[data-reveal-target="button"]:focus-visible {
+  @apply outline-none ring-2 ring-slate-400;
+}
+
+/* ===========================
+   変更系ボタン（アウトライン → ホバーで塗りつぶし）
+   - 共通: .btn-change
+   - 色バリアント: .is-edit（緑）, .is-delete（赤）
+   - 仕組み: CSSカスタムプロパティ --btnc / --btnc-active を色に使用
+   =========================== */
+@layer components {
+  .btn-change{
+    /* ベース（形・余白・タイポ・アウトライン） */
+    @apply inline-flex items-center justify-center
+           rounded px-3 py-1 text-sm font-medium
+           transition bg-white ring-1;
+    /* 色（テキスト/ボーダー=同色） */
+    color: var(--btnc);
+    --tw-ring-color: var(--btnc);
+  }
+  .btn-change:hover{
+    /* 反転（塗りつぶし） */
+    @apply text-white;
+    background-color: var(--btnc);
+  }
+  .btn-change:active{
+    /* ほんの少しだけ暗く */
+    background-color: var(--btnc-active, var(--btnc));
+  }
+  .btn-change:focus-visible{
+    @apply outline-none ring-2;
+  }
+
+  /* === バリアント === */
+  .btn-change.is-edit{
+    /* 画像指定の緑 */
+    --btnc: #0E9970;
+    --btnc-active: #0C8B66;
+  }
+  .btn-change.is-delete{
+    /* 既存UIの赤系に合わせた階調 */
+    --btnc: #CC0000;
+    --btnc-active: #BB0000;
+  }
+}
+
+/* ===========================
+   クイズ機能の選択肢ボタン
+   =========================== */
+@layer components {
+  /* 選択肢ボタン（プレーン→Hoverでわずかに強調） */
+  .btn-choice{
+    @apply rounded ring-1 ring-slate-300 bg-white
+           px-4 py-3 text-sm transition
+           hover:bg-slate-50 hover:ring-slate-400
+           active:bg-slate-100
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400;
+  }
+}
+
+/* ===========================
+   Pill型アウトラインボタン（Next / 結果を見る）共通
+   ・見た目や余白、丸み、hover時の反転は共通
+   ・色だけを --btnc で差し替え
+   ・色の指定は .is-mint / .is-orange で付与（必要に応じて色クラスを追加）
+   =========================== */
+@layer components {
+  .btn-pill{
+    /* 形・余白・タイポなどの共通部分 */
+    @apply inline-flex items-center gap-2 rounded-full px-6 py-2
+           text-sm font-semibold bg-white transition-colors
+           focus:outline-none;
+    /* 色はカスタムプロパティで一元化（デフォルトは黒） */
+    border: 1px solid var(--btnc, #000);
+    color: var(--btnc, #000);
+  }
+  .btn-pill:hover{
+    background: var(--btnc, #000);
+    color: #fff;
+  }
+
+  /* フォーカス見やすさ（色に合わせた外枠）。color-mixが未対応でも見えるように個別指定も下で用意 */
+  .btn-pill:focus-visible{
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--btnc) 50%, transparent);
+  }
+
+  /* === 色指定（必要に応じて増やせます） === */
+  .btn-pill.is-mint   { --btnc: #2ED6B5; } /* ミント系 */
+  .btn-pill.is-orange { --btnc: #FF8A5B; } /* 鮮やかなオレンジ */
+  .btn-pill.is-red   { --btnc: #CC0000; } /* ヘッダーと同じ赤（紅）*/
+
+  /* color-mix 非対応ブラウザ向けのフォールバック（半透明の外枠） */
+  .btn-pill.is-mint:focus-visible   { box-shadow: 0 0 0 2px rgba(46, 214, 181, .5); }
+  .btn-pill.is-orange:focus-visible { box-shadow: 0 0 0 2px rgba(255, 138,  91, .5); }
+  .btn-pill:active   { filter: brightness(.95); }
+}
+
+/* ===========================
+   白背景 黒文字ボタン（大）（共通）
+   - 既定: 白背景 / 黒文字 / 灰色リング
+   - hover: 黒背景 / 白文字 / 黒リング
+   - 用途: 「タグを選ぶ」「テーマ切替」など
+   =========================== */
+@layer components {
+  .btn-bg-white{
+    @apply inline-flex items-center justify-center
+           px-3 py-2 rounded text-sm
+           bg-white text-slate-900
+           ring-1 ring-slate-300
+           transition-colors;
+  }
+  .btn-bg-white:hover{
+    @apply bg-black text-white ring-black;
+  }
+  .btn-bg-white:active{
+    @apply bg-slate-900;
+  }
+  .btn-bg-white:focus-visible{
+    @apply outline-none ring-2 ring-slate-600;
+  }
+}
+
+/* ===========================
+   赤ベタボタン（共通）
+   - 既定: 赤背景 / 白文字
+   - hover: 少し暗い赤
+   - active: さらに暗い赤
+   - 用途: 検索/実行/リンク 等の通常幅
+   =========================== */
+@layer components {
+  .btn-solid-red{
+    @apply inline-flex items-center justify-center
+           rounded px-3 py-2 text-sm font-medium
+           bg-[#CC0000] text-white
+           transition hover:bg-[#BB0000] active:bg-[#AA0000]
+           focus:outline-none focus:ring-2 focus:ring-[#CC0000];
+  }
+
+  /* 横長版（固定幅） */
+  .btn-solid-red--wide{
+    @apply inline-flex items-center justify-center
+           w-64 rounded px-4 py-2 text-base font-medium
+           bg-[#CC0000] text-white
+           transition hover:bg-[#BB0000] active:bg-[#AA0000]
+           focus:outline-none focus:ring-2 focus:ring-[#CC0000];
+  }
+}
+

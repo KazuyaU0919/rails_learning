@@ -12,12 +12,12 @@
     <input type="hidden" name="tags" value="<%= params[:tags].to_s %>"
            data-tag-picker-target="hiddenInput">
 
-    <button type="button" class="px-3 py-2 rounded ring-1 ring-slate-300"
+    <button type="button" class="btn-bg-white"
             data-action="tag-picker#open">
       タグを選ぶ
     </button>
 
-    <button type="submit" class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
+    <button type="submit" class="btn-solid-red">
       検索
     </button>
   <% end %>

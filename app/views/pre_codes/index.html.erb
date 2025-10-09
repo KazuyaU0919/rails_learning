@@ -19,7 +19,7 @@
     data-reveal-close-label-value="🔰 説明を閉じる">
     <div class="flex justify-end">
       <button type="button"
-              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              class="btn-toggle"
               data-reveal-target="button"
               data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
@@ -150,7 +150,7 @@ Rubyの標準メソッドを効率的に学習しましょう！
         </div>
 
         <%= f.submit "検索",
-              class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+              class: "btn-solid-red" %>
       <% end %>
     </div>
 
@@ -160,10 +160,10 @@ Rubyの標準メソッドを効率的に学習しましょう！
 
     <div class="flex gap-2 mt-2 justify-end">
       <%= link_to "使い方", help_path,
-            class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+            class: "btn-solid-red" %>
 
       <%= link_to "PreCode 新規作成", new_pre_code_path,
-            class: "px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+            class: "btn-solid-red" %>
     </div>
   </div>
 </div>

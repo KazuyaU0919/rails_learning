@@ -9,9 +9,9 @@
   </nav>
 
   <% if can_edit?(@section) %>
-    <div class="mb-4">
+    <div class="flex justify-end mb-4">
       <%= link_to "編集", edit_book_section_path(@book, @section),
-            class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
+            class: "btn-change is-edit" %>
     </div>
   <% end %>
 
@@ -25,37 +25,36 @@
     <%= render_section_content(@section) %>
   </article>
 
-  <!-- ===== アウトプットシェア ===== -->
-  <div class="mt-12 text-center space-y-3"
+  <!-- ===== シェア & クイズ遷移ボタン ===== -->
+  <h1 class="mt-12 text-2xl font-semibold">次の章に行く前に...</h1>
+  <div class="text-center space-y-3"
        data-controller="share"
        data-share-url-value="<%= books_url %>">
+    <% if @section.quiz_section.present? %>
+      <div class="mt-4 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
+        <p class="text-xl font-semibold mt-2 mb-3">この章で学んだ知識を覚えよう！</p>
 
-    <h1 class="text-lg font-semibold">次の章に行く前に...</h1>
-    <p class="text-slate-700 font-medium">
-      この章で学んだことを、Xでアウトプットしてみましょう ✨
-    </p>
+        <p class="text-slate-600 mb-4">
+          この章で学んだことを、Xでアウトプットしましょう ✨
+        </p>
 
-    <button type="button"
-            data-action="share#openTwitter"
-            data-text="<%= "#{@section.heading} を学習しました！ #RailsLearning" %>"
-            class="btn-dark">
-      Xでシェア
-    </button>
+        <button type="button"
+                data-action="share#openTwitter"
+                data-text="<%= "#{@section.heading} を学習しました！ #RailsLearning" %>"
+                class="btn-dark">
+          Xでシェア
+        </button>
+
+        <p class="text-slate-600 mt-8 mb-4">対応するクイズに挑戦して理解を定着させましょう💡</p>
+
+        <%= link_to "クイズを解く",
+              quiz_section_path(@section.quiz_section.quiz, @section.quiz_section),
+              class: "btn-pill is-red" %>
+      </div>
+    <% end %>
   </div>
 
-  <!-- ===== 学んだらクイズで定着！ ===== -->
-  <% if @section.quiz_section.present? %>
-    <div class="mt-10 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
-      <p class="text-lg font-semibold mb-2">この章で学んだ知識を覚えよう！</p>
-      <p class="text-slate-600 mb-4">対応するクイズに挑戦して理解を定着させましょう。</p>
-
-      <%= link_to "クイズを解く",
-            quiz_section_path(@section.quiz_section.quiz, @section.quiz_section),
-            class: "inline-flex items-center rounded-md bg-[#CC0000] px-5 py-2 text-white hover:bg-[#BB0000]" %>
-    </div>
-  <% end %>
-
-  <div class="flex items-center justify-between mt-10 pt-6 border-t">
+  <div class="flex items-center justify-between mt-6 pt-6 border-t">
     <div>
       <% if @prev %>
         <%= link_to "◀ 前へ：#{@prev.heading}",
@@ -73,9 +72,9 @@
   </div>
 
   <% if can_edit?(@section) %>
-    <div class="mb-4">
+    <div class="flex justify-end my-4">
       <%= link_to "編集", edit_book_section_path(@book, @section),
-            class: "inline-block px-3 py-1 rounded bg-slate-900 text-white text-sm" %>
+            class: "btn-change is-edit" %>
     </div>
   <% end %>
 </div>

@@ -12,7 +12,7 @@
     <%= f.hidden_field :quiz_mode, value: "false", data: { "precode-mode-target": "modeField" } %>
 
     <div class="flex items-center justify-end">
-      <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+      <button type="button" class="btn-toggle"
               data-precode-mode-target="toggle" data-action="precode-mode#switch">
         問題モードにする
       </button>
@@ -40,7 +40,7 @@
              data-tag-picker-target="hiddenInput">
 
       <div class="flex gap-2 items-center">
-        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+        <button type="button" class="btn-toggle"
                 data-action="tag-picker#open">既存のタグを選ぶ</button>
 
         <input type="text" placeholder="タグの新規作成"
@@ -133,6 +133,6 @@
 
   <div class="flex justify-center">
     <%= f.submit (pre_code.new_record? ? "登録" : "更新"),
-          class: "inline-flex justify-center w-64 bg-[#CC0000] text-white px-4 py-2 rounded hover:bg-[#BB0000] active:bg-[#AA0000]" %>
+          class: "btn-solid-red--wide" %>
   </div>
 <% end %>
