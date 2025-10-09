@@ -45,6 +45,15 @@ export default class extends Controller {
 
   disconnect () { this.view?.destroy() }
 
+  // === public: 外部からコードを差し替える用 ===
+  set (value) {
+    const text = value ?? ""
+    this.fieldTarget.value = text
+    if (this.view) {
+      this.view.dispatch({ changes: { from: 0, to: this.view.state.doc.length, insert: text } })
+    }
+  }
+
   // ---- private ----
   #applyContainerTheme () {
     const el = this.mountTarget

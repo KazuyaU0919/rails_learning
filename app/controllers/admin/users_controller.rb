@@ -8,12 +8,21 @@ class Admin::UsersController < Admin::BaseController
     @q = params[:q]
     @filter = params[:filter]
 
-    @users = User.search(@q)
-                 .yield_self { |u| @filter == "editors" ? u.editors : u }
-                 .yield_self { |u| @filter == "banned"  ? u.banned  : u }
-                 .includes(:editor_permissions)
-                 .order(created_at: :desc)
-                 .page(params[:page]).per(50)
+    users = User.all
+    if @q.present?
+      if @q.to_s =~ /\A\d+\z/
+        users = users.where(id: @q.to_i)
+      else
+        users = users.search(@q)
+      end
+    end
+
+    @users = users
+               .yield_self { |u| @filter == "editors" ? u.editors : u }
+               .yield_self { |u| @filter == "banned"  ? u.banned  : u }
+               .includes(:editor_permissions)
+               .order(created_at: :desc)
+               .page(params[:page]).per(50)
   end
 
   def toggle_editor

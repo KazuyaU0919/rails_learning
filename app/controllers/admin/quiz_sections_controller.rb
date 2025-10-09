@@ -35,6 +35,6 @@ class Admin::QuizSectionsController < Admin::BaseController
   private
 
   def section_params
-    params.require(:quiz_section).permit(:quiz_id, :heading, :is_free, :position)
+    params.require(:quiz_section).permit(:quiz_id, :heading, :is_free, :position, :book_section_id)
   end
 end

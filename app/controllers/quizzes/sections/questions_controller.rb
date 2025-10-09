@@ -18,17 +18,28 @@ class Quizzes::Sections::QuestionsController < ApplicationController
   def update
     return unless require_edit_permission!(@question)
 
-    attrs = question_params.slice(*@question.editable_attributes).merge(lock_version: question_params[:lock_version])
+    # 送られてきた編集可能属性だけを採用し、lock_version を付与
+    attrs = question_params.slice(*@question.editable_attributes)
+    attrs[:lock_version] = question_params[:lock_version]
+
+    # 来ているキーだけ sanitize する
+    if attrs.key?(:question)
+      attrs[:question] = RichTextSanitizer.call(attrs[:question])
+    end
+    if attrs.key?(:explanation)
+      attrs[:explanation] = RichTextSanitizer.call(attrs[:explanation])
+    end
+
     @question.assign_attributes(attrs)
 
     begin
       if @question.save
-        redirect_to quiz_section_question_path(@quiz, @section, @question),
-                    notice: "問題を更新しました"
+        redirect_to quiz_section_question_path(@quiz, @section, @question), notice: "問題を更新しました"
       else
         render :edit, status: :unprocessable_entity
       end
     rescue ActiveRecord::StaleObjectError
+      # 楽観ロック：409 を返す
       flash.now[:alert] = "他の編集と競合しました。最新の内容を確認して再度保存してください。"
       render :edit, status: :conflict
     end
@@ -41,11 +52,7 @@ class Quizzes::Sections::QuestionsController < ApplicationController
     correct   = (selected == @question.correct_choice)
 
     scores[@question.id.to_s] = correct
-
-    # ★ PRG: GET にリダイレクトして解説を表示
-    redirect_to answer_page_quiz_section_question_path(@quiz, @section, @question,
-                   choice: selected),
-                status: :see_other
+    redirect_to answer_page_quiz_section_question_path(@quiz, @section, @question, choice: selected), status: :see_other
   end
 
   # GET /.../questions/:id/answer_page
@@ -68,7 +75,8 @@ class Quizzes::Sections::QuestionsController < ApplicationController
 
   def question_params
     params.require(:quiz_question).permit(
-      :question, :choice1, :choice2, :choice3, :choice4, :correct_choice, :explanation, :lock_version
+      :question, :choice1, :choice2, :choice3, :choice4,
+      :correct_choice, :explanation, :lock_version
     )
   end
 

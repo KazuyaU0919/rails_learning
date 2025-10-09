@@ -5,27 +5,46 @@ class Admin::PreCodesController < Admin::BaseController
 
   # GET /admin/pre_codes
   def index
-    rel  = PreCode.includes(:user) # タグも読むなら :tags を preload へ
+    # JOIN させずに別クエリで読み込む（GROUP BY と相性が良い）
+    rel  = PreCode.preload(:user, :tags)
     norm = ->(s) { s.to_s.unicode_normalize(:nfkc).downcase }
 
     if params[:title].present?
       q = "%#{norm.(params[:title])}%"
       rel = rel.where("LOWER(pre_codes.title) LIKE ?", q)
     end
+
     if params[:description].present?
       q = "%#{norm.(params[:description])}%"
       rel = rel.where("LOWER(pre_codes.description) LIKE ?", q)
     end
+
     if params[:user].present?
       q = "%#{norm.(params[:user])}%"
+      # users 条件のときだけ JOIN。preload は維持されるのでN+1は出ない
       rel = rel.joins(:user).where("LOWER(users.name) LIKE ? OR LOWER(users.email) LIKE ?", q, q)
     end
 
-    # タグ AND（タグ機能がある場合）
-    if PreCode.reflect_on_association(:tags) && (tag_ids = Array(params[:tag_ids]).reject(&:blank?)).present?
-      rel = rel.joins(:tags).where(tags: { id: tag_ids })
+    # === タグ AND（一般側と同じ “tags（名前）” パラメータ） ===
+    if params[:tags].present? && PreCode.reflect_on_association(:tags)
+      tag_keys  = parse_tags(params[:tags])
+      norm_keys = tag_keys.map { |n| normalize_tag(n) }.uniq
+
+      if norm_keys.any?
+        tag_ids = Tag.where(name_norm: norm_keys).pluck(:id)
+
+        rel =
+          if tag_ids.any?
+            # GROUP/HAVING を使う枝では SELECT を pre_codes.* に固定して安全にする
+            rel.joins(:tags)
+               .where(tags: { id: tag_ids })
                .group("pre_codes.id")
                .having("COUNT(DISTINCT tags.id) = ?", tag_ids.size)
+               .select("pre_codes.*")
+          else
+            rel.none
+          end
+      end
     end
 
     rel =
@@ -43,13 +62,11 @@ class Admin::PreCodesController < Admin::BaseController
   def edit; end
 
   def update
-    # 一般側と同様：quiz_mode の有無で answer を必須にするため、更新前にセット
     @pre_code.quiz_mode = params.dig(:pre_code, :quiz_mode)
 
     attrs = pre_code_params_with_sanitized_text
 
     if @pre_code.update(attrs)
-      # タグ（文字列: "ruby, array"）を置換
       replace_tags(@pre_code, params[:tag_names])
       redirect_to [ :admin, @pre_code ], notice: "更新しました"
     else
@@ -100,7 +117,6 @@ class Admin::PreCodesController < Admin::BaseController
   end
 
   # ===== タグ関連（一般側と同等の「文字列」入力を受ける） =====
-  # "ruby, array" / ["ruby", "array"] を配列化して正規化なしで登録（必要なら Tag.normalize を利用）
   def replace_tags(pre_code, raw_names)
     return if raw_names.nil?
 
@@ -112,5 +128,18 @@ class Admin::PreCodesController < Admin::BaseController
 
     new_tags = names.map { |n| Tag.find_or_create_by!(name: n) }
     pre_code.tags = new_tags
+  end
+
+  # === 一覧検索用の補助（一般側と同等） ===
+  def parse_tags(val)
+    Array(val).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
+  end
+
+  def normalize_tag(name)
+    if Tag.respond_to?(:normalize)
+      Tag.normalize(name)
+    else
+      name.to_s.unicode_normalize(:nfkc).strip.downcase.gsub(/\s+/, " ")
+    end
   end
 end

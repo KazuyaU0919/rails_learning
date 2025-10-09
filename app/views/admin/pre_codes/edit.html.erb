@@ -1,3 +1,7 @@
+<% breadcrumb :admin_pre_codes %>
+<% breadcrumb :admin_pre_code_edit, @pre_code %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "PreCode編集" %>
 <h1 class="text-xl font-semibold mb-4">PreCode編集</h1>
 <%= render "pre_codes/form", pre_code: @pre_code, namespace: :admin %>

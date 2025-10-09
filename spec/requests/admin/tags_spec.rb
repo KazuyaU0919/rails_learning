@@ -17,4 +17,11 @@ RSpec.describe "Admin::Tags", type: :request do
     t = create(:tag, name: "unused")
     expect { delete admin_tag_path(t) }.to change(Tag, :count).by(-1)
   end
+
+  it "index に未使用タグも表示される" do
+    sign_in admin
+    create(:tag, name: "unused") # taggings_count: 0
+    get admin_tags_path
+    expect(response.body).to include("unused")
+  end
 end

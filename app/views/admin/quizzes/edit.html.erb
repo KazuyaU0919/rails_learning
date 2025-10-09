@@ -1,3 +1,7 @@
 <!-- app/views/admin/quizzes/edit.html.erb -->
+<% breadcrumb :admin_quizzes %>
+<% breadcrumb :admin_quiz_edit, @quiz %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-xl font-bold mb-4">Quiz を編集</h1>
 <%= render "form" %>

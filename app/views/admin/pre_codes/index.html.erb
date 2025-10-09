@@ -1,3 +1,6 @@
+<% breadcrumb :admin_pre_codes %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "PreCode管理" %>
 
 <h1 class="text-xl font-semibold text-slate-900 mb-4">PreCode 管理</h1>
@@ -17,33 +20,71 @@
           placeholder: "ユーザー名／メール",
           class: "min-w-[12rem] w-64 rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
 
-    <%# --- タグ（複数選択） --- %>
-    <% if defined?(Tag) && PreCode.reflect_on_association(:tags) %>
-      <div class="flex items-end gap-2">
-        <label class="text-xs text-slate-500 mb-2">タグ</label>
-        <%= select_tag :tag_ids,
-              options_from_collection_for_select(
-                Tag.order(:name), :id, :name, Array(params[:tag_ids]).map(&:to_i)
-              ),
-              multiple: true, size: 1,
-              class: "min-w-[14rem] md:w-80 rounded-md border ring-1 ring-slate-300 px-2 py-2 text-sm" %>
+    <%# --- タグ（一般側と同じ“タグピッカー”） --- %>
+    <div class="ml-auto flex items-center gap-2"
+         data-controller="tag-picker"
+         data-tag-picker-fetch-url-value="/tags/popular.json"
+         data-tag-picker-mode-value="filter">
+
+      <label class="text-xs text-slate-500 mb-2">タグ</label>
+
+      <!-- 選択済み（見た目だけ。送信は hidden で） -->
+      <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
+
+      <!-- hidden（タグ名のカンマ区切り）※同じ form 内 -->
+      <input type="hidden" name="tags" value="<%= params[:tags].to_s %>"
+             data-tag-picker-target="hiddenInput">
+
+      <button type="button" class="px-3 py-2 rounded ring-1 ring-slate-300"
+              data-action="tag-picker#open">
+        タグを選ぶ
+      </button>
+
+      <%= select_tag :sort,
+            options_for_select(
+              [["作成日(新しい順)", ""],
+               ["いいね数", "likes"],
+               ["利用数", "used"],
+               ["タイトル昇順", "title"]],
+              params[:sort]
+            ),
+            class: "rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
+
+      <%= submit_tag "検索",
+            class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+
+      <!-- モーダル（一般側と同じUI：×はHeroicon、閉じるは中央・ホバー赤） -->
+      <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
+           data-tag-picker-target="container">
+        <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
+          <!-- 右上 × -->
+          <button type="button"
+                  class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+                  data-action="tag-picker#close" aria-label="閉じる">
+            <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
+          </button>
+
+          <div class="mb-3">
+            <h3 class="font-semibold">タグを選択（検索）</h3>
+          </div>
+
+          <input type="text" placeholder="タグ名で絞り込み"
+                 class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
+                 data-tag-picker-target="query"
+                 data-action="input->tag-picker#queryInput">
+
+          <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
+
+          <div class="mt-4 flex justify-center">
+            <button type="button"
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
+                    data-action="tag-picker#close">
+              閉じる
+            </button>
+          </div>
+        </div>
       </div>
-    <% end %>
-
-    <div class="flex-1"></div>
-
-    <%= select_tag :sort,
-          options_for_select(
-            [["作成日(新しい順)", ""],
-             ["いいね数", "likes"],
-             ["利用数", "used"],
-             ["タイトル昇順", "title"]],
-            params[:sort]
-          ),
-          class: "rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
-
-    <%= submit_tag "検索",
-          class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
   </div>
 <% end %>
 
@@ -51,7 +92,7 @@
   <table class="min-w-full divide-y divide-slate-200">
     <thead class="bg-slate-50 text-xs text-slate-600">
       <tr>
-        <th class="px-3 py-2 text-left"><input type="checkbox" disabled></th>
+        <%# チェックボックス列は不要なので削除 %>
         <th class="px-3 py-2 text-left">タイトル</th>
         <th class="px-3 py-2 text-left">説明(100字)</th>
         <% if PreCode.reflect_on_association(:tags) %><th class="px-3 py-2 text-left">タグ</th><% end %>
@@ -65,7 +106,7 @@
     <tbody class="divide-y divide-slate-100 text-sm">
       <% @pre_codes.each do |p| %>
         <tr class="hover:bg-slate-50/60">
-          <td class="px-3 py-2"><input type="checkbox" disabled></td>
+          <%# チェックボックス列削除に伴い先頭TDも削除 %>
           <td class="px-3 py-2 font-medium"><%= p.title %></td>
           <td class="px-3 py-2 text-slate-600"><%= truncate(p.description.to_s, length: 100) %></td>
           <% if PreCode.reflect_on_association(:tags) %>

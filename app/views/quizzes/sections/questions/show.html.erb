@@ -1,12 +1,21 @@
-<!-- app/views/quizzes/sections/questions/show.html.erb -->
+<% breadcrumb :quizzes %>
+<% breadcrumb :quiz, @quiz %>
+<% breadcrumb :quiz_section_public, @quiz, @section %>
+<% breadcrumb :quiz_question, @quiz, @section, @question %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "#{@section.heading} - 問題" %>
 <p class="text-sm text-slate-500 mb-2">
   <%= link_to @quiz.title, quiz_path(@quiz) %> / <%= @section.heading %>
 </p>
 
-<div class="rounded border p-4 bg-white">
+<div class="rounded border p-4 bg-white" data-controller="code-highlight">
   <p class="text-slate-500 text-sm mb-1">Q<%= @question.position %></p>
-  <h2 class="text-lg font-semibold mb-3"><%= @question.question %></h2>
+
+  <!-- 問題文（リッチ表示） -->
+  <h2 class="text-lg font-semibold mb-3 content-body">
+    <%= rich_html(@question.question) %>
+  </h2>
 
   <%= form_with url: answer_quiz_section_question_path(@quiz, @section, @question),
                 method: :post,

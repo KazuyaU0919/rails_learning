@@ -1,45 +1,46 @@
+<!-- app/views/admin/quiz_sections/_form.html.erb -->
 <%= form_with model: @section,
               url: (@section.new_record? ? admin_quiz_sections_path : admin_quiz_section_path(@section)),
-              method: (@section.new_record? ? :post : :patch),
-              local: true,
-              class: "space-y-4" do |f| %>
-  <% if @section.errors.any? %>
-    <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-      <p><strong><%= @section.errors.count %></strong> 件のエラーがあります：</p>
-      <ul class="list-disc pl-5 mt-1">
-        <% @section.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
-      </ul>
+              method: (@section.new_record? ? :post : :patch) do |f| %>
+  <div class="grid gap-6">
+    <div>
+      <%= f.label :quiz_id, "クイズ", class: "block font-semibold" %>
+      <%= f.collection_select :quiz_id, Quiz.order(:title), :id, :title,
+            {}, class: "w-80 rounded border px-3 py-2" %>
     </div>
-  <% end %>
 
-  <div>
-    <%= f.label :quiz_id, "Quiz", class: "block text-sm text-slate-600" %>
-    <%= f.collection_select :quiz_id, Quiz.order(:position), :id, :title,
-          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
-  </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :position, class: "block font-semibold" %>
+        <%= f.number_field :position, min: 1, class: "w-40 rounded border px-3 py-2" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= f.check_box :is_free, class: "h-5 w-5" %>
+        <%= f.label :is_free, "無料公開", class: "font-semibold" %>
+      </div>
+    </div>
 
-  <div>
-    <%= f.label :heading, "見出し", class: "block text-sm text-slate-600" %>
-    <%= f.text_field :heading, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
-  </div>
+    <div>
+      <%= f.label :heading, class: "block font-semibold" %>
+      <%= f.text_field :heading, class: "w-full md:w-[36rem] rounded border px-3 py-2" %>
+    </div>
 
-  <div>
-    <label class="inline-flex items-center gap-2">
-      <%= f.check_box :is_free %>
-      <span>FREE（未ログインでも解ける）</span>
-    </label>
-  </div>
+    <!-- ★ 対応テキスト（任意） -->
+    <div>
+      <%= f.label :book_section_id, "対応するRails Booksセクション（任意）", class: "block font-semibold" %>
+      <% book_options = BookSection
+          .includes(:book).order("books.title ASC, book_sections.position ASC")
+          .map { |s| ["#{s.book.title} / #{s.heading}（#{s.position}）", s.id] } %>
+      <%= f.select :book_section_id,
+            options_for_select(book_options, @section.book_section_id),
+            { include_blank: "未設定（リンクを出さない）" },
+            class: "w-full md:w-[36rem] rounded border px-3 py-2" %>
+      <p class="text-xs text-slate-500">※設定すると結果ページに「Rails Booksへ」ボタンが表示されます。</p>
+    </div>
 
-  <div>
-    <%= f.label :position, "位置", class: "block text-sm text-slate-600" %>
-    <%= f.number_field :position, min: 1, step: 1,
-          class: "w-40 rounded ring-1 ring-slate-300 px-3 py-2" %>
-  </div>
-
-  <div>
-    <%= f.submit (@section.new_record? ? "作成する" : "更新する"),
-          class: "px-4 py-2 rounded bg-slate-900 text-white" %>
-    <%= link_to "一覧に戻る", admin_quiz_sections_path,
-          class: "ml-2 px-4 py-2 rounded ring-1 ring-slate-300" %>
+    <div class="pt-2">
+      <%= f.submit(@section.new_record? ? "作成する" : "更新する",
+            class: "inline-flex items-center rounded bg-slate-900 px-5 py-2.5 text-white hover:bg-slate-800") %>
+    </div>
   </div>
 <% end %>

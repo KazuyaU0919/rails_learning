@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,15 +55,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
 
   create_table "book_sections", force: :cascade do |t|
     t.bigint "book_id", null: false
-    t.string "heading", null: false
+    t.string "heading", limit: 50, null: false
     t.text "content", null: false
     t.boolean "is_free", default: false, null: false
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "lock_version", default: 0, null: false
+    t.bigint "quiz_section_id"
     t.index ["book_id", "position"], name: "index_book_sections_on_book_id_and_position", unique: true
     t.index ["book_id"], name: "index_book_sections_on_book_id"
+    t.index ["quiz_section_id"], name: "index_book_sections_on_quiz_section_id"
+    t.check_constraint "\"position\" >= 0 AND \"position\" <= 9999", name: "book_sections_position_range_chk"
+    t.check_constraint "char_length(content) <= 30000", name: "book_sections_content_len_chk"
   end
 
   create_table "bookmarks", force: :cascade do |t|
@@ -77,13 +81,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
   end
 
   create_table "books", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title", limit: 100, null: false
     t.text "description", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "book_sections_count", default: 0, null: false
     t.integer "position", null: false
     t.index ["position"], name: "index_books_on_position", unique: true
+    t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "books_position_range_chk"
+    t.check_constraint "char_length(description) <= 1000", name: "books_description_len_chk"
   end
 
   create_table "editor_permissions", force: :cascade do |t|
@@ -120,7 +126,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
 
   create_table "pre_codes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "title", null: false
+    t.string "title", limit: 50, null: false
     t.text "description"
     t.text "body", null: false
     t.integer "like_count", default: 0, null: false
@@ -133,16 +139,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
     t.index ["title"], name: "index_pre_codes_on_title"
     t.index ["user_id", "created_at"], name: "index_pre_codes_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_pre_codes_on_user_id"
+    t.check_constraint "answer IS NULL OR char_length(answer) <= 2000", name: "pre_codes_answer_len_chk"
+    t.check_constraint "answer_code IS NULL OR char_length(answer_code) <= 2000", name: "pre_codes_answer_code_len_chk"
+    t.check_constraint "char_length(body) <= 5000", name: "pre_codes_body_len_chk"
+    t.check_constraint "description IS NULL OR char_length(description) <= 2000", name: "pre_codes_description_len_chk"
+    t.check_constraint "hint IS NULL OR char_length(hint) <= 1000", name: "pre_codes_hint_len_chk"
   end
 
   create_table "quiz_questions", force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "quiz_section_id", null: false
     t.text "question", null: false
-    t.string "choice1", null: false
-    t.string "choice2", null: false
-    t.string "choice3", null: false
-    t.string "choice4", null: false
+    t.string "choice1", limit: 100, null: false
+    t.string "choice2", limit: 100, null: false
+    t.string "choice3", limit: 100, null: false
+    t.string "choice4", limit: 100, null: false
     t.integer "correct_choice", null: false
     t.text "explanation", null: false
     t.integer "position", null: false
@@ -152,26 +163,34 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
     t.index ["quiz_id"], name: "index_quiz_questions_on_quiz_id"
     t.index ["quiz_section_id", "position"], name: "index_quiz_questions_on_quiz_section_id_and_position"
     t.index ["quiz_section_id"], name: "index_quiz_questions_on_quiz_section_id"
+    t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "quiz_questions_position_range_chk"
+    t.check_constraint "char_length(explanation) <= 2000", name: "quiz_questions_explanation_len_chk"
+    t.check_constraint "char_length(question) <= 2000", name: "quiz_questions_question_len_chk"
   end
 
   create_table "quiz_sections", force: :cascade do |t|
     t.bigint "quiz_id", null: false
-    t.string "heading", null: false
+    t.string "heading", limit: 100, null: false
     t.boolean "is_free", default: false, null: false
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "book_section_id"
+    t.index ["book_section_id"], name: "index_quiz_sections_on_book_section_id"
     t.index ["quiz_id", "position"], name: "index_quiz_sections_on_quiz_id_and_position"
     t.index ["quiz_id"], name: "index_quiz_sections_on_quiz_id"
+    t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "quiz_sections_position_range_chk"
   end
 
   create_table "quizzes", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title", limit: 100, null: false
     t.text "description", null: false
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_quizzes_on_position"
+    t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "quizzes_position_range_chk"
+    t.check_constraint "char_length(description) <= 1000", name: "quizzes_description_len_chk"
   end
 
   create_table "solid_cache_entries", id: false, force: :cascade do |t|
@@ -193,8 +212,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
     t.integer "taggings_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "zero_since"
     t.index ["name_norm"], name: "index_tags_on_name_norm", unique: true
     t.index ["slug"], name: "index_tags_on_slug", unique: true
+    t.index ["taggings_count"], name: "index_tags_on_taggings_count"
+    t.index ["zero_since"], name: "index_tags_on_zero_since"
     t.check_constraint "color IS NULL OR color::text ~ '^#[0-9A-Fa-f]{6}$'::text", name: "tags_color_hex"
   end
 
@@ -244,6 +266,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authentications", "users", on_delete: :cascade
   add_foreign_key "book_sections", "books"
+  add_foreign_key "book_sections", "quiz_sections", on_delete: :nullify
   add_foreign_key "bookmarks", "pre_codes", on_delete: :cascade
   add_foreign_key "bookmarks", "users"
   add_foreign_key "editor_permissions", "users"
@@ -254,6 +277,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_044757) do
   add_foreign_key "pre_codes", "users"
   add_foreign_key "quiz_questions", "quiz_sections"
   add_foreign_key "quiz_questions", "quizzes"
+  add_foreign_key "quiz_sections", "book_sections", on_delete: :nullify
   add_foreign_key "quiz_sections", "quizzes"
   add_foreign_key "used_codes", "pre_codes"
   add_foreign_key "used_codes", "users"

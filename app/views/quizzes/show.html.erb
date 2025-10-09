@@ -1,4 +1,8 @@
 <!-- app/views/quizzes/show.html.erb -->
+<% breadcrumb :quizzes %>
+<% breadcrumb :quiz, @quiz %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, @quiz.title %>
 <h1 class="text-3xl font-bold mb-3"><%= @quiz.title %></h1>
 <p class="text-slate-600 mb-6"><%= @quiz.description %></p>

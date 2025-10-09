@@ -1,22 +1,58 @@
-<%# 目次ページ上部に置くタグ検索フォーム（GET ...?tags= に送る） %>
+<!-- app/views/shared/_tag_filter.html.erb -->
 <% target_url = local_assigns[:url] || pre_codes_path %>
 
-<%= form_with url: target_url,
-              method: :get,
-              local: true,
-              html: { class: "mb-0 ml-auto flex gap-2 items-center" } do %>
-  <input type="text"
-         name="tags"
-         value="<%= params[:tags].to_s %>"
-         placeholder="タグ検索（例: ruby, array）"
-         class="px-3 py-2 rounded ring-1 ring-slate-300 w-64"
-         data-controller="tag-token"
-         data-action="input->tag-token#suggest" />
+<div data-controller="tag-picker"
+     data-tag-picker-fetch-url-value="/tags/popular.json"
+     data-tag-picker-mode-value="filter"
+     class="ml-auto flex items-center gap-2">
 
-  <button type="submit"
-          class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
-    検索
-  </button>
-<% end %>
+  <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
 
-<div id="tag-suggest" class="mt-1 text-sm text-slate-500"></div>
+  <%= form_with url: target_url, method: :get, local: true, html: { class: "mb-0 flex gap-2 items-center" } do %>
+    <input type="hidden" name="tags" value="<%= params[:tags].to_s %>"
+           data-tag-picker-target="hiddenInput">
+
+    <button type="button" class="px-3 py-2 rounded ring-1 ring-slate-300"
+            data-action="tag-picker#open">
+      タグを選ぶ
+    </button>
+
+    <button type="submit" class="px-3 py-2 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]">
+      検索
+    </button>
+  <% end %>
+
+  <!-- ピッカーモーダル -->
+  <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
+       data-tag-picker-target="container">
+    <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
+      <!-- 右上 ×（Heroicon） -->
+      <button type="button"
+              class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+              data-action="tag-picker#close" aria-label="閉じる">
+        <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
+      </button>
+
+      <div class="mb-3">
+        <h3 class="font-semibold">タグを選択（検索）</h3>
+      </div>
+
+      <input type="text" placeholder="タグ名で絞り込み"
+             class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
+             data-tag-picker-target="query"
+             data-action="input->tag-picker#queryInput">
+
+      <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
+
+      <div class="mt-4 flex justify-center">
+        <button type="button"
+                class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
+                data-action="tag-picker#close">
+          閉じる
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tag-suggest" class="hidden"></div>

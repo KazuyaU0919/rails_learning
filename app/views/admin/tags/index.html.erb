@@ -1,4 +1,6 @@
 <%# app/views/admin/tags/index.html.erb %>
+<% breadcrumb :admin_tags %>
+<%= render "shared/breadcrumbs" %>
 
 <h1 class="text-xl font-bold mb-4">Tags</h1>
 
@@ -33,7 +35,7 @@
           <td class="p-2">
             <%# 色スウォッチ + HEX 表示（背景色は直接指定） %>
             <span class="inline-block w-4 h-4 rounded align-middle"
-                  style="background-color: '<%= t.color.presence || '#6B7280' %>'"></span>
+                  style="background-color: '<%= (t.color.presence || '#6B7280') %>'"></span>
             <code class="ml-1 text-xs align-middle"><%= t.color %></code>
           </td>
           <td class="p-2 text-right"><%= t.taggings_count %></td>

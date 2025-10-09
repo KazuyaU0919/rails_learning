@@ -3,7 +3,7 @@
 <% breadcrumb :book_section, @book, @section %>
 <%= render "shared/breadcrumbs" %>
 
-<div class="mx-auto w-full max-w-3xl px-4 md:px-6 lg:px-8">
+<div class="mx-auto w-full max-w-3xl px-4 md:px-6 lg:px-8" data-controller="code-highlight">
   <nav class="mb-6 text-sm">
     <%= link_to "← #{@book.title} に戻る", book_path(@book), class: "text-slate-600 hover:underline" %>
   </nav>
@@ -20,9 +20,40 @@
     <%= @section.heading %>
   </h1>
 
+  <!-- ★ ここがハイライト対象（content-body） -->
   <article class="content-body prose break-all md:break-words">
     <%= render_section_content(@section) %>
   </article>
+
+  <!-- ===== アウトプットシェア ===== -->
+  <div class="mt-12 text-center space-y-3"
+       data-controller="share"
+       data-share-url-value="<%= books_url %>">
+
+    <h1 class="text-lg font-semibold">次の章に行く前に...</h1>
+    <p class="text-slate-700 font-medium">
+      この章で学んだことを、Xでアウトプットしてみましょう ✨
+    </p>
+
+    <button type="button"
+            data-action="share#openTwitter"
+            data-text="<%= "#{@section.heading} を学習しました！ #RailsLearning" %>"
+            class="btn-dark">
+      Xでシェア
+    </button>
+  </div>
+
+  <!-- ===== 学んだらクイズで定着！ ===== -->
+  <% if @section.quiz_section.present? %>
+    <div class="mt-10 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
+      <p class="text-lg font-semibold mb-2">この章で学んだ知識を覚えよう！</p>
+      <p class="text-slate-600 mb-4">対応するクイズに挑戦して理解を定着させましょう。</p>
+
+      <%= link_to "クイズを解く",
+            quiz_section_path(@section.quiz_section.quiz, @section.quiz_section),
+            class: "inline-flex items-center rounded-md bg-[#CC0000] px-5 py-2 text-white hover:bg-[#BB0000]" %>
+    </div>
+  <% end %>
 
   <div class="flex items-center justify-between mt-10 pt-6 border-t">
     <div>
