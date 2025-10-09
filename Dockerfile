@@ -3,13 +3,15 @@
 FROM ruby:3.3
 
 # ---- OS パッケージの導入（1RUNにまとめてレイヤを減らす）----
-# - apt-get update         : パッケージリスト更新
-# - nodejs                 : importmap / esbuild 等で必要になることがある（不要なら外してOK）
-# - postgresql-client      : rails db:… で psql を使う場合に便利（不要なら外してOK）
-# - libvips libvips-dev    : ActiveStorage の画像変換（variant）で vips を使うために必須
-# - rm -rf /var/lib/apt/lists/* : APT キャッシュを削除してイメージを軽量化
+# - cron                : whenever が crontab を呼ぶために必要
+# - tzdata              : cron の時刻を JST に合わせたい場合に有用（Rails は既に Asia/Tokyo）
+# - nodejs / npm        : 必要なら維持
+# - postgresql-client   : 必要なら維持
+# - libvips libvips-dev : ActiveStorage の variant 用
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
+      cron \
+      tzdata \
       nodejs npm \
       postgresql-client \
       libvips \

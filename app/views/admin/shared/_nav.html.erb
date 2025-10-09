@@ -1,0 +1,103 @@
+<!-- app/views/admin/shared/_nav.html.erb -->
+<header class="border-b bg-[#0000CC] text-white">
+  <div
+    class="mx-auto max-w-5xl px-4
+           h-16
+           grid grid-cols-3 items-center"
+    data-controller="modal">
+
+    <!-- タイトル：base=中央 / lg=左 -->
+    <%= link_to admin_root_path,
+          class: "col-start-2 justify-self-center
+                  lg:col-start-1 lg:justify-self-start
+                  inline-flex items-center gap-2 h-full
+                  font-semibold text-lg whitespace-nowrap" do %>
+      <%= heroicon "cog-6-tooth", variant: :outline, options: { class: "w-6 h-6 text-white" } %>
+      <span class="text-white">Admin</span>
+    <% end %>
+
+    <!-- 右側クラスター -->
+    <div class="col-start-3 justify-self-end flex items-center gap-0 h-full">
+
+      <!-- グローバルメニュー（LG以上で表示） -->
+      <nav class="hidden lg:flex items-center gap-0 text-sm whitespace-nowrap h-full">
+
+        <!-- ユーザー管理 -->
+        <%= link_to admin_users_path,
+          class: "inline-flex h-full px-4 hover:bg-[#0000AA] active:bg-[#000099] text-white" do %>
+          <span class="flex items-center">ユーザー管理</span>
+        <% end %>
+
+        <!-- サブエディタ権限管理 -->
+        <%= link_to admin_editor_permissions_path,
+          class: "inline-flex h-full px-4 hover:bg-[#0000AA] active:bg-[#000099] text-white" do %>
+          <span class="flex items-center">サブエディタ権限管理</span>
+        <% end %>
+
+        <!-- Rails Books 管理（ホバーでドロップダウン） -->
+        <div class="relative group h-full">
+          <span class="inline-flex h-full px-4 items-center cursor-default select-none
+                       hover:bg-[#0000AA] active:bg-[#000099]">Rails Books管理</span>
+
+          <!-- ドロップダウン -->
+          <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100
+                      transition-opacity duration-150
+                      absolute left-0 top-full min-w-52
+                    bg-white text-slate-800 shadow ring-1 ring-slate-200">
+            <%= link_to "Books：章管理", admin_books_path,
+                  class: "block px-4 py-2 rounded-t-lg hover:bg-slate-50" %>
+            <%= link_to "Books：Section管理", admin_book_sections_path,
+                  class: "block px-4 py-2 rounded-b-lg hover:bg-slate-50" %>
+          </div>
+        </div>
+
+        <!-- クイズ管理（ホバーでドロップダウン） -->
+        <div class="relative group h-full">
+          <span class="inline-flex h-full px-4 items-center cursor-default select-none
+                       hover:bg-[#0000AA] active:bg-[#000099]">クイズ管理</span>
+
+          <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100
+                      transition-opacity duration-150
+                      absolute left-0 top-full min-w-56
+                    bg-white text-slate-800 shadow ring-1 ring-slate-200">
+            <%= link_to "クイズ：章管理", admin_quizzes_path,
+                  class: "block px-4 py-2 hover:bg-slate-50" %>
+            <%= link_to "クイズ：Seciton管理", admin_quiz_sections_path,
+                  class: "block px-4 py-2 hover:bg-slate-50" %>
+            <%= link_to "クイズ：問題管理", admin_quiz_questions_path,
+                  class: "block px-4 py-2 hover:bg-slate-50" %>
+          </div>
+        </div>
+
+        <!-- バージョン管理 -->
+        <%= link_to admin_versions_path,
+          class: "inline-flex h-full px-4 hover:bg-[#0000AA] active:bg-[#000099] text-white" do %>
+          <span class="flex items-center">バージョン管理</span>
+        <% end %>
+
+        <!-- PreCode管理 -->
+        <%= link_to admin_pre_codes_path,
+          class: "inline-flex h-full px-4 hover:bg-[#0000AA] active:bg-[#000099] text-white" do %>
+          <span class="flex items-center">PreCode管理</span>
+        <% end %>
+
+        <!-- タグ管理 -->
+        <%= link_to admin_tags_path,
+          class: "inline-flex h-full px-4 hover:bg-[#0000AA] active:bg-[#000099] text-white" do %>
+          <span class="flex items-center">タグ管理</span>
+        <% end %>
+      </nav>
+
+      <!-- ハンバーガー：LG未満のみ表示 -->
+      <button
+        class="inline-flex items-center justify-center h-full px-3 rounded-none lg:hidden
+               hover:bg-[#0000AA] active:bg-[#000099]"
+        data-action="click->modal#open" aria-label="メニューを開く">
+        <%= heroicon "bars-3", options: { class: "w-6 h-6" } %>
+      </button>
+    </div>
+
+    <!-- モーダル（同スコープ内で描画） -->
+    <%= render "admin/shared/modal_panel" %>
+  </div>
+</header>

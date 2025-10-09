@@ -12,6 +12,103 @@
     <p class="mt-1 text-sm text-slate-500">~ 初期データ閲覧機能 ~</p>
   </div>
 
+  <!-- 🔰 初めての方へ -->
+  <section
+    class="-mt-2 mb-2"
+    data-controller="reveal"
+    data-reveal-open-label-value="🔰 初めての方へ"
+    data-reveal-close-label-value="🔰 説明を閉じる">
+    <div class="flex justify-end">
+      <button type="button"
+              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              data-reveal-target="button"
+              data-action="reveal#toggle">🔰 初めての方へ</button>
+    </div>
+    <div class="hidden mt-2" data-reveal-target="content">
+      <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
+💻 Code Library機能へようこそ！！
+Code Libraryは、他ユーザーが作成した初期データを閲覧・利用できる機能です。
+
+
+【初期データって何？？】
+
+初期データとは、コードエディタのエディタフォームに
+あらかじめ登録しておいたコード断片（スニペット）を自動入力する機能です。
+
+といっても、言葉で説明しても分かりづらいと思うので、
+以下で例え話を例にして説明していきますね！
+
+
+たとえば、Rubyの標準メソッドに「min」ってメソッドがありますよね。
+
+以下のような配列numbersがあった時、
+その配列の中の最小値「４」を抽出するコードです。
+
+==================例題コード======================
+
+numbers = [42, 7, 19, 73, 4, 58, 91, 26, 11, 65]
+
+puts numbers.min
+# => 4
+
+================================================
+
+
+この「min」について、
+コードエディタを用いた実践的な学習をしたいと思った時、
+毎回初期データとして、配列numbersを用意しないといけません。
+
+上記のように配列numbersを定義してからでないと、
+numbers.minの意味が通らなくなってしまいます。
+
+
+でも、毎回配列numbersを定義するのって、
+めんどくさくないですか？？
+
+まぁ、上記の配列numbersくらいなら良いかもしれませんが、
+別のRuby標準メソッドを試すために、
+もっとややこしく、コード量も多い初期データが必要ならどうでしょうか？
+
+そのメソッドを試すために、
+毎回その初期データを入力しないといけないとしたらどうですか？？
+
+少なくとも私はめんどくさいと思います。
+
+なので、普段よく利用する初期データを登録・保存しておいて、
+「コードエディタでRuby標準メソッドの復習をするときに楽をしよう！」
+という考えのもと生み出されたのが初期データ登録機能、
+つまり、PreCode機能です。
+
+そして、他ユーザーの初期データを
+閲覧・利用するための機能がCode Library機能です。
+
+
+
+【Code Library機能について】
+
+先ほどから、他ユーザーと言っているように、
+自分の作成した初期データはCode Libraryでは表示されず、
+他ユーザーが作成した初期データを閲覧・利用するための機能になります。
+
+
+Code Libraryにはブックマーク機能があり、
+ブックマーク登録をすると、コードエディタ機能の初期データ選択プルダウンから
+直接初期データを読み込めるようになります。
+
+また、いいねを押すことができ、
+いいね数の多い初期データは、Code Library 一覧画面で上位に表示されるようになります。
+
+何度も使いたい初期データはいいねやブックマークをしておきましょう！
+
+※ ❤️は他ユーザーからのいいね数、💼は他ユーザーが該当の初期データを利用した数です。
+
+
+これらの機能を利用して、
+Rubyの標準メソッドを効率的に学習しましょう！
+      </pre>
+    </div>
+  </section>
+
   <div class="mt-4">
     <div class="flex gap-2 justify-end">
       <%= search_form_for @q, url: code_libraries_path, method: :get,

@@ -3,10 +3,36 @@
 <% breadcrumb :profile_edit %>
 <%= render "shared/breadcrumbs" %>
 
-<% content_for :title, "プロフィール編集" %>
-<h1 class="text-xl font-semibold mb-4">プロフィール編集</h1>
-
 <div class="mx-auto w-full max-w-2xl space-y-8">
+  <% content_for :title, "プロフィール編集" %>
+  <h1 class="text-xl font-semibold mb-4">プロフィール編集</h1>
+
+  <!-- 🔰 初めての方へ -->
+  <section
+    class="-mt-2 mb-4"
+    data-controller="reveal"
+    data-reveal-open-label-value="🔰 初めての方へ"
+    data-reveal-close-label-value="🔰 説明を閉じる">
+    <div class="flex justify-end">
+      <button type="button"
+              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              data-reveal-target="button"
+              data-action="reveal#toggle">🔰 初めての方へ</button>
+    </div>
+    <div class="hidden mt-2" data-reveal-target="content">
+      <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-xl p-4 text-[15px]">
+👤 ユーザープロフィールへようこそ！！
+ユーザープロフィールでは、My アカウントの確認と編集ができます。
+
+
+編集可能な内容は、
+アカウント名変更・パスワード変更・外部連携先の追加・他端末のログイン状態の解除の４つです。
+
+※ メールアドレスはアカウントに紐づいて登録されておりますので、
+　申し訳ありませんが、メールアドレスの変更はできません。
+      </pre>
+    </div>
+  </section>
 
   <!-- セクション1：プロフィール -->
   <section>
@@ -60,7 +86,6 @@
     </div>
   </section>
 
-  <!-- セクション4：他端末ログアウト -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">セキュリティ</h2>
     <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">

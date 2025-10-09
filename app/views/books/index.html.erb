@@ -7,6 +7,72 @@
   <p class="mt-1 text-sm text-slate-500">~ Railsを知るための教科書 ~</p>
 </div>
 
+<!-- 🔰 初めての方へ -->
+<section
+  class="-mt-2 mb-4"
+  data-controller="reveal"
+  data-reveal-open-label-value="🔰 初めての方へ"
+  data-reveal-close-label-value="🔰 説明を閉じる">
+  <div class="flex justify-end">
+    <button type="button"
+            class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+            data-reveal-target="button"
+            data-action="reveal#toggle">🔰 初めての方へ</button>
+  </div>
+  <div class="hidden mt-2" data-reveal-target="content">
+    <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
+📚 Rails Booksへようこそ！！
+Rails Booksは、Ruby on Rails初学者のためのRails学習テキストです。
+
+
+私がRailsを初めて学習した時、Rails の学習が非常に難しく、
+また、Rails 初学者向けの本もなく、非常に苦戦しました。
+
+そんな経験から、Rails初学者がわかりやすくRailsを学習するための教科書を作りたいと思い、本機能を作成しました。
+
+
+
+【Rails Booksの学習内容】
+
+Rails Booksでは、Rails初学者が初心者になるために必要な知識を１〜１０まで全て詰め込みました。
+（逆に言うと、高度な内容 & 初学者の学習にとって余計な内容はほとんど書いてありません）。
+
+Rails初学者にとって必要な認識のみに絞って学習を行い、
+Rails特有のコードの意味や使い方を理解し、
+Railsのアプリ制作やデプロイ（作成したアプリをインターネット上に公開すること）ができるようになります。
+
+現在、本やプログラミングスクールのカリキュラムに挑戦して、
+「難しい…」とか、「本当に理解できているか不安だ…」と思っている方に、
+最適なプログラムとなっております。
+
+
+
+【学習の進め方について】
+
+学習の進め方は簡単で、
+Rails Booksを読んで、理解して、
+Rails Booksと連動しているクイズ機能で理解した内容を復習することで、
+テキストの内容を着実に覚えることができます。
+
+
+また、Rails Booksには「初級」「中級」「上級」と３つの段階分けがされており、
+「上級」に行くほど高度な内容が書かれおり、
+「上級」は初学者がいきなり読んでも理解が難しいかと思います。
+
+また、仮に理解できたとしても、
+「上級」の内容は初学者が当分使うことがない技術である可能性が高く、
+覚えても、その内容を使わないまま忘れてしまう可能性が高いです。
+
+そのため、すべて章の「初級」を学習したら「中級」へ、
+すべての章の「中級」を学習したら「上級」へ、という学習手順をお勧めいたします。
+
+
+※ あくまで初学者が知っておくべき内容や手順を”覚える”ためのサービスですので、
+　プログラミングスクールの課題や独学でのアプリ作成と並行して学習することをお勧めします。
+    </pre>
+  </div>
+</section>
+
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <%= render partial: "book", collection: @books, as: :book %>
 </ul>

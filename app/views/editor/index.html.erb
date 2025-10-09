@@ -12,6 +12,89 @@
 <div class="w-full space-y-6 bg-white" data-controller="editor loading">
   <h1 class="text-2xl font-semibold"><%= yield :title %></h1>
 
+  <!-- 🔰 初めての方へ（タイトル直下・右寄せ） -->
+  <section
+    class="-mt-2"
+    data-controller="reveal"
+    data-reveal-open-label-value="🔰 初めての方へ"
+    data-reveal-close-label-value="🔰 説明を閉じる">
+    <div class="flex justify-end">
+      <button type="button"
+              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              data-reveal-target="button"
+              data-action="reveal#toggle">🔰 初めての方へ</button>
+    </div>
+    <div class="hidden mt-2" data-reveal-target="content">
+      <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-xl p-4 text-[15px]">
+【はじめに】
+
+Rails Learningへようこそ！
+Rails Learningは、Rails初学者やRuby学習者（paiza学習者）のための学習支援アプリです。
+
+Rails初学者の方は、Rails Booksやクイズに挑戦して、Rails に対する知識を学ぶことができます。
+
+Ruby（paiza）学習者の方は、コードエディタ、PreCode、Code Libraryを通して、
+学習したrubyコードの意味を覚え、復習 & 実践することができます。
+
+各機能について詳しく知りたい方は、
+フッターやハンバーガーメニュー（≡）にある「アプリの使い方」を参照するか、
+各機能の上部についている「🔰 初めての方へ」ボタンを押してみましょう。
+
+
+
+【コードエディタ機能について】
+
+コードエディタ機能は、オンラインですぐにプログラミング練習ができるRuby限定のコード実行環境です。
+WEBブラウザ上で、プログラミング初学者がRubyコードを簡単に実行できる環境を構築しました。
+
+まぁ、細かく説明するよりも、まずは実際に手を動かしてみましょう！
+
+下記のエディタフォームに「puts “Hello World!”」などのRubyコードを入力して、
+「実行」ボタンを押してみましょう！
+
+「実行」ボタンを押すと、入力したコードが実行されて、
+ページ下部の出力フォームに実行結果が出力されます。
+
+これがコードエディタ機能の基本機能です。
+コードエディタ機能を使って、Ruby学習の効率化を行いましょう🎶
+
+
+
+【追加機能について】
+
+コードエディタの追加機能についても軽く説明します。
+
+
+🔸 「テーマ切替」ボタンについて
+
+「実行」ボタンの隣にある「テーマ切替」ボタンを押すと、
+エディタフォームの色が白 or 黒に変わります。
+
+
+🔸 「初期データ選択プルダウン」について
+
+初期データ選択プルダウンについて理解するは、
+PreCode画面の「🔰 初めての方へ」の説明を先に読んだ方が良いでしょう。
+
+初期データ選択プルダウンは、
+PreCode画面で作成した自分の初期データと、
+Code Libraryでブックマーク登録した初期データがプルダウン形式で一覧表示されます。
+（作成した初期データがゼロ & ブックマークした初期データがゼロなら何も表示されません）
+
+初期データをプルダウンから選択すると、
+エディタフォームに初期データが自動入力されます。
+
+また、選択した初期データが「問題モード」の場合は、
+問題タイトル・問題文・ヒント・解答・解答コードも同時に表示されます。
+（ヒント・解答・解答コードは最初非表示状態になっております）。
+
+
+これらの機能を使いこなし、
+Ruby学習の効率化を図りましょう！！！
+      </pre>
+    </div>
+  </section>
+
   <!-- ===== 上部：タイトル／問題文／ヒント ===== -->
   <section data-editor-target="quizPanelTop" class="hidden space-y-4 mt-2">
     <div>

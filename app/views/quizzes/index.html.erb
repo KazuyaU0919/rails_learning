@@ -7,11 +7,37 @@
   <p class="mt-1 text-sm text-slate-500">~ 教本連動クイズ ~</p>
 </div>
 
+<!-- 🔰 初めての方へ -->
+<section
+  class="-mt-2 mb-4"
+  data-controller="reveal"
+  data-reveal-open-label-value="🔰 初めての方へ"
+  data-reveal-close-label-value="🔰 説明を閉じる">
+  <div class="flex justify-end">
+    <button type="button"
+            class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+            data-reveal-target="button"
+            data-action="reveal#toggle">🔰 初めての方へ</button>
+  </div>
+  <div class="hidden mt-2" data-reveal-target="content">
+    <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
+💡 クイズ機能へようこそ！！
+この機能では、Rails Booksと連動した内容のクイズが出題されます。
+
+Rails Booksで学習した内容を着実に覚えるための機能です。
+
+Rails Booksで理解した内容を、
+クイズ機能で何度も反復し、
+内容を覚えられるまで挑戦しましょう。
+    </pre>
+  </div>
+</section>
+
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <%= render partial: "quiz", collection: @quizzes, as: :quiz %>
 </ul>
 
-<%# ページネーション %>
+<%# ページネーション（あれば） %>
 <div class="mt-4">
   <%= paginate @quizzes if respond_to?(:paginate) %>
 </div>

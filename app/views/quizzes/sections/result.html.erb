@@ -1,12 +1,44 @@
-<!-- app/views/quizzes/sections/result.html.erb（下部に追記 or 置換） -->
+<%# app/views/quizzes/sections/result.html.erb %>
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
 <% breadcrumb :quiz_section_result, @quiz, @section %>
 <%= render "shared/breadcrumbs" %>
 
 <% content_for :title, "#{@section.heading} - 結果" %>
+
 <h1 class="text-2xl font-semibold mb-2"><%= @section.heading %> の結果</h1>
-<p class="text-xl mb-4"><span class="font-bold"><%= @correct %></span> / <%= @total %> 正解</p>
+<p class="text-xl mb-4">
+  <span class="font-bold"><%= @correct %></span> / <%= @total %> 正解
+</p>
+
+<%# ===== 正答率に応じた 画像 + メッセージ ===== %>
+<%
+  percent = @total.to_i.positive? ? (@correct.to_f / @total) : 0.0
+
+  if @total.to_i.positive? && @correct == @total
+    msg = "おめでとう！！全問正解だよ！！"
+    img = "全問正解.png"
+  elsif percent >= 0.8
+    msg = "おしい！あと少しだ！！Fight！！！"
+    img = "８割以上.png"
+  elsif percent >= 0.6
+    msg = "まずまずと言ったところ… もう少しテキストの内容を理解しよう！！"
+    img = "６割以上.png"
+  elsif percent >= 0.3
+    msg = "不正解が多いね… もう一度テキストを読み直そう！"
+    img = "３割以上.png"
+  else
+    msg = "不正解がかなり多いね… もう一度テキストを読み直そう！"
+    img = "３割未満.png"
+  end
+%>
+
+<div class="mb-6">
+  <div class="flex flex-col items-center gap-4">
+    <p class="text-lg font-semibold text-slate-800 text-center"><%= msg %></p>
+    <%= image_tag img, alt: msg, class: "max-w-full rounded shadow-sm w-full md:w-3/4" %>
+  </div>
+</div>
 
 <div class="flex justify-center mt-6"
      data-controller="share"
@@ -24,7 +56,6 @@
   <%= link_to "セクション一覧へ戻る", quiz_path(@quiz), class: "px-4 py-2 rounded ring-1 ring-slate-300" %>
 </div>
 
-<!-- ★ テキストへ戻る導線（任意） -->
 <% if @section.book_section.present? %>
   <div class="mt-8 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
     <p class="text-lg font-semibold mb-2">もう一度、テキストを読み直す？</p>

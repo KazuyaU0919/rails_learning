@@ -1,0 +1,18 @@
+<div>
+  <% @admin_names.each do |n| %>
+    <p><%= n %> 様</p>
+  <% end %>
+
+  <p>
+    <%= l @window_start, format: :long %> から <%= l @window_end, format: :long %> までの間に、問い合わせがありました。<br>
+    問い合わせ内容をご確認ください。
+  </p>
+
+  <p style="margin:14px 0;">
+    <a href="<%= @form_url || "#" %>" style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
+      Googleフォームへ遷移する
+    </a>
+  </p>
+
+  <p>以上です。</p>
+</div>
