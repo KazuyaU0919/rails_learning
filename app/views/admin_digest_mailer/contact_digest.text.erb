@@ -1,0 +1,10 @@
+<% @admin_names.each do |n| %><%= n %> 様
+<% end %>
+
+<%= l @window_start, format: :long %> から <%= l @window_end, format: :long %> までの間に、問い合わせがありました。
+問い合わせ内容をご確認ください。
+
+< Googleフォームへ遷移する >
+<%= @form_url || "（GOOGLE_FORM_URL を設定してください）" %>
+
+以上です。

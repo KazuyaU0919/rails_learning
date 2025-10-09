@@ -11,6 +11,33 @@
           class: "rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-800" %>
   </div>
 
+  <!-- 🔰 初めての方へ -->
+  <section
+    class="-mt-2"
+    data-controller="reveal"
+    data-reveal-open-label-value="🔰 初めての方へ"
+    data-reveal-close-label-value="🔰 説明を閉じる">
+    <div class="flex justify-end">
+      <button type="button"
+              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              data-reveal-target="button"
+              data-action="reveal#toggle">🔰 初めての方へ</button>
+    </div>
+    <div class="hidden mt-2" data-reveal-target="content">
+      <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-xl p-4 text-[15px]">
+👤 ユーザープロフィールへようこそ！！
+ユーザープロフィールでは、My アカウントの確認と編集ができます。
+
+
+編集可能な内容は、
+アカウント名変更・パスワード変更・外部連携先の追加・他端末のログイン状態の解除の４つです。
+
+※ メールアドレスはアカウントに紐づいて登録されておりますので、
+　申し訳ありませんが、メールアドレスの変更はできません。
+      </pre>
+    </div>
+  </section>
+
   <div class="rounded-xl bg-white ring-1 ring-slate-200 divide-y divide-slate-100">
     <div class="grid grid-cols-3 gap-4 px-4 py-3">
       <div class="text-sm text-slate-500">ユーザー名</div>

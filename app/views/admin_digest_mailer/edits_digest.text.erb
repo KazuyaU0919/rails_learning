@@ -1,0 +1,26 @@
+<% @admin_names.each do |n| %><%= n %> 様
+<% end %>
+
+<%= l @window_start, format: :long %> から <%= l @window_end, format: :long %> までの間に、以下の内容が編集されました。
+編集内容をご確認ください。
+
+< Rails Learningにログイン >
+<%= @login_url %>
+
+<% if @edits.blank? %>
+（この時間帯の編集はありませんでした）
+<% else %>
+<% @edits.each_with_index do |e, i| %>
+< 編集内容：その<%= i+1 %> >
+日時：<%= l e[:at], format: :long %>
+編集者ID：<%= e[:user]&.id || "-" %>
+編集者名：<%= e[:user]&.name || "-" %>
+編集者メールアドレス：<%= e[:user]&.email || "-" %>
+対象モデル：<%= e[:item_type] %>
+対象ID：<%= e[:item_id] %>
+対象ページのタイトル：<%= e[:title] || "-" %>
+
+<% end %>
+<% end %>
+
+以上です。

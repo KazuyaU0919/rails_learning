@@ -1,0 +1,35 @@
+<div>
+  <% @admin_names.each do |n| %>
+    <p><%= n %> 様</p>
+  <% end %>
+
+  <p>
+    <%= l @window_start, format: :long %> から <%= l @window_end, format: :long %> までの間に、以下の内容が編集されました。<br>
+    編集内容をご確認ください。
+  </p>
+
+  <p style="margin:14px 0;">
+    <a href="<%= @login_url %>" style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
+      Rails Learningにログイン
+    </a>
+  </p>
+
+  <% if @edits.blank? %>
+    <p>（この時間帯の編集はありませんでした）</p>
+  <% else %>
+    <% @edits.each_with_index do |e, i| %>
+      <div style="margin:12px 0;padding:12px;border:1px solid #e5e7eb;border-radius:10px;">
+        <div style="font-weight:600;margin-bottom:6px;">編集内容：その<%= i+1 %></div>
+        <div>日時：<%= l e[:at], format: :long %></div>
+        <div>編集者ID：<%= e[:user]&.id || "-" %></div>
+        <div>編集者名：<%= e[:user]&.name || "-" %></div>
+        <div>編集者メールアドレス：<%= e[:user]&.email || "-" %></div>
+        <div>対象モデル：<%= e[:item_type] %></div>
+        <div>対象ID：<%= e[:item_id] %></div>
+        <div>対象ページのタイトル：<%= e[:title] || "-" %></div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <p>以上です。</p>
+</div>
