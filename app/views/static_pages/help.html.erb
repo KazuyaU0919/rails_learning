@@ -255,11 +255,43 @@
       </div>
     </details>
 
-    <!-- 4) 小さなアプリを作って試す -->
+    <!-- 4) クイズで復習・記憶する -->
     <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
       <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
         <div class="flex items-center gap-2">
-          <p class="font-semibold text-lg">4. 学んだコードを使って、実際に小さなアプリを作成してみる</p>
+          <p class="font-semibold text-lg">4. Rails Booksで理解した内容を、クイズで復習・記憶する</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Rails Booksの内容と対応したクイズを解くことで、知識を頭に定着させましょう。</p>
+        <p class="mt-1 text-sm text-slate-600">理解した内容を記憶することで、Railsに対する理解度がグンと上がります。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 手順（初心者向け）</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>Rails Books 各ページの末尾にあるクイズへのリンクをクリックします。</li>
+          <li>先ほど学習した内容と対応したクイズが出題されるので、解いていきます。</li>
+          <li>全問正解（最低でも８割以上正解）するまで挑戦しましょう！</li>
+          <li>学習内容を記憶できたら、Rails Booksの次のページを読み進めましょう。</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>正答率が８割以上になるまで反復することで、Rails Booksの内容を正確に理解・記憶した状態で、次のページに進むことができます。</li>
+          <li>クイズの正解率によって、結果画面の画像や文字が変わるかも…！？全問正解を目指して挑戦してみよう！！</li>
+          <li>クイズ機能はあくまで学習内容を”覚える”ための機能です。ここからさらにプログラミング力を上げるならアプリ制作に挑戦してみましょう！</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", quizzes_path,
+            class: "btn-pill is-red" %>
+      </div>
+    </details>
+
+    <!-- 5) 小さなアプリを作って試す -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">5. 学んだコードを使って、実際に小さなアプリを作成してみる</p>
           <p class="text-lg ml-auto">▼</p>
         </div>
         <p class="mt-1 text-sm text-slate-600">学んだコードを使って、実際に小さなアプリを作ってみましょう。</p>
@@ -286,11 +318,11 @@
       </div>
     </details>
 
-    <!-- 5) スキマ時間で振り返る -->
+    <!-- 6) スキマ時間で振り返る -->
     <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
       <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
         <div class="flex items-center gap-2">
-          <p class="font-semibold text-lg">5. スキマ時間に振り返りを行う</p>
+          <p class="font-semibold text-lg">6. スキマ時間に振り返りを行う</p>
           <p class="text-lg ml-auto">▼</p>
         </div>
         <p class="mt-1 text-sm text-slate-600">知識は理解するだけでは効率的に扱うことができません。</p>
@@ -299,7 +331,8 @@
       <div class="px-4 py-4 space-y-2 text-sm">
         <p class="font-semibold">💻 やること</p>
         <ol class="list-decimal ml-5 space-y-1">
-          <li>学習した内容を PreCode に問題としてまとめ、翌日、解いてみましょう。</li>
+          <li>スキマ時間にRails Booksやクイズ機能を使って、復習を行いましょう！</li>
+          <li>そして、学習した内容を PreCode に問題としてまとめ、翌日、解いてみましょう。</li>
           <li>Code Library で、同テーマの問題を探し、学んだ知識を応用して使ってみるのも良い学習法です。</li>
         </ol>
         <p class="pt-3 font-semibold">🧩 理由</p>
@@ -334,7 +367,7 @@
         ✍️ paiza学習で必要なコードを、PreCode & Code Library機能で学習できます。
       </li>
       <li class="py-2 border-b border-[#FFBEDA]">
-        📱 Rails Learningは、PC / タブレット / スマホで利用でき、スキマ時間にいつでも学習ができます。
+        🎨 Rails Booksで理解した内容を、クイズ機能で記憶に定着させることができます。
       </li>
     </ul>
   </section>
@@ -362,11 +395,13 @@
         <ol class="list-decimal ml-5 space-y-1">
           <li>メニューからRails Booksをタップし、Rails Books画面に遷移します。</li>
           <li>一覧画面から、学習したい章を選択します（初学者は１章の初級編から）。</li>
-          <li>各章を読み進めながら、学習を進めます。</li>
+          <li>各章・各ページを読み進めながら学習を進めます。</li>
+          <li>各ページごとにクイズへのリンクがあるので、そのページの内容を理解したらクイズに挑戦しましょう！</li>
         </ol>
         <p class="pt-3 font-semibold">🎯 ポイント</p>
         <ul class="list-disc ml-5 space-y-1">
           <li>すべての章の初級編を読み終わってから、各章の中級編（作成中）、上級編（作成中）に取り掛かることを推奨します。</li>
+          <li>人はアウトプットすることで、記憶が定着します。各ページの末尾にあるクイズやシェア機能を利用してガンガンアウトプットしましょう！</li>
           <li>一部の章には「FREE」ラベルがあり、未ログイン状態でも閲覧可能です（ログインすれば全ての章を閲覧できます）。</li>
           <li>Rails初学者〜初心者に向けた、Railsの全体像を知るための教科書で、基礎から体系的に学習を進められます。</li>
           <li>RUNTEQ生は、Rails入門〜応用の補助に利用できます。</li>
@@ -379,15 +414,47 @@
       </div>
     </details>
 
-    <!-- 2) Code Editor -->
+    <!-- 2) クイズ機能 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">Quizzes（クイズ）</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+        <p class="mt-1 text-sm text-slate-600">Rails Booksで学習した内容を、記憶に定着させるためのクイズが出題されます！</p>
+        <p class="mt-1 text-sm text-slate-600">Rails Booksの各ページごとに対応したクイズが作成されているため、各ページの内容を記憶しながら学習を進められます。</p>
+      </summary>
+      <div class="px-4 py-4 space-y-2 text-sm">
+        <p class="font-semibold">🔰 主な使い方</p>
+        <ol class="list-decimal ml-5 space-y-1">
+          <li>Rails Booksを読んで、内容を理解します。</li>
+          <li>Rails Booksの各ページの末尾にクイズへのリンクがあるので、そこからクイズに挑戦しましょう！</li>
+          <li>全問正解（最低でも８割以上正解）するまで挑戦しましょう！</li>
+          <li>学習内容を記憶できたら、Rails Booksの次のページを読み進めましょう。</li>
+        </ol>
+        <p class="pt-3 font-semibold">💡 ポイント</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>正答率が８割以上になるまで反復することで、Rails Booksの内容を正確に理解・記憶した状態で、次のページに進むことができます。</li>
+          <li>クイズの正解率によって、結果画面の画像や文字が変わるかも…！？全問正解を目指して挑戦してみよう！！</li>
+          <li>クイズ機能はあくまで学習内容を”覚える”ための機能です。ここからさらにプログラミング力を上げるならアプリ制作に挑戦してみましょう！</li>
+        </ul>
+      </div>
+
+      <div class="pb-5 mt-3 flex justify-center">
+        <%= link_to "このページへ移動する", quizzes_path,
+            class: "btn-pill is-red" %>
+      </div>
+    </details>
+
+    <!-- 3) Code Editor -->
     <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
       <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
         <div class="flex items-center gap-2">
           <p class="font-semibold text-lg">Code Editor（コードエディタ）</p>
           <p class="text-lg ml-auto">▼</p>
         </div>
-        <p class="mt-1 text-sm text-slate-600">Ruby専用のコードエディタ機能。</p>
-        <p class="mt-1 text-sm text-slate-600">初期データを適用することで、効率的に学習を進めることができます。</p>
+        <p class="mt-1 text-sm text-slate-600">オンラインですぐにプログラミング練習ができるRuby限定のコード実行環境。</p>
+        <p class="mt-1 text-sm text-slate-600">WEBブラウザ上で、プログラミング初学者がRubyコードを簡単に実行できる環境を構築しました。</p>
       </summary>
       <div class="px-4 py-4 space-y-2 text-sm">
         <p class="font-semibold">🔰 主な使い方</p>
@@ -395,12 +462,22 @@
           <li>「初期データ」と書かれているプルダウンからサンプルコードを選択します（任意）。</li>
           <li>コードエディタ欄に自由にコードを入力してください。</li>
           <li>「実行」ボタンを押すと、下部の出力欄に実行結果が表示されます。</li>
-          <li>テーマ切り替えボタンで、ダーク / ライトモードを切り替えられます。</li>
         </ol>
+        <p class="pt-3 font-semibold">❓ 初期データとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>初期データとは、コードエディタのエディタフォームに、あらかじめ登録しておいたコード断片（スニペット）を自動入力する機能です。</li>
+          <li>詳しくは、ページ下部の「よくある質問」か、PreCode or Code Libraryの「🔰 初めての方へ」を参照してください。</li>
+        </ul>
         <p class="pt-3 font-semibold">🎯 ポイント</p>
         <ul class="list-disc ml-5 space-y-1">
           <li>学習中のコードを気軽に試す場として利用してください。</li>
+          <li>テーマ切り替えボタンで、ダーク / ライトモードを切り替えられます。</li>
           <li>PreCode機能やCode Library機能と併用することで、Rubyやpaiza学習の効率を上げることができます。</li>
+          <li>選択した初期データが「問題モード」の場合、問題タイトル・問題文・ヒント・解答・解答コード欄が表示されます。</li>
+        </ul>
+        <p class="pt-3 font-semibold">❓ 問題モードとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>自分もしくは、他ユーザーが作成したRubyやアルゴリズムのプログラミング問題です。実力試しに解いてみましょう🎶</li>
         </ul>
       </div>
 
@@ -410,14 +487,14 @@
       </div>
     </details>
 
-    <!-- 3) PreCode -->
+    <!-- 4) PreCode -->
     <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
       <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
         <div class="flex items-center gap-2">
           <p class="font-semibold text-lg">PreCode（プリコード）</p>
           <p class="text-lg ml-auto">▼</p>
         </div>
-        <p class="mt-1 text-sm text-slate-600">「自分専用のコード断片（スニペット）」を作成・保存できる機能。</p>
+        <p class="mt-1 text-sm text-slate-600">「初期データ」と呼ばれる自分専用のコード断片（スニペット）を作成・保存できる機能。</p>
         <p class="mt-1 text-sm text-slate-600">頻繁に使うコードや学習メモを整理して保存できます。また、Rubyやpaiza学習用の簡単な問題を作れます。</p>
       </summary>
       <div class="px-4 py-4 space-y-2 text-sm">
@@ -430,10 +507,20 @@
           <li>詳細画面の「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
           <li>編集・削除も可能です。</li>
         </ol>
+        <p class="pt-3 font-semibold">❓ 初期データとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>初期データとは、コードエディタのエディタフォームに、あらかじめ登録しておいたコード断片（スニペット）を自動入力する機能です。</li>
+          <li>詳しくは、ページ下部の「よくある質問」か、PreCode or Code Libraryの「🔰 初めての方へ」を参照してください。</li>
+        </ul>
         <p class="pt-3 font-semibold">🎯 ポイント</p>
         <ul class="list-disc ml-5 space-y-1">
           <li>学習メモや頻繁に使うコードを保存・利用することで学習の効率化が図れます。</li>
-          <li>自分が復習するための<span class="font-semibold">ミニ問題</span>を作成することで、効率的に知識を定着させられます。</li>
+          <li>「問題モード」を選択すると、問題タイトル・問題文・ヒント・解答・解答コード欄が表示されます。</li>
+        </ul>
+        <p class="pt-3 font-semibold">❓ 問題モードとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>自分もしくは、他ユーザーが作成したRubyやアルゴリズムのプログラミング問題です。実力試しに解いてみましょう🎶</li>
+          <li>あとで復習したい内容を「問題モード」として保存しておくと、スキマ時間で簡単に復習することができます！</li>
         </ul>
       </div>
 
@@ -443,15 +530,15 @@
       </div>
     </details>
 
-    <!-- 4) Code Library -->
+    <!-- 5) Code Library -->
     <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
       <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
         <div class="flex items-center gap-2">
           <p class="font-semibold text-lg">Code Library（コードライブラリ）</p>
           <p class="text-lg ml-auto">▼</p>
         </div>
-        <p class="mt-1 text-sm text-slate-600">他ユーザーが作成したPreCodeを「共有ライブラリ」として、閲覧・検索できる機能。</p>
-        <p class="mt-1 text-sm text-slate-600">他人のコードを参考にしたり、他人が作成したコード断片や学習問題を利用することもできます。</p>
+        <p class="mt-1 text-sm text-slate-600">他ユーザーが作成した初期データを「共有ライブラリ」として、閲覧・利用できる機能。</p>
+        <p class="mt-1 text-sm text-slate-600">他ユーザーのコードを参考にしたり、他ユーザーが作成した初期データを利用することもできます。</p>
       </summary>
       <div class="px-4 py-4 space-y-2 text-sm">
         <p class="font-semibold">🔰 主な使い方</p>
@@ -462,11 +549,22 @@
           <li>気になるコードがあればタップして、コードページ（詳細画面）へ遷移しましょう。</li>
           <li>各コードページで、「このデータを利用する」ボタンを押すことで、コードエディタ画面に遷移し、コードを利用することができます。</li>
         </ol>
+        <p class="pt-3 font-semibold">❓ 初期データとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>初期データとは、コードエディタのエディタフォームに、あらかじめ登録しておいたコード断片（スニペット）を自動入力する機能です。</li>
+          <li>詳しくは、ページ下部の「よくある質問」か、PreCode or Code Libraryの「🔰 初めての方へ」を参照してください。</li>
+        </ul>
         <p class="pt-3 font-semibold">🎯 ポイント</p>
         <ul class="list-disc ml-5 space-y-1">
           <li><span class="font-semibold">コードを理解する → 少し変える → 変化を見る</span>の 3 ステップを繰り返すことで、そのコードに対する理解度が上がります。</li>
           <li>学習仲間がどんなコードを利用しているのか参考にできます。</li>
           <li>他ユーザーが作成した問題を利用して、手軽にRubyやpaizaの学習ができます。</li>
+          <li>選択した初期データが「問題モード」の場合、問題タイトル・問題文・ヒント・解答・解答コード欄が表示されます。</li>
+        </ul>
+        <p class="pt-3 font-semibold">❓ 問題モードとは？</p>
+        <ul class="list-disc ml-5 space-y-1">
+          <li>自分もしくは、他ユーザーが作成したRubyやアルゴリズムのプログラミング問題です。実力試しに解いてみましょう🎶</li>
+          <li>あとで復習したい内容をPreCodeで「問題モード」として保存しておくと、スキマ時間で簡単に復習することができます！</li>
         </ul>
       </div>
 
@@ -486,6 +584,49 @@
     </h2>
 
     <div class="grid grid-cols-1 gap-4">
+      <!-- 「初めての方へ」ボタン -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">「🔰 初めての方へ」ボタンによる機能説明</p>
+        <p class="text-sm text-slate-800 mt-1">主要機能の画面右上には、「🔰 初めての方へ」ボタンがあります。</p>
+        <p class="text-sm text-slate-800 mt-1"><span class="font-semibold">何か分からないことがあれば、まずは「🔰 初めての方へ」ボタンを押してみましょう！</span></p>
+      </div>
+
+      <!-- ユーザープロフィール機能 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">ユーザープロフィール機能</p>
+        <p class="text-sm text-slate-800 mt-1">自分のアカウント情報を確認・編集できる機能です。</p>
+        <p class="text-sm text-slate-800 mt-1"><span class="font-semibold">アカウント名・パスワードの変更・外部連携情報・セキュリティ事項</span>などが確認・変更できます。</p>
+      </div>
+
+      <!-- シェア機能 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">シェア機能</p>
+        <p class="text-sm text-slate-800 mt-1">Xにシェアできる機能です。</p>
+        <p class="text-sm text-slate-800 mt-1">学習内容のアウトプットやクイズ結果のシェア、興味深い初期データの共有などにご利用ください。</p>
+      </div>
+
+      <!-- URLコピー機能 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">URLコピー機能</p>
+        <p class="text-sm text-slate-800 mt-1">初期データのURLを友人に共有するための機能です。</p>
+        <p class="text-sm text-slate-800 mt-1">「URLコピー」ボタンを押すとURLがコピーされるので、友人にURLを送ってください。</p>
+        <p class="text-sm text-slate-800 mt-1">※ なお、<span class="font-semibold">自分で作成した初期データのURLをコピーした場合</span>、そのURLは自分では利用できませんのでご注意ください。</p>
+      </div>
+
+      <!-- タグ機能 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">タグ作成 & タグ検索機能</p>
+        <p class="text-sm text-slate-800 mt-1">タグを自由に作成 & タグ検索できる機能です。</p>
+        <p class="text-sm text-slate-800 mt-1">※ タグ選択をする際に、タグが正しく選択できているか分かりづらい場合がございますが、問題なく選択できているのでご安心してお使いください。</p>
+      </div>
+
+      <!-- ブックマーク機能 -->
+      <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
+        <p class="font-semibold text-lg">ブックマーク機能</p>
+        <p class="text-sm text-slate-800 mt-1">Code Library内の初期データをブックマークできる機能です。</p>
+        <p class="text-sm text-slate-800 mt-1">ブックマークした内容は、<span class="font-semibold">コードエディタの初期データ選択プルダウンに表示される</span>ようになります。</p>
+      </div>
+
       <!-- いいね -->
       <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
         <p class="font-semibold text-lg">いいね機能</p>
@@ -495,8 +636,8 @@
 
       <!-- いいね数・利用数 -->
       <div class="rounded-lg ring-1 ring-slate-300 bg-white p-4">
-        <p class="font-semibold text-lg">いいね数・利用数の確認</p>
-        <p class="text-sm text-slate-800 mt-1">自分の PreCode が<span class="font-semibold">他ユーザーから</span>どれだけ使われ、支持されたか可視化する機能。</p>
+        <p class="font-semibold text-lg">いいね数（❤️）・利用数（💼）の確認</p>
+        <p class="text-sm text-slate-800 mt-1">自分で作成した初期データが<span class="font-semibold">他ユーザーから</span>どれだけ使われ、支持されたか可視化する機能。</p>
         <p class="text-sm text-slate-800 mt-1">モチベーションの向上につながります。</p>
       </div>
     </div>
@@ -566,6 +707,68 @@
         <p>　</p>
         <p class="mt-1">ただ、Rails Booksのみは、どの端末でも問題なく利用できます。</p>
         <p class="mt-1">なので、読む学習は スマホ / タブレット / PC、書く学習は PC という利用方法が望ましいでしょう。</p>
+      </div>
+    </details>
+
+    <!-- Q4 -->
+    <details class="rounded-lg ring-1 ring-slate-300 bg-white mb-3">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 rounded-lg transition-colors hover:bg-[#FFEEFF]">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-lg">「初期データ」ってなんですか？？ PreCodeやCode Libraryとは、何のページですか？？</p>
+          <p class="text-lg ml-auto">▼</p>
+        </div>
+      </summary>
+      <div class="px-4 py-4 text-sm text-slate-800 space-y-2">
+        <p class="mt-1">
+          初期データとは、コードエディタのエディタフォームに<br>
+          あらかじめ登録しておいたコード断片（スニペット）を自動入力する機能です。
+        </p>
+        <p>　</p>
+        <p class="mt-1">といっても、言葉で説明しても分かりづらいと思うので、以下で例え話を例にして説明していきますね！</p>
+        <p>　</p>
+        <p class="mt-1">たとえば、Rubyの標準メソッドに「min」ってメソッドがありますよね。</p>
+        <p class="mt-1">以下のような配列numbersがあった時、その配列の中の最小値「４」を抽出するコードです。</p>
+        <p>　</p>
+        <p class="mt-1">==================例題コード======================</p>
+        <p>　</p>
+        <p class="mt-1">numbers = [42, 7, 19, 73, 4, 58, 91, 26, 11, 65]</p>
+        <p>　</p>
+        <p class="mt-1">puts numbers.min</p>
+        <p class="mt-1"># => 4</p>
+        <p>　</p>
+        <p class="mt-1">================================================</p>
+        <p>　</p>
+        <p class="mt-1">
+          この「min」について、コードエディタを用いた実践的な学習をしたいと思った時、<br>
+          毎回初期データとして、配列numbersを用意しないといけません。
+        </p>
+        <p>　</p>
+        <p class="mt-1">上記のように配列numbersを定義してからでないと、numbers.minの意味が通らなくなってしまいます。</p>
+        <p>　</p>
+        <p>　</p>
+        <p class="mt-1">でも、毎回配列numbersを定義するのって、めんどくさくないですか？？</p>
+        <p>　</p>
+        <p class="mt-1">
+          まぁ、上記の配列numbersくらいなら良いかもしれませんが、<br>
+          別のRuby標準メソッドを試すために、もっとややこしく、コード量も多い初期データが必要ならどうでしょうか？
+        </p>
+        <p>　</p>
+        <p class="mt-1">そのメソッドを試すために、毎回その初期データを入力しないといけないとしたらどうですか？？</p>
+        <p>　</p>
+        <p class="mt-1">少なくとも私はめんどくさいと思います。</p>
+        <p>　</p>
+        <p class="mt-1">
+          なので、普段よく利用する初期データを登録・保存しておいて、<br>
+          「コードエディタでRuby標準メソッドの復習をするときに楽をしよう！」という考えのもと生み出されたのが<br>
+          初期データ登録機能、つまり、PreCode機能です。</p>
+        <p>　</p>
+        <p class="mt-1">そして、他ユーザーの初期データを閲覧・利用するための機能がCode Library機能になります。</p>
+        <p>　</p>
+        <p class="mt-1">
+          PreCodeやCode Libraryで登録・保存した初期データを、<br>
+          コードエディタ画面にて選択することで自動で初期データを挿入することができ、<br>
+          効率的にRuby標準メソッドやアルゴリズム、paizaなどの学習を進めることができるようになります。
+        </p>
       </div>
     </details>
   </section>

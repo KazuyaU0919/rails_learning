@@ -39,6 +39,23 @@ class ProfilesController < ApplicationController
     end
   end
 
+  # パスワード未設定ユーザー向け：新規作成メール送付
+  def password_setup
+    # すでにパスワードがあるなら弾く
+    if current_user.uses_password?
+      return redirect_to edit_profile_path, alert: "あなたのアカウントには、すでにパスワードが存在します"
+    end
+
+    email = params[:email].to_s.strip.downcase
+    if email.present? && email == current_user.email.to_s.downcase
+      current_user.generate_reset_token!
+      UserMailer.reset_password(current_user).deliver_later
+      redirect_to edit_profile_path, notice: "登録メールアドレスにパスワード再設定メールを送信しました"
+    else
+      redirect_to edit_profile_path, alert: "メールアドレスが一致しません"
+    end
+  end
+
   def revoke_remember
     current_user.revoke_all_remember!
     redirect_to profile_path, notice: "他の端末のログイン状態をすべて解除しました"

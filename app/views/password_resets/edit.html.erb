@@ -13,18 +13,17 @@
         <%= f.label :password, "パスワード", class: "block text-sm mb-1" %>
         <%= f.password_field :password,
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500",
-              placeholder: "8文字以上 20文字未満" %>
+              placeholder: "6文字以上 19文字以下" %>
       </div>
 
       <div>
         <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
         <%= f.password_field :password_confirmation,
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500",
-              placeholder: "8文字以上 20文字未満" %>
+              placeholder: "6文字以上 19文字以下" %>
       </div>
 
-      <%# ▼ 送信/新規登録ボタン：赤に（文言は既存どおり） %>
-      <%= f.submit "新規登録",
+      <%= f.submit "パスワードを設定",
             class: "w-full rounded-xl px-5 py-2 text-white bg-[#CC0000] hover:bg-[#BB0000] active:bg-[#AA0000]" %>
     <% end %>
 
