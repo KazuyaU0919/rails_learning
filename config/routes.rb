@@ -37,7 +37,9 @@ Rails.application.routes.draw do
   resources :bookmarks, only: %i[create destroy]
 
   # タグ
-  resources :tags, only: %i[index show]
+  resources :tags, only: [ :index, :show, :create ] do
+    collection { get :popular }
+  end
 
   # Code Editor
   root "editor#index"

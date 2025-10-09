@@ -13,13 +13,13 @@ class PreCode < ApplicationRecord
   validates :title,
             presence: true,
             length: { maximum: 50 },
-            format: { without: /\A\s*\z/, message: "を空白だけにはできません" }
+            format: { without: /\A\s*\z/, message: I18n.t!("errors.messages.blank_only") }
 
-  validates :description, length: { maximum: 2000 }, allow_blank: true
-  validates :body, presence: true
-  validates :hint,        length: { maximum: 1000 }, allow_blank: true
-  validates :answer,      length: { maximum: 2000 }, allow_blank: true
-  validates :answer_code, length: { maximum: 2000 }, allow_blank: true
+  validates :description, length: { maximum: 2_000 }
+  validates :body,        presence: true, length: { maximum: 5_000 }
+  validates :hint,        length: { maximum: 1_000 }, allow_blank: true
+  validates :answer,      length: { maximum: 2_000 }, allow_blank: true
+  validates :answer_code, length: { maximum: 2_000 }, allow_blank: true
 
   # Quiz モードのときだけ answer を必須にする
   validates :answer, presence: true, if: :quiz_mode?

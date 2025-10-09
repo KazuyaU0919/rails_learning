@@ -26,9 +26,16 @@
           {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
   </div>
 
+  <!-- ▼ 問題文（Quill） -->
   <div>
-    <%= f.label :question, "問題文", class: "block text-sm text-slate-600" %>
-    <%= f.text_area :question, rows: 3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    <%= f.label :question, "問題文（最大2000文字）", class: "block text-sm text-slate-600 mb-1" %>
+    <div data-controller="quill-field"
+         data-quill-field-max-length-value="2000"
+         data-quill-field-placeholder-value="問題文を入力…"
+         class="rounded ring-1 ring-slate-300 bg-white">
+      <div data-quill-field-target="editor" class="min-h-[220px] ql-container ql-snow rounded-t"></div>
+      <%= f.hidden_field :question, data: { "quill-field-target": "input" } %>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -61,9 +68,16 @@
     </div>
   </div>
 
+  <!-- ▼ 解説（Quill） -->
   <div>
-    <%= f.label :explanation, "解説", class: "block text-sm text-slate-600" %>
-    <%= f.text_area :explanation, rows: 4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+    <%= f.label :explanation, "解説（最大2000文字）", class: "block text-sm text-slate-600 mb-1" %>
+    <div data-controller="quill-field"
+         data-quill-field-max-length-value="2000"
+         data-quill-field-placeholder-value="解説を入力…"
+         class="rounded ring-1 ring-slate-300 bg-white">
+      <div data-quill-field-target="editor" class="min-h-[220px] ql-container ql-snow rounded-t"></div>
+      <%= f.hidden_field :explanation, data: { "quill-field-target": "input" } %>
+    </div>
   </div>
 
   <div>

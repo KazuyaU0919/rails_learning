@@ -1,3 +1,7 @@
 <!-- app/views/admin/editor_permissions/edit.html.erb -->
+<% breadcrumb :admin_editor_permissions %>
+<% breadcrumb :edit_admin_editor_permission, @editor_permission %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-2xl font-bold mb-6">編集権限を編集</h1>
 <%= render "form" %>

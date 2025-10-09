@@ -4,7 +4,8 @@ class Admin::TagsController < Admin::BaseController
 
   def index
     @q = params[:q].to_s
-    @tags = Tag.used.prefix(@q).order_for_suggest.page(params[:page])
+    # 未使用も含めて一覧表示（used を外す）
+    @tags = Tag.prefix(@q).order_for_suggest.page(params[:page])
   end
 
   def merge
@@ -17,7 +18,7 @@ class Admin::TagsController < Admin::BaseController
       PreCodeTagging.group(:pre_code_id, :tag_id).having("COUNT(*) > 1").pluck(:pre_code_id, :tag_id).each do |pid, tid|
         PreCodeTagging.where(pre_code_id: pid, tag_id: tid).offset(1).delete_all
       end
-      # カウンタ再計算（簡易）
+      # カウンタ再計算
       Tag.reset_counters(to.id, :pre_code_taggings)
       Tag.reset_counters(from.id, :pre_code_taggings)
       from.destroy! if from.taggings_count.zero?

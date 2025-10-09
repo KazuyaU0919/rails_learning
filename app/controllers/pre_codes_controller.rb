@@ -24,7 +24,8 @@ class PreCodesController < ApplicationController
     end
 
     @q = base.ransack(params[:q])
-    @pre_codes = @q.result.order(id: :desc).page(params[:page])
+    # ★ Bullet (N+1) 対策
+    @pre_codes = @q.result.order(id: :desc).preload(:tags).page(params[:page])
   end
 
   def show; end
@@ -73,7 +74,6 @@ class PreCodesController < ApplicationController
       :quiz_mode
     )
 
-    # テキストだけサニタイズ
     sanitizer = if respond_to?(:sanitize_content, true)
                   method(:sanitize_content)
     else

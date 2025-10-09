@@ -37,6 +37,20 @@
       </div>
     </div>
 
+    <!-- ★ 対応クイズ（任意） -->
+    <div class="space-y-2">
+      <%= f.label :quiz_section_id, "対応するクイズセクション（任意）", class: "block font-semibold text-slate-800" %>
+      <% quiz_options = QuizSection
+          .includes(:quiz).order("quizzes.title ASC, quiz_sections.position ASC")
+          .map { |s| ["#{s.quiz.title} / #{s.heading}（#{s.position}）", s.id] } %>
+      <%= f.select :quiz_section_id,
+            options_for_select(quiz_options, @section.quiz_section_id),
+            { include_blank: "未設定（リンクを出さない）" },
+            class: "w-full md:w-[36rem] rounded-md border border-slate-300 bg-white px-3 py-2
+                    shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" %>
+      <p class="text-xs text-slate-500">※設定すると本文下に「クイズを解く」ボタンが表示されます。</p>
+    </div>
+
     <!-- 本文（Quill 編集用） -->
     <div class="space-y-2">
       <%= f.label :content, class: "block font-semibold text-slate-800" %>

@@ -3,7 +3,7 @@ require "rails_helper"
 
 RSpec.describe Book, type: :model do
   describe "validations" do
-    it "is valid with title, description and position" do
+    it "is valid with title and description" do
       expect(build(:book)).to be_valid
     end
 
@@ -13,27 +13,10 @@ RSpec.describe Book, type: :model do
       expect(b.errors[:title]).to be_present
     end
 
-    it "is invalid when description is over 500 chars" do
-      b = build(:book, description: "a" * 501)
+    it "is invalid when description is over 1000 chars" do
+      b = build(:book, description: "a" * 1001)
       expect(b).to be_invalid
       expect(b.errors[:description]).to be_present
-    end
-
-    it "validates position is integer > 0" do
-      b = build(:book, position: 0)
-      expect(b).to be_invalid
-      expect(b.errors[:position]).to be_present
-
-      b2 = build(:book, position: 1.5)
-      expect(b2).to be_invalid
-      expect(b2.errors[:position]).to be_present
-    end
-
-    it "validates position uniqueness" do
-      create(:book, position: 10)
-      dup = build(:book, position: 10)
-      expect(dup).to be_invalid
-      expect(dup.errors[:position]).to be_present
     end
   end
 

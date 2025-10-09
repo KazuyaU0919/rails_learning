@@ -13,6 +13,12 @@ ja:
       long: "%Y年%-m月%-d日 %H:%M"
       ymd_hm: "%Y/%m/%d %H:%M"
 
+  editor:
+    errors:
+      blank: "code が空です"
+      too_large: "code が大きすぎます"
+      forbidden_chars: "禁止された制御文字が含まれています"
+
   activerecord:
     models:
       pre_code: "PreCode"
@@ -32,7 +38,11 @@ ja:
         lock_version: "更新番号"
       pre_code:
         title: "タイトル"
-        body: "コードの説明"
+        description: "問題文"
+        body: "登録コード"
+        hint: "ヒント"
+        answer: "解答"
+        answer_code: "解答コード"
       book:
         title: "タイトル"
         description: "説明"
@@ -67,16 +77,42 @@ ja:
         lock_version: "更新番号"
         created_at: "作成日時"
         updated_at: "更新日時"
+      user:
+        name: "ユーザー名"
+        email: "メールアドレス"
+        password: "パスワード"
 
     errors:
       models:
         book:
           attributes:
+            title:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            description:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             position:
               blank: "を入力してください"
               not_a_number: "は数値で入力してください"
+              not_an_integer: "は整数で入力してください"
               greater_than: "は%{count}より大きい値にしてください"
+              less_than_or_equal_to: "は%{count}以下にしてください"
               taken: "はすでに使用されています"
+        book_section:
+          attributes:
+            heading:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            content:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            position:
+              blank: "を入力してください"
+              not_a_number: "は数値で入力してください"
+              not_an_integer: "は整数で入力してください"
+              greater_than_or_equal_to: "は%{count}以上にしてください"
+              less_than_or_equal_to: "は%{count}以下にしてください"
         quiz:
           attributes:
             title:
@@ -90,6 +126,7 @@ ja:
               not_a_number: "は数値で入力してください"
               not_an_integer: "は整数で入力してください"
               greater_than: "は%{count}より大きい値にしてください"
+              less_than_or_equal_to: "は%{count}以下にしてください"
         quiz_section:
           attributes:
             quiz:
@@ -104,6 +141,7 @@ ja:
               not_a_number: "は数値で入力してください"
               not_an_integer: "は整数で入力してください"
               greater_than: "は%{count}より大きい値にしてください"
+              less_than_or_equal_to: "は%{count}以下にしてください"
         quiz_question:
           attributes:
             quiz:
@@ -112,16 +150,22 @@ ja:
               blank: "を選択してください"
             question:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             explanation:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             choice1:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             choice2:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             choice3:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             choice4:
               blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
             correct_choice:
               blank: "を入力してください"
               inclusion: "は1〜4のいずれかを指定してください"
@@ -130,6 +174,43 @@ ja:
               not_a_number: "は数値で入力してください"
               not_an_integer: "は整数で入力してください"
               greater_than: "は%{count}より大きい値にしてください"
+              less_than_or_equal_to: "は%{count}以下にしてください"
+        pre_code:
+          attributes:
+            title:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+              blank_only: "を空白だけにはできません"
+            description:
+              too_long: "は%{count}文字以内で入力してください"
+            body:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            hint:
+              too_long: "は%{count}文字以内で入力してください"
+            answer:
+              blank: "を入力してください（問題モード）"
+              too_long: "は%{count}文字以内で入力してください"
+            answer_code:
+              too_long: "は%{count}文字以内で入力してください"
+        editor_permission:
+          attributes:
+            target_id:
+              not_found: "が存在しません"
+        user:
+          attributes:
+            name:
+              blank: "を入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            email:
+              blank: "を入力してください"
+              invalid: "の形式が正しくありません"
+              taken: "はすでに使用されています"
+              too_long: "は%{count}文字以内で入力してください"
+            password:
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+              too_long: "は%{count}文字以内で入力してください"
 
   helpers:
     submit:
@@ -151,6 +232,7 @@ ja:
   errors:
     messages:
       blank: "を入力してください"
+      blank_only: "を空白だけにはできません"
       inclusion: "は一覧にありません"
       exclusion: "は予約されています"
       invalid: "は不正な値です"
@@ -170,6 +252,7 @@ ja:
       other_than: "は%{count}以外の値にしてください"
       odd: "は奇数を指定してください"
       even: "は偶数を指定してください"
+      too_many_images: "%{max}枚以下にしてください"
 
   bookmarks:
     limit_reached: "300件以上のブックマーク登録はできません"

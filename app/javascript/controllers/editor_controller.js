@@ -5,14 +5,8 @@ import axios from "axios"
 import { EditorState, Compartment } from "@codemirror/state"
 import { EditorView, lineNumbers } from "@codemirror/view"
 import { oneDark } from "@codemirror/theme-one-dark"
-
-// CodeMirror 6 共通言語レイヤ
 import { StreamLanguage, syntaxHighlighting, HighlightStyle } from "@codemirror/language"
-
-// Ruby レガシーモード（CM5） → CM6 で包む
 import { ruby } from "@codemirror/legacy-modes/mode/ruby"
-
-// ハイライト定義（色とタグ）
 import { tags as t } from "@lezer/highlight"
 
 const rubyHighlight = HighlightStyle.define([
@@ -23,14 +17,19 @@ const rubyHighlight = HighlightStyle.define([
   { tag: [t.atom, t.regexp],              color: "#0ea5e9" },
   { tag: t.function(t.variableName),      color: "#0284c7" },
 ])
-
 const rubyLang = StreamLanguage.define(ruby)
 
 const KEY = { code: "editor:code", theme: "editor:theme" }
 const SAVE_DELAY = 50
 
 export default class extends Controller {
-  static targets = ["mount", "output", "select"]
+  static targets = [
+    "mount", "output", "select",
+    // 問題モード（上：タイトル・問題文・ヒント）
+    "quizPanelTop", "quizTitle", "quizDesc", "quizHint",
+    // 問題モード（下：解答・解答コード）
+    "quizPanelBottom", "quizAnswer", "quizAnswerCode"
+  ]
 
   connect () {
     this.theme = localStorage.getItem(KEY.theme) === "dark" ? "dark" : "light"
@@ -54,22 +53,13 @@ export default class extends Controller {
     })
 
     this.view = new EditorView({ state: this.state, parent: this.mountTarget })
-
-    // 入力欄コンテナの色をテーマと同期
     this.#applyContainerTheme()
 
-    // loading コントローラ（同じ要素に data-controller="loading" を付与している想定）
     this.loadingCtrl = this.application.getControllerForElementAndIdentifier(this.element, "loading")
 
-    // ===== pre_code_id=... で来たときの自動読込 =====
     const params = new URLSearchParams(window.location.search)
     const pid = params.get("pre_code_id")
-    if (pid) {
-      this.#loadPreCodeBody(pid)
-      // （必要ならクエリを消したい場合は下の2行を使ってください）
-      // const url = new URL(window.location)
-      // url.searchParams.delete("pre_code_id"); window.history.replaceState({}, "", url)
-    }
+    if (pid) this.#loadPreCodeBody(pid)
   }
 
   disconnect () { this.view?.destroy() }
@@ -84,24 +74,18 @@ export default class extends Controller {
       const code = this.view.state.doc.toString()
       const config = signal ? { signal } : undefined
       const res = await axios.post("/editor", { code }, config)
-      if (res.data.stderr && res.data.stderr.length > 0) {
-        this.outputTarget.textContent = res.data.stderr
-      } else {
-        this.outputTarget.textContent = res.data.stdout
-      }
+      this.outputTarget.textContent = (res.data.stderr && res.data.stderr.length > 0)
+        ? res.data.stderr
+        : res.data.stdout
     }
 
     try {
       if (this.loadingCtrl?.withOverlay) {
-        await this.loadingCtrl.withOverlay(async (signal) => {
-          await perform(signal)
-        })
+        await this.loadingCtrl.withOverlay(async (signal) => await perform(signal))
       } else {
-        // フォールバック：ローダー未装着でも動作
         await perform()
       }
     } catch (e) {
-      // Abort/ネットワーク/5xx など
       const msg = e?.response?.data?.stderr || (e?.message || e)
       this.outputTarget.textContent = `Error: ${msg}`
     } finally {
@@ -111,10 +95,9 @@ export default class extends Controller {
   }
 
   async changeSelect () {
-    const id = this.selectTarget.value
+    const id = this.hasSelectTarget ? this.selectTarget.value : ""
     if (!id) return
-    // ===== 共通の読込ロジックを呼ぶように =====
-    this.#loadPreCodeBody(id)
+    await this.#loadPreCodeBody(id)
   }
 
   toggleTheme () {
@@ -123,33 +106,90 @@ export default class extends Controller {
     this.view.dispatch({
       effects: this.themeCompartment.reconfigure(this.theme === "dark" ? oneDark : [])
     })
-    // 入力欄コンテナ全面の色も同時に切替え
     this.#applyContainerTheme()
   }
 
   // ===== private =====
   #applyContainerTheme () {
     const el = this.mountTarget
-    el.classList.remove("bg-white", "text-slate-900")
-    el.classList.remove("bg-[#0b0f19]", "text-white") // ダーク時の色
-    if (this.theme === "dark") {
-      el.classList.add("bg-[#0b0f19]", "text-white")
-    } else {
-      el.classList.add("bg-white", "text-slate-900")
-    }
+    el.classList.remove("bg-white", "text-slate-900", "bg-[#0b0f19]", "text-white")
+    if (this.theme === "dark") el.classList.add("bg-[#0b0f19]", "text-white")
+    else el.classList.add("bg-white", "text-slate-900")
   }
 
-  // ===== PreCode 本文を読み込んでエディタへ反映する共通関数 =====
   async #loadPreCodeBody (id) {
     try {
       const res  = await axios.get(`/pre_codes/${id}/body`)
-      const body = res.data?.body || ""
+      const data = res.data || {}
+
+      // エディタ本文
+      const body = data.body || ""
       this.view.dispatch({ changes: { from: 0, to: this.view.state.doc.length, insert: body } })
       localStorage.setItem(KEY.code, body)
-      // セレクトを持っている画面なら、選択状態も同期
-      if (this.hasSelectTarget) this.selectTarget.value = id
+
+      // ===== 問題モードの描画 =====
+      if (data.is_quiz) {
+        // 上部
+        if (this.hasQuizPanelTopTarget) {
+          this.quizPanelTopTarget.classList.remove("hidden")
+          this.quizTitleTarget.innerHTML  = this.#safeHTML(data.title)
+          this.quizDescTarget.innerHTML   = data.description_html || ""
+          this.quizHintTarget.innerHTML   = data.hint_html || ""
+        }
+        // 下部
+        if (this.hasQuizPanelBottomTarget) {
+          this.quizPanelBottomTarget.classList.remove("hidden")
+          this.quizAnswerTarget.innerHTML = data.answer_html || ""
+
+          // 解答コード（code-view へ差し込み）
+          if (this.quizAnswerCodeTarget) {
+            // code-view コントローラを取得できれば set() で反映
+            const codeView = this.application.getControllerForElementAndIdentifier(
+              this.quizAnswerCodeTarget,
+              "code-view"
+            )
+            const text = data.answer_code || ""
+            if (codeView && typeof codeView.set === "function") {
+              codeView.set(text)
+            } else {
+              // まだ接続前の場合に備え textarea にも値を入れておく
+              const field = this.quizAnswerCodeTarget.querySelector("textarea")
+              if (field) field.value = text
+            }
+          }
+        }
+      } else {
+        // 非クイズ：パネルを隠す
+        if (this.hasQuizPanelTopTarget) {
+          this.quizPanelTopTarget.classList.add("hidden")
+          this.quizTitleTarget.innerHTML = ""
+          this.quizDescTarget.innerHTML  = ""
+          this.quizHintTarget.innerHTML  = ""
+        }
+        if (this.hasQuizPanelBottomTarget) {
+          this.quizPanelBottomTarget.classList.add("hidden")
+          this.quizAnswerTarget.innerHTML = ""
+          const field = this.quizAnswerCodeTarget?.querySelector("textarea")
+          if (field) field.value = ""
+          // code-view が接続済なら空文字に
+          const codeView = this.application.getControllerForElementAndIdentifier(
+            this.quizAnswerCodeTarget,
+            "code-view"
+          )
+          if (codeView && typeof codeView.set === "function") codeView.set("")
+        }
+      }
+
+      // セレクトの選択状態を同期
+      if (this.hasSelectTarget) this.selectTarget.value = String(id)
     } catch (e) {
       this.outputTarget.textContent = `Load Error: ${e}`
     }
+  }
+
+  #safeHTML (text) {
+    const div = document.createElement("div")
+    div.textContent = text ?? ""
+    return div.innerHTML
   }
 }

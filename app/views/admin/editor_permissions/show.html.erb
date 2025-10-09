@@ -1,4 +1,8 @@
 <!-- app/views/admin/editor_permissions/show.html.erb -->
+<% breadcrumb :admin_editor_permissions %>
+<% breadcrumb :admin_editor_permission, @editor_permission %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-2xl font-bold mb-6">権限の詳細</h1>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

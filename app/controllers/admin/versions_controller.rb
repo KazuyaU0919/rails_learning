@@ -14,6 +14,9 @@ class Admin::VersionsController < Admin::BaseController
   def show
     @version = PaperTrail::Version.find(params[:id])
     @record  = safe_reify(@version) # create のときは nil
+
+    # BookSection 用 fallback（changesetにcontentが無くても拾う）
+    @content_before, @content_after = field_before_after(@version, :content)
   end
 
   def revert
@@ -21,7 +24,6 @@ class Admin::VersionsController < Admin::BaseController
     record  = safe_reify(version)
 
     if record.nil?
-      # create の巻き戻し = 現在存在するレコードを削除
       model_klass = safe_model_for_item_type(version.item_type)
       if model_klass
         model_klass.find_by(id: version.item_id)&.destroy!
@@ -36,14 +38,12 @@ class Admin::VersionsController < Admin::BaseController
                 notice: "この版にロールバックしました"
   end
 
-  # ＝＝＝＝ 単体削除 ＝＝＝＝
   def destroy
     v = PaperTrail::Version.find(params[:id])
     v.destroy
     redirect_back fallback_location: admin_versions_path, notice: "版を削除しました"
   end
 
-  # ＝＝＝＝ 一括削除 ＝＝＝＝
   def bulk_destroy
     ids = Array(params[:version_ids]).map(&:to_i).uniq
     if ids.empty?
@@ -58,15 +58,12 @@ class Admin::VersionsController < Admin::BaseController
 
   # YAML/JSON どちらでも安全に reify する
   def safe_reify(version)
-    # まず JSON (現行設定) でトライ
     version.reify
   rescue JSON::ParserError
-    # YAML の可能性が高い → YAML serializer で再トライ
     PaperTrail.serializer = PaperTrail::Serializers::YAML
     begin
       version.reify
     ensure
-      # 終わったら必ず JSON に戻す
       PaperTrail.serializer = PaperTrail::Serializers::JSON
     end
   rescue Psych::DisallowedClass
@@ -74,26 +71,8 @@ class Admin::VersionsController < Admin::BaseController
     retry
   end
 
-  # 一時的に PaperTrail の serializer を YAML にしてブロックを実行
-  def with_yaml_serializer
-    PaperTrail.request do |req|
-      prev = req.serializer
-      req.serializer = PaperTrail::Serializers::YAML
-      begin
-        return yield
-      ensure
-        req.serializer = prev
-      end
-    end
-  end
-
-  # YAML 安全読み込みの許可クラスを追加
   def permit_yaml_classes!
-    permitted = [
-      Time, Date, Symbol,
-      ActiveSupport::TimeZone,
-      ActiveSupport::TimeWithZone
-    ]
+    permitted = [ Time, Date, Symbol, ActiveSupport::TimeZone, ActiveSupport::TimeWithZone ]
     if ActiveRecord.respond_to?(:yaml_column_permitted_classes)
       ActiveRecord.yaml_column_permitted_classes |= permitted
     end
@@ -103,5 +82,38 @@ class Admin::VersionsController < Admin::BaseController
     type = item_type.to_s
     return nil unless ALLOWED_ITEM_TYPES.include?(type)
     type.safe_constantize
+  end
+
+  # ---- 指定カラムの before/after を、changeset に無い場合でも再構築 ----
+  def field_before_after(version, column)
+    col = column.to_s
+    cs  = version.changeset || {}
+    if cs.key?(col)
+      before, after = cs[col]
+      return [ before, after ]
+    end
+
+    # update: reify が「更新前」。現在（または next 版の reify）が「更新後」
+    if version.event == "update"
+      before_rec = safe_reify(version)
+      after_rec  = version.next ? safe_reify(version.next) : version.item_type.constantize.find_by(id: version.item_id)
+      return [ before_rec&.public_send(col), after_rec&.public_send(col) ]
+    end
+
+    # create: after のみ
+    if version.event == "create"
+      after_rec = version.next ? safe_reify(version.next) : version.item_type.constantize.find_by(id: version.item_id)
+      return [ nil, after_rec&.public_send(col) ]
+    end
+
+    # destroy: before のみ
+    if version.event == "destroy"
+      before_rec = safe_reify(version)
+      return [ before_rec&.public_send(col), nil ]
+    end
+
+    [ nil, nil ]
+  rescue
+    [ nil, nil ]
   end
 end

@@ -2,78 +2,106 @@
 <%= render "shared/errors", object: pre_code %>
 
 <%
-  # 管理側から呼ばれたときだけ admin ネームスペースに送る
   admin_namespace = (local_assigns[:namespace] == :admin)
   form_model      = admin_namespace ? [:admin, pre_code] : pre_code
 %>
 
 <%= form_with model: form_model, class: "space-y-6" do |f| %>
-  <div data-controller="precode-mode"
-       data-precode-mode-mode-value="normal"
-       class="space-y-6">
+  <div data-controller="precode-mode" data-precode-mode-mode-value="normal" class="space-y-6">
 
-    <!-- モードの現在値を送る hidden -->
-    <%= f.hidden_field :quiz_mode,
-          value: "false",
-          data: { "precode-mode-target": "modeField" } %>
+    <%= f.hidden_field :quiz_mode, value: "false", data: { "precode-mode-target": "modeField" } %>
 
     <div class="flex items-center justify-end">
-      <button type="button"
-              class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
-              data-precode-mode-target="toggle"
-              data-action="precode-mode#switch">
+      <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+              data-precode-mode-target="toggle" data-action="precode-mode#switch">
         問題モードにする
       </button>
     </div>
 
     <!-- タイトル -->
     <div class="space-y-2">
-      <label class="block text-sm font-semibold text-slate-500"
-             data-precode-mode-target="titleLabel">登録名</label>
-      <%= f.text_field :title,
-            placeholder: "選択肢に表示する名前を入力してください",
+      <label class="block text-sm font-semibold text-slate-500" data-precode-mode-target="titleLabel">登録名</label>
+      <%= f.text_field :title, placeholder: "選択肢に表示する名前を入力してください",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
     </div>
 
-    <!-- タグ -->
-    <div class="space-y-2">
+    <!-- タグ（ピッカー + 新規作成） -->
+    <div class="space-y-2"
+         data-controller="tag-picker"
+         data-tag-picker-fetch-url-value="/tags/popular.json"
+         data-tag-picker-max-value="10"
+         data-tag-picker-mode-value="assign">
       <label class="block text-sm font-semibold text-slate-500">タグ（最大10個）</label>
-      <input id="tag-input" name="tag_names" value="<%= pre_code.tags.map(&:name).join(',') %>"
-             class="w-full rounded-xl ring-1 ring-slate-300 px-3 py-2"
-             placeholder="例: ruby, array, sql"
-             data-controller="tag-token"
-             data-action="input->tag-token#suggest">
-      <div id="tag-suggest" class="text-sm text-slate-500"></div>
+
+      <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
+
+      <input type="hidden" name="tag_names"
+             value="<%= pre_code.tags.map(&:name).join(',') %>"
+             data-tag-picker-target="hiddenInput">
+
+      <div class="flex gap-2 items-center">
+        <button type="button" class="px-3 py-1 rounded ring-1 ring-slate-300 text-sm"
+                data-action="tag-picker#open">既存のタグを選ぶ</button>
+
+        <input type="text" placeholder="タグの新規作成"
+               class="rounded-xl ring-1 ring-slate-300 px-3 py-1.5"
+               data-tag-picker-target="newName">
+        <button type="button" class="px-3 py-1 rounded bg-[#CC0000] text-white hover:bg-[#BB0000] active:bg-[#AA0000]"
+                data-action="tag-picker#createTag">作成</button>
+      </div>
+      <p class="text-sm text-red-600" data-tag-picker-target="createError"></p>
+
+      <!-- モーダル -->
+      <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
+           data-tag-picker-target="container">
+        <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
+          <!-- 右上 ×（Heroicon） -->
+          <button type="button"
+                  class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+                  data-action="tag-picker#close" aria-label="閉じる">
+            <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
+          </button>
+
+          <div class="mb-3">
+            <h3 class="font-semibold">タグを選択</h3>
+          </div>
+
+          <input type="text" placeholder="タグ名で絞り込み"
+                 class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
+                 data-tag-picker-target="query"
+                 data-action="input->tag-picker#queryInput">
+
+          <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
+
+          <!-- 下部中央の閉じるボタン（ホバーで赤背景・白文字） -->
+          <div class="mt-4 flex justify-center">
+            <button type="button"
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
+                    data-action="tag-picker#close">
+              閉じる
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 説明（通常モードの“問題文”相当） -->
+    <!-- 説明 -->
     <div class="space-y-2">
-      <label class="block text-sm font-semibold text-slate-500"
-             data-precode-mode-target="descLabel">コードの説明</label>
-      <%= f.text_area :description, rows: 3,
-            placeholder: "コード内容の説明を簡単に書いてください",
+      <label class="block text-sm font-semibold text-slate-500" data-precode-mode-target="descLabel">コードの説明</label>
+      <%= f.text_area :description, rows: 3, placeholder: "コード内容の説明を簡単に書いてください",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
-            data: {
-              controller: "autosize",
-              "autosize-target": "field",
-              "autosize-min-rows-value": 3
-            } %>
+            data: { controller: "autosize", "autosize-target": "field", "autosize-min-rows-value": 3 } %>
     </div>
 
-    <!-- ▼ ヒント（問題モード時のみ表示） -->
+    <!-- ヒント（問題モード） -->
     <div data-precode-mode-target="quizBlock" class="space-y-2 hidden">
       <label class="block text-sm font-semibold text-slate-500">ヒント（任意）</label>
-      <%= f.text_area :hint, rows: 3,
-            placeholder: "ヒント本文（1000文字まで）",
+      <%= f.text_area :hint, rows: 3, placeholder: "ヒント本文（1000文字まで）",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
-            data: {
-              controller: "autosize",
-              "autosize-target": "field",
-              "autosize-min-rows-value": 3
-            } %>
+            data: { controller: "autosize", "autosize-target": "field", "autosize-min-rows-value": 3 } %>
     </div>
 
-    <!-- ▼ 登録コード（常に表示） -->
+    <!-- 登録コード -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500">登録コード</label>
       <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
@@ -84,28 +112,19 @@
       </div>
     </div>
 
-    <!-- ▼ 解答（問題モード時のみ表示） -->
+    <!-- 解答（問題モード） -->
     <div data-precode-mode-target="quizBlock" class="space-y-2 hidden">
       <label class="block text-sm font-semibold text-slate-500">解答（必須）</label>
-      <%= f.text_area :answer, rows: 4,
-            placeholder: "解答本文（2000文字まで）",
+      <%= f.text_area :answer, rows: 4, placeholder: "解答本文（2000文字まで）",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2",
-            data: {
-              controller: "autosize",
-              "autosize-target": "field",
-              "autosize-min-rows-value": 4,
-              "precode-mode-target": "answerField"
-            } %>
+            data: { controller: "autosize", "autosize-target": "field", "autosize-min-rows-value": 4, "precode-mode-target": "answerField" } %>
 
       <div class="space-y-2">
         <label class="block text-sm font-semibold text-slate-500">解答用コード（任意）</label>
         <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
         <div data-controller="precode-body" data-precode-body-theme-value="light"
              class="rounded-xl ring-1 ring-slate-300 overflow-hidden">
-          <%= f.text_area :answer_code,
-                data: { "precode-body-target": "field",
-                        "precode-mode-target": "answerCodeField" },
-                class: "hidden" %>
+          <%= f.text_area :answer_code, data: { "precode-body-target": "field", "precode-mode-target": "answerCodeField" }, class: "hidden" %>
           <div data-precode-body-target="mount" class="w-full min-h-[200px]"></div>
         </div>
       </div>

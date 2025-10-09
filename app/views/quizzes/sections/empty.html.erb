@@ -1,4 +1,7 @@
 <!-- app/views/quizzes/sections/empty.html.erb -->
+<% breadcrumb :quiz_empty %>
+<%= render "shared/breadcrumbs" %>
+
 <%# 問題未登録のセクション用 %>
 <% content_for :title, "#{@section.heading} - クイズ" %>
 

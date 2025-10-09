@@ -1,7 +1,6 @@
 # app/controllers/book_sections_controller.rb
 class BookSectionsController < ApplicationController
   include EditPermission
-  include ActionView::Helpers::SanitizeHelper
   before_action :set_book
   before_action :set_section, only: %i[show edit update]
   helper_method :logged_in?
@@ -24,7 +23,7 @@ class BookSectionsController < ApplicationController
     return unless require_edit_permission!(@section)
 
     attrs = section_params.slice(*@section.editable_attributes)
-    attrs[:content] = sanitize_content(attrs[:content])
+    attrs[:content] = RichTextSanitizer.call(attrs[:content])
     attrs[:lock_version] = section_params[:lock_version]
 
     begin
@@ -57,7 +56,6 @@ class BookSectionsController < ApplicationController
     params.require(:book_section).permit(:content, :lock_version)
   end
 
-  # ===== 同じロジックをこちらにも持たせる（簡易版） =====
   SIGNED_ID_IMG_SRC =
     %r{/rails/active_storage/(?:blobs|representations)(?:/redirect)?/([A-Za-z0-9_\-=]+)}.freeze
 
@@ -82,14 +80,6 @@ class BookSectionsController < ApplicationController
       keep = blobs.map(&:id)
       section.images.attachments.reject { |att| keep.include?(att.blob_id) }.each(&:purge)
     end
-  end
-
-  def sanitize_content(html)
-    sanitize(
-      html,
-      tags: %w[p h1 h2 h3 h4 h5 h6 b i u strong em a ul ol li pre code blockquote br span div img hr],
-      attributes: %w[href class target rel src alt style]
-    )
   end
 
   def logged_in?

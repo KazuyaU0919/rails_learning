@@ -1,4 +1,7 @@
 <!-- app/views/admin/versions/index.html.erb -->
+<% breadcrumb :admin_versions %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-2xl font-bold mb-6">変更履歴</h1>
 
 <%= form_with url: admin_versions_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-12 gap-3 items-end mb-5" do %>
@@ -39,10 +42,10 @@
             <input type="checkbox" id="check_all">
           </th>
           <th class="p-2 text-left w-48">日時</th>
-          <th class="p-2 text-left">タイプ</th>
-          <th class="p-2 text-right w-24">ID</th>
+          <th class="p-2 text-left whitespace-nowrap">対象モデル</th>
+          <th class="p-2 text-right w-24">対象ID</th>
           <th class="p-2 text-left w-28">イベント</th>
-          <th class="p-2 text-right w-24">ユーザー</th>
+          <th class="p-2 text-left w-[320px]">ユーザー（ID / 名前 / メール）</th>
           <th class="p-2 w-36"></th>
         </tr>
       </thead>
@@ -53,7 +56,7 @@
               <input type="checkbox" name="version_ids[]" value="<%= v.id %>" class="row-check">
             </td>
             <td class="p-2 whitespace-nowrap"><%= l v.created_at, format: :long %></td>
-            <td class="p-2 font-mono"><%= v.item_type %></td>
+            <td class="p-2 whitespace-nowrap"><%= label_for_item_type(v.item_type) %></td>
             <td class="p-2 text-right"><%= v.item_id %></td>
             <td class="p-2">
               <% badge = case v.event
@@ -64,7 +67,7 @@
               end %>
               <span class="px-2 py-0.5 rounded text-xs <%= badge %>"><%= v.event %></span>
             </td>
-            <td class="p-2 text-right"><%= v.whodunnit.presence || "-" %></td>
+            <td class="p-2"><%= actor_badge(v).html_safe %></td>
             <td class="p-2 text-right whitespace-nowrap">
               <%= link_to "詳細", admin_version_path(v),
                     class: "inline-block rounded px-3 py-1 bg-slate-900 text-white text-xs" %>

@@ -13,8 +13,8 @@ RSpec.describe Book, type: :model do
       expect(b.errors[:title]).to be_present
     end
 
-    it "is invalid when description is over 500 chars" do
-      b = build(:book, description: "a" * 501)
+    it "is invalid when description is over 1000 chars" do
+      b = build(:book, description: "a" * 1001)
       expect(b).to be_invalid
       expect(b.errors[:description]).to be_present
     end

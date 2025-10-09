@@ -1,4 +1,8 @@
 <!-- app/views/admin/editor_permissions/bulk_new.html.erb -->
+<% breadcrumb :admin_editor_permissions %>
+<% breadcrumb :bulk_new_admin_editor_permissions %>
+<%= render "shared/breadcrumbs" %>
+
 <h1 class="text-2xl font-bold mb-6">編集権限を一括付与</h1>
 
 <%= form_with url: bulk_create_admin_editor_permissions_path, method: :post, local: true, class: "space-y-5" do |f| %>

@@ -1,4 +1,9 @@
 <!-- app/views/book_sections/edit.html.erb -->
+<% breadcrumb :books %>
+<% breadcrumb :book, @book %>
+<% breadcrumb :book_section_edit, @book, @section %>
+<%= render "shared/breadcrumbs" %>
+
 <% content_for :title, "セクション編集" %>
 <h1 class="text-xl font-semibold mb-4"><%= @book.title %> / <%= @section.heading %> を編集</h1>
 

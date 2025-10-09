@@ -2,14 +2,17 @@
 class Book < ApplicationRecord
   has_many :book_sections, -> { order(:position) }, dependent: :destroy
 
+  # タイトル100 / 説明1000 / 並び順は 1..9999 かつ一意
   validates :title,       presence: true, length: { maximum: 100 }
-  validates :description, presence: true, length: { maximum: 500 }
-
-  # 並び順
+  validates :description, presence: true, length: { maximum: 1000 }
   validates :position,
            presence: true,
-           numericality: { only_integer: true, greater_than: 0 },
-           uniqueness: true   # 重複時にエラー表示（DBのuniqueと二重で守る）
+           numericality: {
+             only_integer: true,
+             greater_than: 0,
+             less_than_or_equal_to: 9_999
+           },
+           uniqueness: true
 
   before_validation :set_default_position, on: :create
 
