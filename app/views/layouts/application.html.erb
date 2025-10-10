@@ -17,6 +17,9 @@
     <%= csp_meta_tag %>
     <%= yield :head %>
 
+    <%# ===== Google Analytics ===== %>
+    <%= render "shared/google_analytics" %>
+
     <%# ===== アイコン & PWA ===== %>
     <%= favicon_link_tag 'favicon.ico', rel: 'icon', type: 'image/x-icon' %>
     <link rel="manifest" href="/manifest.json">
