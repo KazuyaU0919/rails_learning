@@ -11,10 +11,13 @@
     <%= csp_meta_tag %>
     <%= yield :head %>
 
-    <!-- アイコン系 -->
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <!-- アイコン & PWA -->
+    <%= favicon_link_tag 'favicon.ico', rel: 'icon', type: 'image/x-icon' %>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <meta name="theme-color" content="#CC0000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
     <!-- CSS / JS (Importmap) -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
