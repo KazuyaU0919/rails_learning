@@ -1,0 +1,35 @@
+<%# Google Analytics (gtag.js) - 本番かつ GA_MEASUREMENT_ID があるときだけ有効化 %>
+<% if Rails.env.production? && ENV["GA_MEASUREMENT_ID"].present? %>
+  <% ga_id = ENV["GA_MEASUREMENT_ID"] %>
+
+  <!-- Global site tag (gtag.js) -->
+  <script async
+          src="https://www.googletagmanager.com/gtag/js?id=<%= ERB::Util.url_encode(ga_id) %>"
+          nonce="<%= content_security_policy_nonce %>"></script>
+
+  <script nonce="<%= content_security_policy_nonce %>">
+    // dataLayer の初期化
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    // 初期の自動 page_view はオフ（SPA/Turbo で自前送信するため）
+    gtag('config', '<%= ga_id %>', { 'send_page_view': false });
+
+    // ページ表示イベントを明示送信（タイトル/URL/クエリ含む）
+    function sendPageView() {
+      gtag('event', 'page_view', {
+        page_title:   document.title,
+        page_location: location.href,
+        page_path:     location.pathname + location.search
+      });
+    }
+
+    // Turbo あり: 画面遷移ごとに送信
+    document.addEventListener('turbo:load', sendPageView);
+    // 念のため（Turbo 不使用ページ向け）
+    if (!window.Turbo) {
+      document.addEventListener('DOMContentLoaded', sendPageView);
+    }
+  </script>
+<% end %>
