@@ -14,28 +14,51 @@ class Admin::VersionsController < Admin::BaseController
   def show
     @version = PaperTrail::Version.find(params[:id])
     @record  = safe_reify(@version) # create のときは nil
-
-    # BookSection 用 fallback（changesetにcontentが無くても拾う）
     @content_before, @content_after = field_before_after(@version, :content)
   end
 
   def revert
-    version = PaperTrail::Version.find(params[:id])
-    record  = safe_reify(version)
+    @version = PaperTrail::Version.find(params[:id])
+    # reify は「その版の直前（before）」の状態
+    record   = safe_reify(@version)
 
-    if record.nil?
-      model_klass = safe_model_for_item_type(version.item_type)
-      if model_klass
-        model_klass.find_by(id: version.item_id)&.destroy!
+    begin
+      case @version.event
+      when "create"
+        # 作成を取り消す => 現在のレコードを削除
+        klass = safe_model_for_item_type(@version.item_type)
+        klass.find_by(id: @version.item_id)&.destroy! if klass
+        redirect_to admin_versions_path(item_type: @version.item_type, item_id: @version.item_id),
+                    notice: "この作成を取り消しました（削除）"
+        nil
+
+      when "destroy"
+        # 削除を取り消す => 削除前の状態を復活
+        # destroy の reify は復活させたい完全オブジェクト
+        raise ActiveRecord::RecordNotFound, "reify failed" unless record
+        klass = record.class
+        toggle_lock(klass, false) { record.save!(validate: false, touch: false) }
+        redirect_to admin_versions_path(item_type: @version.item_type, item_id: @version.item_id),
+                    notice: "削除前の版に復元しました"
+        nil
+
+      else # "update" など
+        # その版の「更新前」の内容で上書き
+        raise ActiveRecord::RecordNotFound, "reify failed" unless record
+        klass = record.class
+        toggle_lock(klass, false) { record.save!(validate: false, touch: false) }
+        redirect_to admin_versions_path(item_type: @version.item_type, item_id: @version.item_id),
+                    notice: "この版にロールバックしました"
+        nil
       end
-      redirect_to admin_versions_path(item_type: version.item_type, item_id: version.item_id),
-                  notice: "この作成を取り消しました（削除）"
-      return
-    end
 
-    record.save!
-    redirect_to admin_versions_path(item_type: version.item_type, item_id: version.item_id),
-                notice: "この版にロールバックしました"
+    rescue ActiveRecord::StaleObjectError
+      redirect_back fallback_location: admin_versions_path,
+                    alert: "ロールバック中に他の変更と競合しました。もう一度お試しください。"
+    rescue => e
+      redirect_back fallback_location: admin_versions_path,
+                    alert: "ロールバックに失敗しました: #{e.message}"
+    end
   end
 
   def destroy
@@ -55,6 +78,15 @@ class Admin::VersionsController < Admin::BaseController
   end
 
   private
+
+  # 楽観ロックの ON/OFF を一時的に切り替えるユーティリティ
+  def toggle_lock(klass, enable)
+    prev = klass.lock_optimistically
+    klass.lock_optimistically = enable
+    yield
+  ensure
+    klass.lock_optimistically = prev
+  end
 
   # YAML/JSON どちらでも安全に reify する
   def safe_reify(version)
@@ -88,31 +120,21 @@ class Admin::VersionsController < Admin::BaseController
   def field_before_after(version, column)
     col = column.to_s
     cs  = version.changeset || {}
-    if cs.key?(col)
-      before, after = cs[col]
-      return [ before, after ]
-    end
+    return cs[col] if cs.key?(col)
 
-    # update: reify が「更新前」。現在（または next 版の reify）が「更新後」
     if version.event == "update"
       before_rec = safe_reify(version)
       after_rec  = version.next ? safe_reify(version.next) : version.item_type.constantize.find_by(id: version.item_id)
-      return [ before_rec&.public_send(col), after_rec&.public_send(col) ]
-    end
-
-    # create: after のみ
-    if version.event == "create"
+      [ before_rec&.public_send(col), after_rec&.public_send(col) ]
+    elsif version.event == "create"
       after_rec = version.next ? safe_reify(version.next) : version.item_type.constantize.find_by(id: version.item_id)
-      return [ nil, after_rec&.public_send(col) ]
-    end
-
-    # destroy: before のみ
-    if version.event == "destroy"
+      [ nil, after_rec&.public_send(col) ]
+    elsif version.event == "destroy"
       before_rec = safe_reify(version)
-      return [ before_rec&.public_send(col), nil ]
+      [ before_rec&.public_send(col), nil ]
+    else
+      [ nil, nil ]
     end
-
-    [ nil, nil ]
   rescue
     [ nil, nil ]
   end
