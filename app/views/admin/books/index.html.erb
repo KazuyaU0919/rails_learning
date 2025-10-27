@@ -1,12 +1,36 @@
+<!-- =========================================================
+  View: Admin / Books 一覧
+  File: app/views/admin/books/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - Book（教本）の一覧を管理画面で表示
+    - 新規作成 / 編集 / 削除の操作を提供
+  構成:
+    1) パンくず
+    2) ページタイトル / 新規作成ボタン
+    3) 一覧テーブル
+    4) ページネーション
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_books %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル + 新規作成ボタン
+======================= -->
 <% content_for :title, "Books" %>
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-2xl font-semibold">Books</h1>
   <%= link_to "＋ 新規作成", new_admin_book_path, class: "px-3 py-2 rounded bg-slate-900 text-white" %>
 </div>
 
+<!-- =======================
+     3) 一覧テーブル
+     - 各行に 編集 / 削除リンク
+======================= -->
 <table class="w-full text-left border rounded bg-white">
   <thead>
     <tr class="border-b bg-slate-50">
@@ -17,6 +41,7 @@
       <th class="px-3 py-2"></th>
     </tr>
   </thead>
+
   <tbody>
     <% @books.each do |b| %>
       <tr class="border-b">
@@ -26,13 +51,18 @@
         <td class="px-3 py-2 text-slate-500"><%= l b.updated_at, format: :short %></td>
         <td class="px-3 py-2 text-right">
           <%= link_to "編集", edit_admin_book_path(b), class: "mr-2 text-sky-700 hover:underline" %>
-          <%= link_to "削除", admin_book_path(b), data: { turbo_method: :delete, turbo_confirm: "削除しますか？" }, class: "text-red-700 hover:underline" %>
+          <%= link_to "削除", admin_book_path(b),
+                data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
+                class: "text-red-700 hover:underline" %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
+<!-- =======================
+     4) ページネーション
+======================= -->
 <div class="mt-4">
   <%= paginate @books if defined?(paginate) %>
 </div>

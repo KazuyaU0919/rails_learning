@@ -1,8 +1,31 @@
+<!-- =========================================================
+  View: Admin / BookSections 編集
+  File: app/views/admin/book_sections/edit.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 既存 BookSection の編集フォームを表示
+  構成:
+    1) パンくず
+    2) 見出し
+    3) フォーム（_form 部分テンプレート）
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+     - 階層: Root > Admin > Sections > Edit
+======================= -->
 <% breadcrumb :root %>
 <% breadcrumb :admin_root %>
 <% breadcrumb :admin_book_sections %>
 <% breadcrumb :admin_book_section_edit, @section %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) 見出し
+======================= -->
 <h1 class="text-2xl font-semibold mb-4">Section編集</h1>
+
+<!-- =======================
+     3) フォーム本体
+======================= -->
 <%= render "form" %>

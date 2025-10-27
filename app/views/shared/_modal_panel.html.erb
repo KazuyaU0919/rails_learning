@@ -1,29 +1,58 @@
-<!-- app/views/shared/_modal_panel.html.erb -->
-<div data-modal-target="container"
-     class="hidden fixed inset-0 z-50 grid
-            place-items-start md:place-items-start lg:place-items-center
-            pt-4 sm:pt-6 md:pt-10 lg:pt-0"
-     role="dialog" aria-modal="true" aria-labelledby="user-menu-title">
+<!-- =========================================================
+  Partial: 汎用モーダルパネル（ヘッダー右のハンバーガーから起動）
+  File: app/views/shared/_modal_panel.html.erb
+  ---------------------------------------------------------
+  目的:
+    ・各種ナビゲーション（ログイン状態/画面幅でメニューが変化）をモーダルで表示。
+  使い方:
+    ・shared/_nav.html.erb 内で同スコープに render 済み。
+  備考:
+    ・Stimulus controller "modal" 前提（open/close）。
+========================================================= -->
 
-  <!-- 背景 -->
-  <div data-modal-target="backdrop"
-       class="absolute inset-0 bg-black/40"
-       data-action="click->modal#close"></div>
+<!-- =======================
+     スコープ: モーダルルート
+     - container/backdrop/panel は Stimulus target
+======================= -->
+<div
+  data-modal-target="container"
+  class="hidden fixed inset-0 z-50 grid
+         place-items-start md:place-items-start lg:place-items-center
+         pt-4 sm:pt-6 md:pt-10 lg:pt-0"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="user-menu-title"
+>
 
-  <!-- パネル -->
-  <div data-modal-target="panel"
-       class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-slate-900
-              max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-3.5rem)] lg:max-h-none overflow-y-auto">
+  <!-- 背景（クリックで閉じる） -->
+  <div
+    data-modal-target="backdrop"
+    class="absolute inset-0 bg-black/40"
+    data-action="click->modal#close"
+  ></div>
 
-    <!-- タイトルは削除、×だけ残す -->
-    <button class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
-            data-action="click->modal#close" aria-label="閉じる">
+  <!-- 本体パネル -->
+  <div
+    data-modal-target="panel"
+    class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-slate-900
+           max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-3.5rem)] lg:max-h-none overflow-y-auto"
+  >
+    <!-- 右上 × ボタン -->
+    <button
+      class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+      data-action="click->modal#close"
+      aria-label="閉じる"
+    >
       <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
     </button>
 
-    <%# ================= PC用（lg以上だけ表示） ================= %>
+    <!-- =======================
+         スコープ: PC用メニュー（lg 以上）
+         - ログイン状態で表示内容が変化
+    ======================= -->
     <div class="hidden lg:block">
       <% if logged_in? %>
+        <!-- 一般リンク群 -->
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -32,18 +61,23 @@
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 管理者リンク -->
         <% if current_user&.admin? %>
           <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
             <li><%= link_to "管理画面", admin_root_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           </ul>
         <% end %>
 
+        <!-- 認証操作 -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
-          <li><%= link_to "ログアウト", session_path,
-                data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
-                class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li>
+            <%= link_to "ログアウト", session_path,
+                  data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
+                  class: "block py-3 text-center hover:text-[#CC0000]" %>
+          </li>
         </ul>
       <% else %>
+        <!-- 未ログイン向け一般リンク -->
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "お問い合わせ",     contact_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -51,6 +85,7 @@
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 未ログイン向け認証導線 -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "ログイン", new_session_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "新規登録", new_user_path,   class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -58,17 +93,21 @@
       <% end %>
     </div>
 
-    <%# =========== スマホ/タブレット用（lg未満のみ表示） =========== %>
+    <!-- =======================
+         スコープ: モバイル/タブレット用（lg 未満）
+    ======================= -->
     <div class="lg:hidden">
       <% if logged_in? %>
+        <!-- 機能リンク -->
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "Code Editor",  editor_path,         class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Rails Books",  books_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "Quizzes",    quizzes_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Quizzes",      quizzes_path,        class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "PreCode",      pre_codes_path,      class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Code Library", code_libraries_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 一般リンク -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -77,25 +116,31 @@
           <li><%= link_to "プライバシーポリシー", privacy_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 認証操作 -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
-          <li><%= link_to "ログアウト", session_path,
-                data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
-                class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li>
+            <%= link_to "ログアウト", session_path,
+                  data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
+                  class: "block py-3 text-center hover:text-[#CC0000]" %>
+          </li>
         </ul>
       <% else %>
+        <!-- 未ログイン: 認証導線 -->
         <ul class="space-y-0 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "ログイン",     new_session_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "新規登録",     new_user_path,    class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 機能リンク -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "Code Editor",  editor_path,         class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Rails Books",  books_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
-          <li><%= link_to "Quizzes",    quizzes_path,          class: "block py-3 text-center hover:text-[#CC0000]" %></li>
+          <li><%= link_to "Quizzes",      quizzes_path,        class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "PreCode",      pre_codes_path,      class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "Code Library", code_libraries_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
         </ul>
 
+        <!-- 一般リンク -->
         <ul class="mt-2 border-b-2 border-[#CC0000] divide-y-2 divide-[#CC0000]">
           <li><%= link_to "アプリの使い方",   help_path,     class: "block py-3 text-center hover:text-[#CC0000]" %></li>
           <li><%= link_to "ユーザープロフィール", profile_path, class: "block py-3 text-center hover:text-[#CC0000]" %></li>
@@ -106,10 +151,14 @@
       <% end %>
     </div>
 
-    <!-- フッター：閉じるボタン -->
+    <!-- フッター操作: 閉じる -->
     <div class="mt-6 flex justify-center">
-      <button class="inline-flex items-center rounded-lg bg-[#CC0000] px-5 py-2 text-white hover:bg-[#BB0000] active:bg-[#AA0000]"
-              data-action="click->modal#close">閉じる</button>
+      <button
+        class="inline-flex items-center rounded-lg bg-[#CC0000] px-5 py-2 text-white hover:bg-[#BB0000] active:bg-[#AA0000]"
+        data-action="click->modal#close"
+      >
+        閉じる
+      </button>
     </div>
   </div>
 </div>

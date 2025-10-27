@@ -1,4 +1,19 @@
-<!-- app/views/admin/shared/_nav.html.erb -->
+<!-- =========================================================
+  Partial: Admin / Global Navigation
+  File: app/views/admin/shared/_nav.html.erb
+  ---------------------------------------------------------
+  目的:
+    - Admin 全体のページ上部に表示するグローバルナビ。
+    - LG 以上ではフルメニュー、LG 未満ではハンバーガー + モーダル。
+  構成:
+    1) ヘッダー枠（Stimulus: modal を束ねる）
+    2) タイトル（左/中央揃え切替）
+    3) 右クラスター（LG: ナビ / SM: ハンバーガー）
+    4) モーダル（admin/shared/modal_panel）
+  注意:
+    - 視覚表現・リンク先は既存のまま。コメントで意味を整理。
+========================================================= -->
+
 <header class="border-b bg-[#0000CC] text-white">
   <div
     class="mx-auto max-w-5xl px-4
@@ -6,7 +21,9 @@
            grid grid-cols-3 items-center"
     data-controller="modal">
 
-    <!-- タイトル：base=中央 / lg=左 -->
+    <!-- =======================
+         2) タイトル（base=中央 / lg=左）
+    ======================= -->
     <%= link_to admin_root_path,
           class: "col-start-2 justify-self-center
                   lg:col-start-1 lg:justify-self-start
@@ -16,10 +33,14 @@
       <span class="text-white">Admin</span>
     <% end %>
 
-    <!-- 右側クラスター -->
+    <!-- =======================
+         3) 右側クラスター
+         - LG 以上: フルメニュー
+         - LG 未満: ハンバーガー
+    ======================= -->
     <div class="col-start-3 justify-self-end flex items-center gap-0 h-full">
 
-      <!-- グローバルメニュー（LG以上で表示） -->
+      <!-- 3-1) グローバルメニュー（LG以上） -->
       <nav class="hidden lg:flex items-center gap-0 text-sm whitespace-nowrap h-full">
 
         <!-- ユーザー管理 -->
@@ -43,7 +64,7 @@
           <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100
                       transition-opacity duration-150
                       absolute left-0 top-full min-w-52
-                    bg-white text-slate-800 shadow ring-1 ring-slate-200">
+                      bg-white text-slate-800 shadow ring-1 ring-slate-200">
             <%= link_to "Books：章管理", admin_books_path,
                   class: "block px-4 py-2 rounded-t-lg hover:bg-slate-50" %>
             <%= link_to "Books：Section管理", admin_book_sections_path,
@@ -59,7 +80,7 @@
           <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100
                       transition-opacity duration-150
                       absolute left-0 top-full min-w-56
-                    bg-white text-slate-800 shadow ring-1 ring-slate-200">
+                      bg-white text-slate-800 shadow ring-1 ring-slate-200">
             <%= link_to "クイズ：章管理", admin_quizzes_path,
                   class: "block px-4 py-2 hover:bg-slate-50" %>
             <%= link_to "クイズ：Seciton管理", admin_quiz_sections_path,
@@ -88,7 +109,7 @@
         <% end %>
       </nav>
 
-      <!-- ハンバーガー：LG未満のみ表示 -->
+      <!-- 3-2) ハンバーガー（LG未満のみ表示） -->
       <button
         class="inline-flex items-center justify-center h-full px-3 rounded-none lg:hidden
                hover:bg-[#0000AA] active:bg-[#000099]"
@@ -97,7 +118,9 @@
       </button>
     </div>
 
-    <!-- モーダル（同スコープ内で描画） -->
+    <!-- =======================
+         4) モーダル（同スコープ内描画）
+    ======================= -->
     <%= render "admin/shared/modal_panel" %>
   </div>
 </header>

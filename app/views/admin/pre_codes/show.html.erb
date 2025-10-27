@@ -1,9 +1,32 @@
+<!-- =========================================================
+  View: Admin / PreCodes 詳細
+  File: app/views/admin/pre_codes/show.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 管理者向け PreCode の詳細表示（タグ/本文/ヒント/解答 等）
+    - 編集/削除操作の導線
+  構成:
+    1) パンくず
+    2) タイトル
+    3) 詳細セクション（登録名 / タグ / 説明 / ヒント / 登録コード / 解答）
+    4) 操作（編集 / 削除）
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_pre_codes %>
 <% breadcrumb :admin_pre_code, @pre_code %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <% content_for :title, "PreCode詳細" %>
 
+<!-- =======================
+     3) 詳細セクション
+======================= -->
 <div class="mx-auto w-full max-w-3xl space-y-6">
 
   <!-- 登録名 -->
@@ -14,7 +37,7 @@
     </div>
   </section>
 
-  <!-- タグ -->
+  <!-- タグ（関連がある場合のみ） -->
   <% if PreCode.reflect_on_association(:tags) %>
     <section>
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">タグ</h2>
@@ -36,7 +59,7 @@
     </div>
   </section>
 
-  <!-- ヒント（問題モード時） -->
+  <!-- ヒント（問題モード時のみ） -->
   <% if @pre_code.hint.present? %>
     <section>
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">ヒント</h2>
@@ -48,7 +71,7 @@
     </section>
   <% end %>
 
-  <!-- 登録コード + 最終更新 -->
+  <!-- 登録コード（閲覧専用 CodeMirror） + 最終更新 -->
   <section>
     <div class="flex items-baseline justify-between">
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録コード</h2>
@@ -57,7 +80,9 @@
       </p>
     </div>
 
+    <!-- CodeMirror の背景透過（見た目調整のみ） -->
     <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
+
     <div data-controller="code-view" data-code-view-theme-value="light"
          class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white overflow-hidden">
       <textarea data-code-view-target="field" class="hidden"><%= @pre_code.body %></textarea>
@@ -65,11 +90,12 @@
     </div>
   </section>
 
-  <!-- 解答（問題モード時） -->
+  <!-- 解答（本文/コード：問題モード時のみ） -->
   <% if @pre_code.answer.present? || @pre_code.answer_code.present? %>
     <section class="space-y-2">
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">解答</h2>
 
+      <!-- 解答本文 -->
       <% if @pre_code.answer.present? %>
         <div class="rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
           <%= sanitize(@pre_code.answer,
@@ -78,6 +104,7 @@
         </div>
       <% end %>
 
+      <!-- 解答コード -->
       <% if @pre_code.answer_code.present? %>
         <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
         <div data-controller="code-view" data-code-view-theme-value="light"
@@ -89,7 +116,9 @@
     </section>
   <% end %>
 
-  <!-- 操作（右下寄せ） -->
+  <!-- =======================
+       4) 操作（編集 / 削除）
+  ======================= -->
   <div class="flex justify-end gap-3 pt-2">
     <%= link_to "編集",
           [:edit, :admin, @pre_code],

@@ -1,40 +1,63 @@
-<!-- app/views/admin/shared/_modal_panel.html.erb -->
+<!-- =========================================================
+  Partial: Admin / Global Modal Panel
+  File: app/views/admin/shared/_modal_panel.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 管理画面（Admin）のハンバーガーから開く全体メニューのモーダル。
+    - PC/スマホ共通で利用できるシンプルなリンクリストを表示する。
+  構成:
+    1) コンテナ（dialog 役割・CLOSE 操作用 data-modal ターゲット）
+    2) 背景クリックでのクローズ
+    3) パネル本体（×ボタン / メニュー本体 / フッター）
+  注意:
+    - JavaScript 側の Stimulus controller "modal" で open/close を制御。
+    - 機能変更はせず、コメントと視覚的グルーピングのみ追加。
+========================================================= -->
+
+<!-- =======================
+     1) コンテナ
+======================= -->
 <div data-modal-target="container"
      class="hidden fixed inset-0 z-50 grid place-items-start md:place-items-start lg:place-items-center
             pt-4 sm:pt-6 md:pt-10 lg:pt-0"
      role="dialog" aria-modal="true" aria-labelledby="admin-menu-title">
 
-  <!-- 背景 -->
+  <!-- =======================
+       2) 背景（クリックで閉じる）
+  ======================= -->
   <div data-modal-target="backdrop"
        class="absolute inset-0 bg-black/40"
        data-action="click->modal#close"></div>
 
-  <!-- パネル -->
+  <!-- =======================
+       3) パネル本体
+  ======================= -->
   <div data-modal-target="panel"
        class="relative mx-auto w-11/12 max-w-lg rounded-2xl bg-white p-8 shadow-lg text-slate-900
               max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-3.5rem)] lg:max-h-none overflow-y-auto">
 
-    <!-- × ボタン -->
+    <!-- 3-1) × ボタン -->
     <button class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
             data-action="click->modal#close" aria-label="閉じる">
       <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
     </button>
 
-    <!-- メニュー（順番は PC と同じだがドロップダウン展開なし） -->
+    <!-- 3-2) メニュー本体 -->
+    <!-- PC のグローバルナビと同じ順序だが、ここではドロップダウン無しの単純リスト -->
     <ul class="space-y-0 border-b-2 border-[#0000CC] divide-y-2 divide-[#0000CC]">
-      <li><%= link_to "ユーザー管理",            admin_users_path,            class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "ユーザー管理",            admin_users_path,              class: "block py-3 text-center hover:text-[#0000CC]" %></li>
       <li><%= link_to "サブエディタ権限管理",    admin_editor_permissions_path, class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "Books：章管理",           admin_books_path,            class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "Books：Section管理",      admin_book_sections_path,    class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "クイズ：章管理",          admin_quizzes_path,          class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "クイズ：Seciton管理",     admin_quiz_sections_path,    class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "クイズ：問題管理",        admin_quiz_questions_path,   class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "バージョン管理",          admin_versions_path,         class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "PreCode管理",             admin_pre_codes_path,        class: "block py-3 text-center hover:text-[#0000CC]" %></li>
-      <li><%= link_to "タグ管理",                admin_tags_path,             class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "Books：章管理",           admin_books_path,              class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "Books：Section管理",      admin_book_sections_path,      class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "クイズ：章管理",          admin_quizzes_path,            class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "クイズ：Seciton管理",     admin_quiz_sections_path,      class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "クイズ：問題管理",        admin_quiz_questions_path,     class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "バージョン管理",          admin_versions_path,           class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "PreCode管理",             admin_pre_codes_path,          class: "block py-3 text-center hover:text-[#0000CC]" %></li>
+      <li><%= link_to "タグ管理",                admin_tags_path,               class: "block py-3 text-center hover:text-[#0000CC]" %></li>
     </ul>
 
-    <!-- フッター：閉じる -->
+    <!-- 3-3) フッター（閉じるボタン） -->
     <div class="mt-6 flex justify-center">
       <button class="inline-flex items-center rounded-lg bg-[#0000CC] px-5 py-2 text-white
                      hover:bg-[#0000AA]" data-action="click->modal#close">

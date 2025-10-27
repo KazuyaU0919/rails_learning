@@ -1,18 +1,35 @@
-<%# 使い方（どちらでもOK）:
-    render "shared/errors", object: @pre_code
-    render "shared/errors", model:  @pre_code
-%>
+<!-- =========================================================
+  Partial: エラーメッセージ一覧
+  File: app/views/shared/_errors.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・バリデーションエラー発生時にエラーメッセージを整形して表示。
+  備考：
+    ・object または model ローカル変数を受け取る。
+========================================================= -->
 
+<!-- =======================
+     対象オブジェクトを取得
+======================= -->
 <% obj = local_assigns[:object] || local_assigns[:model] %>
+
+<!-- =======================
+     エラーがある場合に出力
+======================= -->
 <% if obj && obj.errors.any? %>
   <div class="mb-4 rounded-xl bg-red-50 ring-1 ring-red-200 p-4">
+
+    <!-- 件数表示 -->
     <p class="font-semibold text-red-800 mb-2">
       入力内容に <%= obj.errors.count %> 件のエラーがあります
     </p>
+
+    <!-- 各エラーメッセージ一覧 -->
     <ul class="list-disc pl-5 text-sm text-red-700 space-y-1">
       <% obj.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
     </ul>
+
   </div>
 <% end %>

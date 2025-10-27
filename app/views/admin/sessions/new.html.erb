@@ -1,6 +1,25 @@
-<!-- app/views/admin/sessions/new.html.erb -->
+<!-- =========================================================
+  View: Admin / Sessions ログイン
+  File: app/views/admin/sessions/new.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 管理画面専用の認証フォーム（メール/パスワード）
+  構成:
+    1) タイトル
+    2) ログインフォーム（/admin/session に POST）
+  注意:
+    - 見た目の調整とコメントのみで挙動は変更しない
+========================================================= -->
+
+<!-- =======================
+     1) タイトル
+======================= -->
 <h1 class="text-xl font-bold mb-4">Admin Login</h1>
 
+<!-- =======================
+     2) ログインフォーム
+     - email / password / submit
+======================= -->
 <%= form_with url: admin_session_path, method: :post, class: "space-y-4" do %>
   <div>
     <%= label_tag :email, "メールアドレス", class: "block text-sm mb-1" %>

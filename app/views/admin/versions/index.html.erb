@@ -1,9 +1,30 @@
-<!-- app/views/admin/versions/index.html.erb -->
+<!-- =========================================================
+  View: Admin / Versions 一覧
+  File: app/views/admin/versions/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - PaperTrail 等の「変更履歴」を管理者向けに一覧表示・削除（単体/一括）する。
+  構成:
+    1) パンくず + タイトル
+    2) 絞り込みフォーム（対象モデル/ID）
+    3) 一括削除フォーム + 一覧テーブル（チェックボックス付き）
+    4) ページネーション
+    5) チェック全選択スクリプト
+  注意:
+    - 既存の機能を変更せず、コメントとグルーピングのみ強化。
+========================================================= -->
+
+<!-- =======================
+     1) パンくず + タイトル
+======================= -->
 <% breadcrumb :admin_versions %>
 <%= render "shared/breadcrumbs" %>
 
 <h1 class="text-2xl font-bold mb-6">変更履歴</h1>
 
+<!-- =======================
+     2) 絞り込みフォーム
+======================= -->
 <%= form_with url: admin_versions_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-12 gap-3 items-end mb-5" do %>
   <div class="md:col-span-5">
     <label class="block text-sm text-slate-600 mb-1">対象モデル</label>
@@ -28,12 +49,17 @@
   </div>
 <% end %>
 
+<!-- =======================
+     3) 一括削除 + 一覧テーブル
+======================= -->
 <%= form_with url: bulk_destroy_admin_versions_path, method: :delete, data: { turbo_confirm: "選択した版を削除します。よろしいですか？" }, local: true do %>
+  <!-- 3-1) 一括削除ボタン -->
   <div class="mb-3 flex items-center gap-2">
     <button class="px-3 py-2 rounded bg-rose-600 text-white text-sm">選択を削除</button>
     <span class="text-xs text-slate-500">※ 削除は元に戻せません（レコード自体には影響しません）</span>
   </div>
 
+  <!-- 3-2) 一覧テーブル -->
   <div class="overflow-x-auto rounded border">
     <table class="min-w-full text-sm">
       <thead class="bg-slate-50 text-slate-600">
@@ -81,9 +107,13 @@
     </table>
   </div>
 
+  <!-- 3-3) ページネーション -->
   <div class="mt-4"><%= paginate @versions if respond_to?(:paginate) %></div>
 <% end %>
 
+<!-- =======================
+     5) チェック全選択スクリプト
+======================= -->
 <script>
   (function(){
     const all = document.getElementById("check_all");

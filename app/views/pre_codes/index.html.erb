@@ -1,17 +1,31 @@
+<!-- =========================================================
+  Page: My PreCodes 一覧画面
+  ---------------------------------------------------------
+  ・自分の登録した PreCode 一覧を表示
+  ・検索フォーム、タグ絞り込み、新規作成導線を含む
+  ・初回利用者向けの説明セクションあり
+========================================================= -->
+
 <% breadcrumb :pre_codes %>
 <%= render "shared/breadcrumbs" %>
 <% content_for :title, "My PreCodes" %>
 
-<%# ===== ヘッダーブロック：中央にタイトル、その“下の行”に右寄せの検索群 ===== %>
+<!-- =========================================================
+     ヘッダー：タイトル + 説明 + 検索エリア
+========================================================= -->
 <div class="mb-6">
 
-  <%# 中央タイトル %>
+  <!-- =======================
+       タイトル部
+  ======================= -->
   <div class="text-center">
     <h1 class="text-2xl font-semibold">My PreCodes</h1>
     <p class="mt-1 text-sm text-slate-500">~ 初期データ登録機能 ~</p>
   </div>
 
-  <!-- 🔰 初めての方へ -->
+  <!-- =======================
+       🔰 初めての方へ（折りたたみ説明）
+  ======================= -->
   <section
     class="-mt-2 mb-2"
     data-controller="reveal"
@@ -23,6 +37,8 @@
               data-reveal-target="button"
               data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
+
+    <!-- 説明本文 -->
     <div class="hidden mt-2" data-reveal-target="content">
       <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
 🎨 PreCode機能へようこそ！！
@@ -128,15 +144,19 @@ Rubyの標準メソッドを効率的に学習しましょう！
     </div>
   </section>
 
-  <%# タイトルの下の行：右寄せで検索フォーム＆使い方/新規作成 %>
+  <!-- =======================
+       検索・フィルタ・新規作成ボタン群
+  ======================= -->
   <div class="mt-4">
+    <!-- 🔍 検索フォーム -->
     <div class="flex gap-2 justify-end">
       <%= search_form_for @q, url: pre_codes_path, method: :get,
             html: { class: "flex gap-2" } do |f| %>
 
         <div data-controller="autocomplete"
-            data-autocomplete-list-url-value="<%= pre_codes_path %>"
-            data-autocomplete-sort-value="<%= (params[:sort].presence || 'id_desc') %>">
+             data-autocomplete-list-url-value="<%= pre_codes_path %>"
+             data-autocomplete-sort-value="<%= (params[:sort].presence || 'id_desc') %>">
+
           <%= f.search_field :title_or_description_cont,
                 value: @q.title_or_description_cont,
                 placeholder: "検索（タイトル／説明）",
@@ -145,32 +165,36 @@ Rubyの標準メソッドを効率的に学習しましょう！
                   autocomplete_target: "input",
                   action: "input->autocomplete#onInput focus->autocomplete#onFocus blur->autocomplete#onBlur"
                 } %>
+
           <div data-autocomplete-target="panel"
-              class="hidden mt-1 w-full max-w-[20rem] rounded border border-slate-200 bg-white shadow-md"></div>
+               class="hidden mt-1 w-full max-w-[20rem] rounded border border-slate-200 bg-white shadow-md"></div>
         </div>
 
-        <%= f.submit "検索",
-              class: "btn-solid-red" %>
+        <%= f.submit "検索", class: "btn-solid-red" %>
       <% end %>
     </div>
 
+    <!-- 🏷️ タグフィルタ -->
     <div class="flex mt-2 justify-end">
       <%= render "shared/tag_filter" %>
     </div>
 
+    <!-- ➕ 操作ボタン群（右寄せ） -->
     <div class="flex gap-2 mt-2 justify-end">
-      <%= link_to "使い方", help_path,
-            class: "btn-solid-red" %>
-
-      <%= link_to "PreCode 新規作成", new_pre_code_path,
-            class: "btn-solid-red" %>
+      <%= link_to "使い方", help_path, class: "btn-solid-red" %>
+      <%= link_to "PreCode 新規作成", new_pre_code_path, class: "btn-solid-red" %>
     </div>
   </div>
 </div>
 
+<!-- =========================================================
+     一覧表示エリア
+========================================================= -->
 <% if @pre_codes.blank? %>
+  <!-- データなし -->
   <p class="text-slate-500">まだ登録がありません。まずは「新規作成」からはじめましょう。</p>
 <% else %>
+  <!-- 一覧リスト -->
   <ul class="space-y-3 -mt-2">
     <% @pre_codes.each do |pc| %>
       <li>
@@ -178,7 +202,7 @@ Rubyの標準メソッドを効率的に学習しましょう！
           <div class="flex justify-between">
             <!-- 左：タイトル／説明 -->
             <div class="flex-1 pr-4">
-              <!-- タイトル -->
+              <!-- タイトル行 -->
               <div class="font-semibold flex items-center gap-2">
                 <%= pc.title %>
                 <% if pc.answer.present? %>
@@ -186,16 +210,16 @@ Rubyの標準メソッドを効率的に学習しましょう！
                 <% end %>
               </div>
 
-              <!-- タグピル（タイトルの下） -->
+              <!-- タグピル -->
               <div class="mt-2">
                 <%= render "shared/tag_pills_static", record: pc %>
               </div>
 
-              <!-- 説明（ピルの下） -->
+              <!-- 説明文 -->
               <p class="text-sm text-slate-500 mt-2"><%= truncate(pc.description, length: 120) %></p>
             </div>
 
-            <!-- 右：メトリクス（いいね数・利用数） -->
+            <!-- 右：メトリクス表示 -->
             <div class="shrink-0">
               <%= render "code_libraries/metrics", pre_code: pc %>
             </div>
@@ -205,5 +229,6 @@ Rubyの標準メソッドを効率的に学習しましょう！
     <% end %>
   </ul>
 
+  <!-- ページネーション -->
   <div class="mt-6"><%= paginate @pre_codes %></div>
 <% end %>

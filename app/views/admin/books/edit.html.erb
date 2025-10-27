@@ -1,9 +1,31 @@
+<!-- =========================================================
+  View: Admin / Books 編集
+  File: app/views/admin/books/edit.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 既存 Book の編集フォームを表示
+  構成:
+    1) パンくず
+    2) タイトル
+    3) フォーム（_form 部分テンプレート）
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :root %>
 <% breadcrumb :admin_root %>
 <% breadcrumb :admin_books %>
 <% breadcrumb :admin_book_edit, @book %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <% content_for :title, "Books / 編集" %>
 <h1 class="text-xl font-semibold mb-4">Book を編集</h1>
+
+<!-- =======================
+     3) フォーム呼び出し
+======================= -->
 <%= render "form", book: @book %>

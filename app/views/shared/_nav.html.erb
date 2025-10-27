@@ -1,12 +1,23 @@
-<!-- app/views/shared/_nav.html.erb -->
+<!-- =========================================================
+  Partial: グローバルナビ（ヘッダー）
+  File: app/views/shared/_nav.html.erb
+  ---------------------------------------------------------
+  目的:
+    ・アプリ共通ヘッダー。タイトルリンク、主要ナビ、ハンバーガー/モーダルを提供。
+  備考:
+    ・画面幅 lg 以上で水平ナビ、未満でハンバーガー中心。
+    ・Stimulus controller "modal" を同コンテナにアタッチ。
+========================================================= -->
+
 <header class="border-b bg-[#CC0000] text-white">
   <div
-    class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8
-           h-16
-           grid grid-cols-3 items-center"
-    data-controller="modal">
+    class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 h-16 grid grid-cols-3 items-center"
+    data-controller="modal"
+  >
 
-    <!-- タイトル：base=中央 / lg=左 -->
+    <!-- =======================
+         スコープ: タイトル（base=中央 / lg=左）
+    ======================= -->
     <%= link_to root_path,
           class: "col-start-2 justify-self-center
                   lg:col-start-1 lg:justify-self-start
@@ -16,10 +27,12 @@
       <span class="text-white">Rails Learning</span>
     <% end %>
 
-    <!-- 右側クラスター：配置は従来どおり -->
+    <!-- =======================
+         スコープ: 右側クラスター（水平ナビ + ハンバーガー）
+    ======================= -->
     <div class="col-start-3 justify-self-end flex items-center gap-0 h-full">
 
-      <!-- グローバルメニュー：LG以上のみ／背景同化・枠なし・ホバーで色替え -->
+      <!-- 水平グローバルメニュー（lg 以上表示） -->
       <nav class="hidden lg:flex items-center gap-0 text-sm whitespace-nowrap h-full">
         <%= link_to editor_path,
           class: "inline-flex h-full px-4 hover:bg-[#BB0000] active:bg-[#AA0000] text-white" do %>
@@ -72,15 +85,19 @@
         <% end %>
       </nav>
 
-      <!-- ハンバーガー：常時表示（デザインのみ変更） -->
+      <!-- ハンバーガー（常時表示 / モーダル起動） -->
       <button
         class="inline-flex items-center justify-center h-full px-3 rounded-none hover:bg-[#BB0000] active:bg-[#AA0000]"
-        data-action="click->modal#open" aria-label="メニューを開く">
+        data-action="click->modal#open"
+        aria-label="メニューを開く"
+      >
         <%= heroicon "bars-3", options: { class: "w-6 h-6" } %>
       </button>
     </div>
 
-    <!-- モーダル（同スコープ内で描画） -->
+    <!-- =======================
+         スコープ: モーダル（同スコープ内で描画）
+    ======================= -->
     <%= render "shared/modal_panel" %>
   </div>
 </header>

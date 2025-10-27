@@ -1,10 +1,21 @@
-<% base = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
+<!-- =========================================================
+  部分テンプレート: 前のページリンク
+  ---------------------------------------------------------
+  「前へ」ボタンを生成する。
+  ・最初のページでは非活性状態で表示。
+========================================================= -->
+
+<!-- 共通クラス定義 -->
+<% base     = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
 <% disabled = "px-3 py-1 rounded ring-1 ring-slate-200 text-slate-300 cursor-default" %>
 
+<!-- 表示ロジック -->
 <% if current_page.first? %>
+  <!-- 現在が最初のページ → 非活性 -->
   <span class="<%= disabled %>" aria-disabled="true">
     <%= t("views.pagination.previous") %>
   </span>
 <% else %>
+  <!-- 前のページへリンク -->
   <%= link_to t("views.pagination.previous"), url, rel: "prev", class: base %>
 <% end %>

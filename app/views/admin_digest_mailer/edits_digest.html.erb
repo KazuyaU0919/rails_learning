@@ -1,4 +1,13 @@
+<!-- =========================================================
+  管理者宛て：編集内容のダイジェスト通知（HTML版）
+  ---------------------------------------------------------
+  ・PaperTrail::Version から抽出した編集履歴を通知。
+  ・@edits: 編集履歴 [{at:, user:, item_type:, item_id:, title:}, ...]
+  ・@window_start / @window_end: 通知対象時間帯
+  ・@login_url: Rails Learning 管理画面へのログインリンク
+========================================================= -->
 <div>
+  <!-- 宛名部分 -->
   <% @admin_names.each do |n| %>
     <p><%= n %> 様</p>
   <% end %>
@@ -8,15 +17,19 @@
     編集内容をご確認ください。
   </p>
 
+  <!-- ログインボタン -->
   <p style="margin:14px 0;">
-    <a href="<%= @login_url %>" style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
+    <a href="<%= @login_url %>"
+       style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
       Rails Learningにログイン
     </a>
   </p>
 
+  <!-- 編集がない場合の分岐 -->
   <% if @edits.blank? %>
     <p>（この時間帯の編集はありませんでした）</p>
   <% else %>
+    <!-- 編集内容の一覧 -->
     <% @edits.each_with_index do |e, i| %>
       <div style="margin:12px 0;padding:12px;border:1px solid #e5e7eb;border-radius:10px;">
         <div style="font-weight:600;margin-bottom:6px;">編集内容：その<%= i+1 %></div>

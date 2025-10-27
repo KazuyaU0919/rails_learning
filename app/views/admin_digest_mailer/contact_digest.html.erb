@@ -1,15 +1,27 @@
+<!-- =========================================================
+  管理者宛て：問い合わせ通知メール（HTML版）
+  ---------------------------------------------------------
+  ・「GOOGLE_FORM_CONFIRM_URL」経由で問い合わせ内容を確認するための通知。
+  ・@admin_names: 宛名（複数管理者対応）
+  ・@window_start / @window_end: 対象期間
+  ・@form_url: Googleフォーム確認URL（nil時は "#"）
+========================================================= -->
 <div>
+  <!-- 宛名の出力 -->
   <% @admin_names.each do |n| %>
     <p><%= n %> 様</p>
   <% end %>
 
+  <!-- 通知本文 -->
   <p>
     <%= l @window_start, format: :long %> から <%= l @window_end, format: :long %> までの間に、問い合わせがありました。<br>
     問い合わせ内容をご確認ください。
   </p>
 
+  <!-- Googleフォーム遷移ボタン -->
   <p style="margin:14px 0;">
-    <a href="<%= @form_url || "#" %>" style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
+    <a href="<%= @form_url || "#" %>"
+       style="display:inline-block;background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none">
       Googleフォームへ遷移する
     </a>
   </p>

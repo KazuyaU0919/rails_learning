@@ -1,11 +1,33 @@
-<%# レイアウト(application.html.erb等)で `render "shared/flash"` を呼ぶ想定 %>
+<!-- =========================================================
+  Partial: フラッシュメッセージ表示
+  File: app/views/shared/_flash.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・コントローラから設定された flash メッセージを整形して表示。
+  備考：
+    ・notice / success / alert / error を色分け。
+    ・それ以外はデフォルトグレー。
+========================================================= -->
+
+<!-- =======================
+     flash の内容を走査
+======================= -->
 <% flash.each do |key, msg| %>
+
+  <!-- =======================
+       色テーマ定義
+       - flash[:key] の種類に応じて背景・文字色を切り替え
+  ======================= -->
   <% base = {
        notice: "bg-green-50 text-green-800 ring-green-200",
        success:"bg-green-50 text-green-800 ring-green-200",
        alert:  "bg-red-50 text-red-800 ring-red-200",
        error:  "bg-red-50 text-red-800 ring-red-200"
      } %>
+
+  <!-- =======================
+       メッセージ本体
+  ======================= -->
   <div class="my-4 rounded-xl px-4 py-3 ring-1 <%= base[key.to_sym] || 'bg-slate-50 text-slate-800 ring-slate-200' %>">
     <%= msg %>
   </div>

@@ -1,26 +1,54 @@
+<!-- =========================================================
+  Layout: Application
+  ---------------------------------------------------------
+  ・フロント全体の基底レイアウト
+  ・OGP, GA, PWA, Importmap, Quill, highlight.js を集約
+  ・共通ナビ/フッター + 可変コンテナクラス
+========================================================= -->
+
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- =======================
+         ページタイトル
+       ======================= -->
     <title><%= content_for?(:title) ? yield(:title) : "Rails Learning" %></title>
+
+    <!-- =======================
+         ビューポート & PWA 基本設定
+       ======================= -->
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <%# 共通OGP設定 %>
+    <!-- =======================
+         共通 OGP 設定
+       ======================= -->
     <meta property="og:title" content="Rails Learning">
     <meta property="og:description" content="Rails学習をもっと楽しく、効率的に。">
     <meta property="og:image" content="<%= image_url("ogp.png") %>">
     <meta property="og:type" content="website">
     <meta property="og:url" content="<%= request.original_url %>">
 
+    <!-- =======================
+         Rails セキュリティメタ
+       ======================= -->
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <!-- =======================
+         ページ固有 head スロット
+       ======================= -->
     <%= yield :head %>
 
-    <%# ===== Google Analytics ===== %>
+    <!-- =======================
+         Google Analytics
+       ======================= -->
     <%= render "shared/google_analytics" %>
 
-    <%# ===== アイコン & PWA ===== %>
+    <!-- =======================
+         アイコン / PWA 関連
+       ======================= -->
     <%= favicon_link_tag 'favicon.ico', rel: 'icon', type: 'image/x-icon' %>
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
@@ -28,15 +56,21 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <%# CSS / JS 読み込み %>
+    <!-- =======================
+         CSS / JS 読み込み（Importmap）
+       ======================= -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
-    <%# Quill CDN %>
+    <!-- =======================
+         外部ライブラリ
+         - Quill（WYSIWYG）
+         - highlight.js（コード表示）
+       ======================= -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 
-    <%# highlight.js のダーク系テーマ（GitHub Dark） %>
+    <!-- highlight.js: GitHub Dark テーマ + 主要言語 -->
     <link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/ruby.min.js" defer></script>
@@ -47,12 +81,16 @@
   </head>
 
   <body class="min-h-screen flex flex-col <%= @body_bg || 'bg-white' %> text-slate-800">
-    <!-- ヘッダー -->
+    <!-- =======================
+         ヘッダー（共通ナビ）
+       ======================= -->
     <%= render "shared/nav" %>
 
-    <!-- メイン（高さだけ担当） -->
+    <!-- =======================
+         メイン（高さ担当）
+       ======================= -->
     <main class="flex-1">
-      <!-- 幅・左右余白はここで集中管理 -->
+      <!-- 幅・左右余白の集中管理（page_container_class で上書き可） -->
       <div class="<%= content_for?(:page_container_class) \
                     ? yield(:page_container_class) \
                     : 'mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-6' %>">
@@ -61,7 +99,9 @@
       </div>
     </main>
 
-    <!-- フッター -->
+    <!-- =======================
+         フッター
+       ======================= -->
     <footer class="mt-12 border-t bg-black text-white">
       <div class="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 items-center gap-4">

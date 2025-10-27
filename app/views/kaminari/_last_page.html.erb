@@ -1,10 +1,22 @@
-<% base = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
+<!-- =========================================================
+  部分テンプレート: 最後のページリンク
+  ---------------------------------------------------------
+  Kaminari が自動的に呼び出す部分テンプレート。
+  「最後へ」ボタンを生成する。
+  ・現在のページが最後のページなら非活性状態にする。
+========================================================= -->
+
+<!-- 共通クラス定義 -->
+<% base     = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
 <% disabled = "px-3 py-1 rounded ring-1 ring-slate-200 text-slate-300 cursor-default" %>
 
+<!-- 表示ロジック -->
 <% if current_page.last? %>
+  <!-- 現在が最後のページ → 押せない -->
   <span class="<%= disabled %>" aria-disabled="true">
     <%= t("views.pagination.last") %>
   </span>
 <% else %>
+  <!-- 最後のページへリンク -->
   <%= link_to t("views.pagination.last"), url, class: base %>
 <% end %>

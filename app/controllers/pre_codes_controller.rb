@@ -1,14 +1,32 @@
-# app/controllers/pre_codes_controller.rb
+# ============================================================
+# PreCodesController
+# ------------------------------------------------------------
+# ユーザー自身の PreCode（初期データ）を管理する。
+# - 一覧、詳細、作成、更新、削除を提供。
+# - タグ付け機能あり。
+# - ユーザー本人のみアクセス可。
+# ------------------------------------------------------------
+# 特徴：
+#   - タグの正規化・付け替え処理（replace_tags）
+#   - HTMLサニタイズによる安全性担保
+#   - Bullet対策のpreload（N+1回避）
+# ============================================================
+
 class PreCodesController < ApplicationController
   before_action :require_login!
   before_action :set_pre_code, only: %i[show edit update destroy]
 
+  # =======================
+  # 一覧
+  # =======================
   def index
     base = current_user.pre_codes
 
+    # --- タグフィルタ（AND検索）---
     if params[:tags].present?
-      tag_keys = parse_tags(params[:tags])
+      tag_keys  = parse_tags(params[:tags])
       norm_keys = tag_keys.map { |n| normalize_tag(n) }.uniq
+
       if norm_keys.any?
         tag_ids = Tag.where(name_norm: norm_keys).pluck(:id)
         base =
@@ -23,13 +41,21 @@ class PreCodesController < ApplicationController
       end
     end
 
+    # --- 検索（ransack使用）---
     @q = base.ransack(params[:q])
-    # ★ Bullet (N+1) 対策
+
+    # --- N+1 対策 + 並び順 ---
     @pre_codes = @q.result.order(id: :desc).preload(:tags).page(params[:page])
   end
 
+  # =======================
+  # 詳細
+  # =======================
   def show; end
 
+  # =======================
+  # 新規作成
+  # =======================
   def new
     @pre_code = current_user.pre_codes.build
   end
@@ -44,6 +70,9 @@ class PreCodesController < ApplicationController
     end
   end
 
+  # =======================
+  # 編集 / 更新
+  # =======================
   def edit; end
 
   def update
@@ -55,6 +84,9 @@ class PreCodesController < ApplicationController
     end
   end
 
+  # =======================
+  # 削除
+  # =======================
   def destroy
     @pre_code.destroy
     redirect_to pre_codes_path, notice: "PreCode を削除しました"
@@ -62,21 +94,26 @@ class PreCodesController < ApplicationController
 
   private
 
+  # =======================
+  # 共通セットアップ
+  # =======================
   def set_pre_code
     @pre_code = current_user.pre_codes.find(params[:id])
   end
 
+  # =======================
   # Strong Parameters
+  # =======================
   def pre_code_params
     attrs = params.require(:pre_code).permit(
       :title, :description, :body,
-      :hint, :answer, :answer_code,
-      :quiz_mode
+      :hint, :answer, :answer_code, :quiz_mode
     )
 
+    # --- HTMLサニタイズ ---
     sanitizer = if respond_to?(:sanitize_content, true)
                   method(:sanitize_content)
-    else
+                else
                   ->(html) {
                     ActionController::Base.helpers.sanitize(
                       html,
@@ -84,7 +121,7 @@ class PreCodesController < ApplicationController
                       attributes: %w[href]
                     )
                   }
-    end
+                end
 
     attrs[:hint]   = sanitizer.call(attrs[:hint])   if attrs.key?(:hint)
     attrs[:answer] = sanitizer.call(attrs[:answer]) if attrs.key?(:answer)
@@ -92,11 +129,16 @@ class PreCodesController < ApplicationController
     attrs
   end
 
-  # === タグ関連 ===
+  # =======================
+  # タグ関連ユーティリティ
+  # =======================
+
+  # 例："ruby,array" → ["ruby","array"]
   def parse_tags(val)
     Array(val).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
   end
 
+  # Tag.normalize があればそちらを使用
   def normalize_tag(name)
     if Tag.respond_to?(:normalize)
       Tag.normalize(name)
@@ -105,6 +147,7 @@ class PreCodesController < ApplicationController
     end
   end
 
+  # タグ付け替え（既存タグを全置換）
   def replace_tags(pre_code, raw_names)
     return if raw_names.nil?
 

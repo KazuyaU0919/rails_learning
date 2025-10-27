@@ -1,9 +1,17 @@
-<%# 右側アイコン＋カウンタ（置換対象） %>
+<!-- =========================================================
+  部分テンプレート: Code Library 用の右側メトリクス表示
+  ---------------------------------------------------------
+  ・いいね数（❤️）と利用回数（💼）を表示
+  ・一覧画面・詳細画面の両方で利用される
+========================================================= -->
 <div id="<%= dom_id(pre_code, :metrics) %>" class="text-sm text-slate-500 shrink-0">
+  <!-- ❤️ いいね数 -->
   <span class="inline-flex items-center gap-1 mr-4 align-middle">
-    <%= heroicon "heart",  variant: :solid,   options: { class: "w-4 h-4" } %>
+    <%= heroicon "heart", variant: :solid, options: { class: "w-4 h-4" } %>
     <%= pre_code.like_count %>
   </span>
+
+  <!-- 💼 利用回数 -->
   <span class="inline-flex items-center gap-1 align-middle">
     <%= heroicon "briefcase", variant: :outline, options: { class: "w-4 h-4" } %>
     <%= pre_code.use_count %>

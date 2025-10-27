@@ -1,12 +1,31 @@
-<!-- app/views/quizzes/show.html.erb -->
+<!-- =========================================================
+  Page: クイズ詳細（クイズ内セクション一覧）
+  File: app/views/quizzes/show.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・1つのクイズ（@quiz）の概要と、その配下のセクション一覧（@sections）を表示
+    ・パンくず／タイトル／説明／目次（FREE 表示含む）で構成
+========================================================= -->
+
+<!-- =======================
+     パンくずナビ
+======================= -->
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     ページタイトル & メタタイトル
+======================= -->
 <% content_for :title, @quiz.title %>
 <h1 class="text-3xl font-bold mb-3"><%= @quiz.title %></h1>
 <p class="text-slate-600 mb-6"><%= @quiz.description %></p>
 
+<!-- =======================
+     セクション目次（一覧）
+     - 各行はセクション詳細へリンク
+     - FREE フラグが true の場合、右肩にバッジを表示
+======================= -->
 <h2 class="text-xl font-semibold mb-2">目次</h2>
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <% @sections.each do |s| %>

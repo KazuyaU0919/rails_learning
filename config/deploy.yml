@@ -1,10 +1,38 @@
-# Name of your application. Used to uniquely configure containers.
-service: rails_learning
+# =========================================================
+# File: config/deploy.yml
+# ---------------------------------------------------------
+# 目的:
+#   Kamal (旧名: Kamal/SSHKit 由来の最小構成デプロイ) のデプロイ設定。
+#   コンテナイメージ・接続先・プロキシ・レジストリ・ENV・ボリュームなどを宣言。
+#
+# ガイド:
+#   - service / image … アプリ識別子とビルドするイメージ名。
+#   - servers … web/job の各ロールを割り当て。単一ホストの最小構成例。
+#   - proxy … 単一 Web サーバー構成での SSL/TLS とホスト名を指定。
+#   - registry … プライベートレジストリ利用時の資格情報を指定。
+#   - env … RAILS_MASTER_KEY 等のシークレット/明文環境変数を注入。
+#   - aliases … よく使う操作を短縮（rails console, shell, logs, dbconsole）。
+#   - volumes … 永続化が必要なパスをボリュームにマウント。
+#   - asset_path … フィンガープリント済みアセットのブリッジ。
+#   - builder … ビルドアーキテクチャ等のビルダー設定。
+#
+# 注意:
+#   - 値は一切変更せず、説明を追記・並べ替えで読みやすくしている。
+# =========================================================
 
-# Name of the container image.
+# =======================
+# アプリ識別
+# =======================
+service: rails_learning            # コンテナ群を一意に識別
+
+# =======================
+# コンテナイメージ
+# =======================
 image: your-user/rails_learning
 
-# Deploy to these servers.
+# =======================
+# デプロイ先サーバ
+# =======================
 servers:
   web:
     - 192.168.0.1
@@ -13,91 +41,98 @@ servers:
   #     - 192.168.0.1
   #   cmd: bin/jobs
 
-# Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
-# Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
+# =======================
+# プロキシ/SSL（単一 Web サーバー運用例）
+# =======================
+# Let's Encrypt による自動証明書発行を有効化する簡易構成。
+# 複数 Web サーバでの運用時はロードバランサ側で終端し、この設定は削除する。
 #
-# Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
+# Cloudflare 利用時は、ダッシュボードの SSL/TLS 設定で "Full" を選択。
 proxy:
   ssl: true
   host: app.example.com
 
-# Credentials for your image host.
+# =======================
+# イメージレジストリ認証
+# =======================
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
+  # server: registry.digitalocean.com / ghcr.io / ...  # Docker Hub 以外を使う場合は指定
   username: your-user
-
-  # Always use an access token rather than real password when possible.
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - KAMAL_REGISTRY_PASSWORD      # 可能な限りアクセストークンを使用（生パスワード非推奨）
 
-# Inject ENV variables into containers (secrets come from .kamal/secrets).
+# =======================
+# 環境変数注入（.kamal/secrets から取り込み）
+# =======================
 env:
   secret:
     - RAILS_MASTER_KEY
   clear:
-    # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
-    # When you start using multiple servers, you should split out job processing to a dedicated machine.
+    # Web サーバの Puma プロセス内で Solid Queue Supervisor を動かす（単一ホスト向け）
     SOLID_QUEUE_IN_PUMA: true
 
-    # Set number of processes dedicated to Solid Queue (default: 1)
+    # 例: Solid Queue の並列数
     # JOB_CONCURRENCY: 3
 
-    # Set number of cores available to the application on each server (default: 1).
+    # 例: Web の並列プロセス数
     # WEB_CONCURRENCY: 2
 
-    # Match this to any external database server to configure Active Record correctly
-    # Use rails_learning-db for a db accessory server on same machine via local kamal docker network.
+    # 例: 外部 DB を使う場合のホスト指定
     # DB_HOST: 192.168.0.2
 
-    # Log everything from Rails
+    # 例: ログレベルを詳細化
     # RAILS_LOG_LEVEL: debug
 
-# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
-# "bin/kamal logs -r job" will tail logs from the first server in the job section.
+# =======================
+# よく使うエイリアス
+# =======================
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
-  shell: app exec --interactive --reuse "bash"
-  logs: app logs -f
-  dbc: app exec --interactive --reuse "bin/rails dbconsole"
+  shell:   app exec --interactive --reuse "bash"
+  logs:    app logs -f
+  dbc:     app exec --interactive --reuse "bin/rails dbconsole"
 
-
-# Use a persistent storage volume for sqlite database files and local Active Storage files.
-# Recommended to change this to a mounted volume path that is backed up off server.
+# =======================
+# 永続ボリューム
+# =======================
+# Active Storage（ローカル保存）や sqlite を使う場合の例。
+# バックアップ対象の外部ストレージにマウントするのが望ましい。
 volumes:
   - "rails_learning_storage:/rails/storage"
 
-
-# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
-# hitting 404 on in-flight requests. Combines all files from new and old
-# version inside the asset_path.
+# =======================
+# アセットブリッジ
+# =======================
+# フィンガープリント済みアセットの入替時に 404 を避けるため、
+# 旧/新の assets を合成して提供する。
 asset_path: /rails/public/assets
 
-# Configure the image builder.
+# =======================
+# ビルダー設定
+# =======================
 builder:
   arch: amd64
-
-  # # Build image via remote server (useful for faster amd64 builds on arm64 computers)
   # remote: ssh://docker@docker-builder-server
-  #
-  # # Pass arguments and secrets to the Docker build process
   # args:
   #   RUBY_VERSION: 3.4.1
   # secrets:
   #   - GITHUB_TOKEN
   #   - RAILS_MASTER_KEY
 
-# Use a different ssh user than root
+# =======================
+# SSH（必要に応じて）
+# =======================
 # ssh:
 #   user: app
 
-# Use accessory services (secrets come from .kamal/secrets).
+# =======================
+# アクセサリサービス（例: DB/Redis）
+# =======================
 # accessories:
 #   db:
 #     image: mysql:8.0
 #     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
+#     port: "127.0.0.1:3306:3306"       # 公開するなら 3306 のみ
 #     env:
 #       clear:
 #         MYSQL_ROOT_HOST: '%'

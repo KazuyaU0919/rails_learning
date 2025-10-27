@@ -1,4 +1,10 @@
-<%# app/views/bookmarks/create.turbo_stream.erb %>
+<%# =========================================================
+    Turbo Stream: ブックマーク作成後のアクション領域置換
+    ---------------------------------------------------------
+    ・いいね／ブックマーク操作ボタンを含む actions 領域を差し替える
+    ・部分テンプレート: code_libraries/_actions を再描画
+    ・current_like / current_bookmark はログイン時のみ検索
+   ========================================================= %>
 <%= turbo_stream.replace dom_id(@pre_code, :actions) do %>
   <%= render "code_libraries/actions",
       pre_code: @pre_code,

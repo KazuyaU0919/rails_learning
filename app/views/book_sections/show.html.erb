@@ -1,13 +1,28 @@
+<!-- =========================================================
+  ビュー: BookSection 表示ページ
+  ---------------------------------------------------------
+  ・1章単位で本文・ナビゲーション・クイズ誘導などを表示。
+  ・Stimulus: code-highlight / share を利用。
+  ・エディタ権限がある場合は「編集」ボタンを表示。
+========================================================= -->
+
+<!-- ===== パンくずリスト ===== -->
 <% breadcrumb :books %>
 <% breadcrumb :book, @book %>
 <% breadcrumb :book_section, @book, @section %>
 <%= render "shared/breadcrumbs" %>
 
-<div class="mx-auto w-full max-w-3xl px-4 md:px-6 lg:px-8" data-controller="code-highlight">
+<!-- ===== コンテンツ本体 ===== -->
+<div class="mx-auto w-full max-w-3xl px-4 md:px-6 lg:px-8"
+     data-controller="code-highlight">
+
+  <!-- 戻るリンク -->
   <nav class="mb-6 text-sm">
-    <%= link_to "← #{@book.title} に戻る", book_path(@book), class: "text-slate-600 hover:underline" %>
+    <%= link_to "← #{@book.title} に戻る", book_path(@book),
+          class: "text-slate-600 hover:underline" %>
   </nav>
 
+  <!-- 編集ボタン（上部） -->
   <% if can_edit?(@section) %>
     <div class="flex justify-end mb-4">
       <%= link_to "編集", edit_book_section_path(@book, @section),
@@ -15,21 +30,23 @@
     </div>
   <% end %>
 
+  <!-- 見出し -->
   <h1 class="text-2xl font-bold mb-3">
     <span class="text-slate-400 mr-2"><%= @section.position %>.</span>
     <%= @section.heading %>
   </h1>
 
-  <!-- ★ ここがハイライト対象（content-body） -->
+  <!-- 本文（code highlight 対象） -->
   <article class="content-body prose break-all md:break-words">
     <%= render_section_content(@section) %>
   </article>
 
-  <!-- ===== シェア & クイズ遷移ボタン ===== -->
+  <!-- ===== クイズ・シェア誘導セクション ===== -->
   <h1 class="mt-12 text-2xl font-semibold">次の章に行く前に...</h1>
   <div class="text-center space-y-3"
        data-controller="share"
        data-share-url-value="<%= books_url %>">
+
     <% if @section.quiz_section.present? %>
       <div class="mt-4 p-5 rounded-xl ring-1 ring-slate-200 bg-white">
         <p class="text-xl font-semibold mt-2 mb-3">この章で学んだ知識を覚えよう！</p>
@@ -38,6 +55,7 @@
           この章で学んだことを、Xでアウトプットしましょう ✨
         </p>
 
+        <!-- X(Twitter)シェアボタン -->
         <button type="button"
                 data-action="share#openTwitter"
                 data-text="<%= "#{@section.heading} を学習しました！ #RailsLearning #Ruby #Rails" %>"
@@ -45,8 +63,11 @@
           Xでシェア
         </button>
 
-        <p class="text-slate-600 mt-8 mb-4">対応するクイズに挑戦して理解を定着させましょう💡</p>
+        <p class="text-slate-600 mt-8 mb-4">
+          対応するクイズに挑戦して理解を定着させましょう💡
+        </p>
 
+        <!-- クイズページへのリンク -->
         <%= link_to "クイズを解く",
               quiz_section_path(@section.quiz_section.quiz, @section.quiz_section),
               class: "btn-pill is-red" %>
@@ -54,6 +75,7 @@
     <% end %>
   </div>
 
+  <!-- ===== 前後ナビゲーション ===== -->
   <div class="flex items-center justify-between mt-6 pt-6 border-t">
     <div>
       <% if @prev %>
@@ -71,6 +93,7 @@
     </div>
   </div>
 
+  <!-- 編集ボタン（下部） -->
   <% if can_edit?(@section) %>
     <div class="flex justify-end my-4">
       <%= link_to "編集", edit_book_section_path(@book, @section),

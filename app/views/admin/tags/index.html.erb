@@ -1,9 +1,34 @@
-<%# app/views/admin/tags/index.html.erb %>
+<!-- =========================================================
+  View: Admin / Tags 一覧 + 検索 + 統合
+  File: app/views/admin/tags/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - タグの一覧・検索（名前）・統合操作・削除
+  構成:
+    1) パンくず
+    2) タイトル
+    3) 検索フォーム（q）
+    4) 一覧テーブル（ID/Name/Slug/Color/Used/Actions）
+    5) 統合フォーム（from_id → to_id）
+    6) ページネーション
+  注意:
+    - 色スウォッチは既存仕様どおり inline-style を保持
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_tags %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <h1 class="text-xl font-bold mb-4">Tags</h1>
 
+<!-- =======================
+     3) 検索フォーム（名前）
+======================= -->
 <%= form_with url: admin_tags_path, method: :get, local: true, class: "mb-4 flex gap-2" do %>
   <input type="text"
          name="q"
@@ -13,6 +38,9 @@
   <button class="rounded-xl px-4 py-2 ring-1 ring-slate-300">検索</button>
 <% end %>
 
+<!-- =======================
+     4) 一覧テーブル
+======================= -->
 <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
   <table class="w-full text-sm">
     <thead class="bg-slate-50">
@@ -29,16 +57,25 @@
     <tbody>
       <% @tags.each do |t| %>
         <tr class="border-t">
+          <!-- ID -->
           <td class="p-2 text-right font-mono"><%= t.id %></td>
+
+          <!-- Name / Slug -->
           <td class="p-2"><%= t.name %></td>
           <td class="p-2"><%= t.slug %></td>
+
+          <!-- Color（スウォッチ + HEX 表示） -->
           <td class="p-2">
-            <%# 色スウォッチ + HEX 表示（背景色は直接指定） %>
+            <!-- 背景色は HEX をそのまま利用（未設定時は #6B7280） -->
             <span class="inline-block w-4 h-4 rounded align-middle"
                   style="background-color: '<%= (t.color.presence || '#6B7280') %>'"></span>
             <code class="ml-1 text-xs align-middle"><%= t.color %></code>
           </td>
+
+          <!-- 使用回数 -->
           <td class="p-2 text-right"><%= t.taggings_count %></td>
+
+          <!-- Actions（未使用タグのみ削除可能） -->
           <td class="p-2">
             <% if t.taggings_count.zero? %>
               <%= link_to "削除",
@@ -55,7 +92,12 @@
   </table>
 </div>
 
-<%# === 統合フォーム === %>
+<!-- =======================
+     5) 統合フォーム
+     - from_id のタグを to_id のタグへ統合
+     - PreCode との関連は移管され、重複は自動除去
+     - 統合後に未使用となった from_id タグは自動削除
+======================= -->
 <div class="mt-6 p-4 rounded-xl ring-1 ring-slate-200">
   <h2 class="font-semibold mb-2">統合</h2>
 
@@ -81,6 +123,9 @@
   <% end %>
 </div>
 
+<!-- =======================
+     6) ページネーション
+======================= -->
 <div class="mt-4">
   <%= paginate @tags if respond_to?(:paginate) %>
 </div>

@@ -1,44 +1,47 @@
-# app/helpers/admin/versions_helper.rb
+# ============================================================
+# Helper: 管理 > Versions (PaperTrail)
+# ------------------------------------------------------------
+# 目的:
+# - HTML差分や操作履歴を人が読める形式に整形
+# - 操作ユーザーや編集ページへのリンクを補助
+# ============================================================
 module Admin::VersionsHelper
-  # HTMLを人が読みやすいプレーンテキストへ
-  # Quill の出力もある程度崩さず読めるように調整
+
+  # =======================
+  # HTML → プレーンテキスト変換
+  # -----------------------
+  # Quill 等で生成されたHTMLを読みやすく整形。
+  # コードブロックは ```code``` に変換。
+  # =======================
   def textify_html(html)
     s = html.to_s.dup
-
-    # Quill の空白
     s.gsub!(/&nbsp;/i, " ")
-
-    # <style>, <script> ブロックごと除去
     s.gsub!(%r{<style[^>]*>.*?</style>}mi, "")
     s.gsub!(%r{<script[^>]*>.*?</script>}mi, "")
-
-    # 行区切り
     s.gsub!(/<br\s*\/?>/i, "\n")
     s.gsub!(/<\/p\s*>/i, "\n\n")
     s.gsub!(/<\/li\s*>/i, "\n")
     s.gsub!(/<li[^>]*>/i, "・")
-
-    # コードブロック（pre/code）は保つ
     s.gsub!(/<pre[^>]*><code[^>]*>(.*?)<\/code><\/pre>/mi) { "\n```\n#{$1}\n```\n" }
-
     s = strip_tags(s)
     s.gsub(/\n{3,}/, "\n\n").strip
   end
 
-  # とりあえずの行単位の簡易差分
+  # =======================
+  # 簡易的な行単位の差分
+  # -----------------------
+  # before/after をテキスト化して比較。
+  # =======================
   def simple_line_diff(before_html, after_html)
     before_lines = textify_html(before_html).split(/\r?\n/)
     after_lines  = textify_html(after_html).split(/\r?\n/)
-
-    {
-      added:   after_lines - before_lines,
-      removed: before_lines - after_lines,
-      before_lines:,
-      after_lines:
-    }
+    { added: after_lines - before_lines, removed: before_lines - after_lines,
+      before_lines:, after_lines: }
   end
 
-  # ===== 表示ラベル =====
+  # =======================
+  # 項目種別の表示ラベル
+  # =======================
   def label_for_item_type(type)
     case type.to_s
     when "BookSection"  then "テキスト"
@@ -47,6 +50,9 @@ module Admin::VersionsHelper
     end
   end
 
+  # =======================
+  # カラム名 → 日本語ラベル
+  # =======================
   def label_for_column(col)
     case col.to_s
     when "updated_at"      then "更新日時"
@@ -64,13 +70,16 @@ module Admin::VersionsHelper
     end
   end
 
-  # ===== 操作者のユーザー情報 =====
+  # =======================
+  # 操作者情報の取得
+  # =======================
   def actor_for(version)
     uid = version.whodunnit.to_s
     return nil if uid.blank? || uid !~ /\A\d+\z/
     User.find_by(id: uid.to_i)
   end
 
+  # 操作者のバッジ表示
   def actor_badge(version)
     if (u = actor_for(version))
       %(ID: #{u.id} / #{ERB::Util.h u.name} / #{ERB::Util.h u.email})
@@ -79,8 +88,11 @@ module Admin::VersionsHelper
     end
   end
 
-  # ===== 「編集されたページ」への遷移先 =====
-  # 存在しない場合は nil を返す（ビュー側で非表示）
+  # =======================
+  # 編集ページへのリンクパス
+  # -----------------------
+  # 対象のレコードが存在する場合のみURLを返す。
+  # =======================
   def admin_edit_path_for(version)
     id = version.item_id
     case version.item_type
@@ -91,7 +103,7 @@ module Admin::VersionsHelper
     else
       nil
     end
-  rescue StandardError
+  rescue
     nil
   end
 end

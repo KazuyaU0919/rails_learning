@@ -1,11 +1,36 @@
+<!-- =========================================================
+  Partial: Admin / BookSections フォーム
+  File: app/views/admin/book_sections/_form.html.erb
+  ---------------------------------------------------------
+  目的:
+    - BookSection の新規作成 / 編集の共通フォーム
+  挙動:
+    - @section.new_record? で URL / HTTP メソッドを出し分け
+    - コンテンツは Quill を用いたリッチテキスト入力
+  構成:
+    1) form_with（URL/メソッドの出し分け）
+    2) Book 選択
+    3) Position / Is free / Heading（横並び）
+    4) 対応クイズ（任意）
+    5) 本文（Quill エディタ）
+    6) 送信ボタン
+========================================================= -->
+
+<!-- =======================
+     1) form_with（URL/メソッドの出し分け + Quill コントローラ付与）
+======================= -->
 <%= form_with model: @section,
               url: (@section.new_record? ? admin_book_sections_path : admin_book_section_path(@section)),
               method: (@section.new_record? ? :post : :patch),
               data: { controller: "quill" } do |f| %>
 
-  <div class="grid gap-8 text-[17px]">  <!-- 全体を少し大きめに -->
+  <!-- 全体ラッパ: 視認性のためフォントサイズや余白を少し広めに -->
+  <div class="grid gap-8 text-[17px]">
 
-    <!-- 教本（セレクト） -->
+    <!-- =======================
+         2) 教本（セレクト）
+         - Book の title で昇順表示
+    ======================= -->
     <div class="space-y-2">
       <%= f.label :book_id, class: "block font-semibold text-slate-800" %>
       <%= f.collection_select :book_id, Book.order(:title), :id, :title, {},
@@ -13,8 +38,14 @@
                     shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" %>
     </div>
 
-    <!-- Position / Is free / Heading（見出しは横並びで値を入力） -->
+    <!-- =======================
+         3) Position / Is free / Heading（横並び）
+         - Position: 並び順
+         - Is free: FREE 表示の有無
+         - Heading: 見出し
+    ======================= -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Position -->
       <div class="space-y-2">
         <%= f.label :position, class: "block font-semibold text-slate-800" %>
         <%= f.number_field :position, min: 0,
@@ -22,13 +53,14 @@
                       shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" %>
       </div>
 
+      <!-- Is free -->
       <div class="flex items-center gap-3 pt-7 md:pt-0">
         <%= f.check_box :is_free, class: "h-5 w-5 align-middle rounded border-slate-300
                                         text-sky-600 focus:ring-sky-500" %>
         <%= f.label :is_free, class: "font-semibold text-slate-800" %>
       </div>
 
-      <!-- Heading：入力を横並びに -->
+      <!-- Heading -->
       <div class="flex items-center gap-3">
         <%= f.label :heading, class: "shrink-0 font-semibold text-slate-800" %>
         <%= f.text_field :heading,
@@ -37,28 +69,44 @@
       </div>
     </div>
 
-    <!-- ★ 対応クイズ（任意） -->
+    <!-- =======================
+         4) 対応クイズ（任意）
+         - 選択肢: Quiz.title / Section.heading (position) の連結表示
+         - 未設定なら本文下にボタンを出さない
+    ======================= -->
     <div class="space-y-2">
       <%= f.label :quiz_section_id, "対応するクイズセクション（任意）", class: "block font-semibold text-slate-800" %>
+
       <% quiz_options = QuizSection
           .includes(:quiz).order("quizzes.title ASC, quiz_sections.position ASC")
           .map { |s| ["#{s.quiz.title} / #{s.heading}（#{s.position}）", s.id] } %>
+
       <%= f.select :quiz_section_id,
             options_for_select(quiz_options, @section.quiz_section_id),
             { include_blank: "未設定（リンクを出さない）" },
             class: "w-full md:w-[36rem] rounded-md border border-slate-300 bg-white px-3 py-2
                     shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500" %>
+
       <p class="text-xs text-slate-500">※設定すると本文下に「クイズを解く」ボタンが表示されます。</p>
     </div>
 
-    <!-- 本文（Quill 編集用） -->
+    <!-- =======================
+         5) 本文（Quill 編集用）
+         - #quill-editor: 表示用のコンテナ
+         - #content_field: 実データ格納用 hidden
+         - data-controller="quill" がこのフォームに付与されている前提
+    ======================= -->
     <div class="space-y-2">
       <%= f.label :content, class: "block font-semibold text-slate-800" %>
       <div id="quill-editor" class="bg-white rounded min-h-[18rem] mb-6 ql-container ql-snow"></div>
       <%= f.hidden_field :content, id: "content_field", autocomplete: "off" %>
     </div>
 
-    <!-- 送信ボタン -->
+    <!-- =======================
+         6) 送信ボタン
+         - 新規: 「作成する」
+         - 編集: 「更新する」
+    ======================= -->
     <div class="mt-20 pt-2">
       <%= f.submit(@section.new_record? ? "作成する" : "更新する",
             class: "inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5

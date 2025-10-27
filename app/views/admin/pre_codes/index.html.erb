@@ -1,45 +1,77 @@
+<!-- =========================================================
+  View: Admin / PreCodes 一覧
+  File: app/views/admin/pre_codes/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - PreCode（初期データ）の一覧・検索・管理（詳細/編集/削除）
+  構成:
+    1) パンくず
+    2) タイトル
+    3) 検索/絞り込みフォーム（タイトル/説明/ユーザー/タグ/並び替え）
+    4) 一覧テーブル
+    5) ページネーション
+  注意:
+    - 機能は変更せず、整形とコメントのみ追加
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_pre_codes %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <% content_for :title, "PreCode管理" %>
-
 <h1 class="text-xl font-semibold text-slate-900 mb-4">PreCode 管理</h1>
 
+<!-- =======================
+     3) 検索 / 絞り込みフォーム
+     - タイトル / 説明 / ユーザー / タグ / 並び替え
+     - タグは tag-picker を利用（hidden にカンマ区切り名を格納）
+======================= -->
 <%= form_with url: admin_pre_codes_path, method: :get, local: true, class: "mb-6" do %>
   <div class="flex flex-wrap items-end gap-2 md:gap-3">
 
+    <!-- タイトル（部分一致） -->
     <%= text_field_tag :title, params[:title],
           placeholder: "タイトルを部分一致検索",
           class: "min-w-[12rem] w-64 md:w-72 rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
 
+    <!-- 説明（部分一致） -->
     <%= text_field_tag :description, params[:description],
           placeholder: "説明を部分一致検索",
           class: "min-w-[12rem] w-72 rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
 
+    <!-- ユーザー（名前 or メール） -->
     <%= text_field_tag :user, params[:user],
           placeholder: "ユーザー名／メール",
           class: "min-w-[12rem] w-64 rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
 
-    <%# --- タグ（一般側と同じ“タグピッカー”） --- %>
+    <!-- タグ + 並び替え + 送信ボタン（右寄せクラスター） -->
     <div class="ml-auto flex items-center gap-2"
          data-controller="tag-picker"
          data-tag-picker-fetch-url-value="/tags/popular.json"
          data-tag-picker-mode-value="filter">
 
+      <!-- ラベル -->
       <label class="text-xs text-slate-500 mb-2">タグ</label>
 
-      <!-- 選択済み（見た目だけ。送信は hidden で） -->
+      <!-- 選択済み（見た目） -->
       <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
 
-      <!-- hidden（タグ名のカンマ区切り）※同じ form 内 -->
+      <!-- hidden（タグ名のカンマ区切り。サーバへ送信する実体） -->
       <input type="hidden" name="tags" value="<%= params[:tags].to_s %>"
              data-tag-picker-target="hiddenInput">
 
+      <!-- モーダル起動ボタン -->
       <button type="button" class="px-3 py-2 rounded ring-1 ring-slate-300"
               data-action="tag-picker#open">
         タグを選ぶ
       </button>
 
+      <!-- 並び替え -->
       <%= select_tag :sort,
             options_for_select(
               [["作成日(新しい順)", ""],
@@ -50,10 +82,14 @@
             ),
             class: "rounded-md border ring-1 ring-slate-300 px-3 py-2 text-sm" %>
 
+      <!-- 実行 -->
       <%= submit_tag "検索",
             class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
 
-      <!-- モーダル（一般側と同じUI：×はHeroicon、閉じるは中央・ホバー赤） -->
+      <!-- =======================
+           タグピッカー・モーダル
+           - 一般側と同UI（×はHeroicon）
+      ======================= -->
       <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
            data-tag-picker-target="container">
         <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
@@ -68,13 +104,16 @@
             <h3 class="font-semibold">タグを選択（検索）</h3>
           </div>
 
+          <!-- フィルタ入力 -->
           <input type="text" placeholder="タグ名で絞り込み"
                  class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
                  data-tag-picker-target="query"
                  data-action="input->tag-picker#queryInput">
 
+          <!-- タグ一覧 -->
           <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
 
+          <!-- 閉じる -->
           <div class="mt-4 flex justify-center">
             <button type="button"
                     class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
@@ -84,15 +123,20 @@
           </div>
         </div>
       </div>
+      <!-- /タグピッカー・モーダル -->
     </div>
+    <!-- /右寄せクラスター -->
   </div>
 <% end %>
 
+<!-- =======================
+     4) 一覧テーブル
+======================= -->
 <div class="overflow-x-auto rounded-lg ring-1 ring-slate-200 bg-white">
   <table class="min-w-full divide-y divide-slate-200">
     <thead class="bg-slate-50 text-xs text-slate-600">
       <tr>
-        <%# チェックボックス列は不要なので削除 %>
+        <!-- チェックボックス列は不要（元コードの意図に従い記載せず） -->
         <th class="px-3 py-2 text-left">タイトル</th>
         <th class="px-3 py-2 text-left">説明(100字)</th>
         <% if PreCode.reflect_on_association(:tags) %><th class="px-3 py-2 text-left">タグ</th><% end %>
@@ -103,12 +147,17 @@
         <th class="px-3 py-2 text-left">操作</th>
       </tr>
     </thead>
+
     <tbody class="divide-y divide-slate-100 text-sm">
       <% @pre_codes.each do |p| %>
         <tr class="hover:bg-slate-50/60">
-          <%# チェックボックス列削除に伴い先頭TDも削除 %>
+          <!-- タイトル -->
           <td class="px-3 py-2 font-medium"><%= p.title %></td>
+
+          <!-- 説明（100字トリム） -->
           <td class="px-3 py-2 text-slate-600"><%= truncate(p.description.to_s, length: 100) %></td>
+
+          <!-- タグ（関連がある場合のみ） -->
           <% if PreCode.reflect_on_association(:tags) %>
             <td class="px-3 py-2">
               <div class="flex flex-wrap gap-1">
@@ -118,10 +167,18 @@
               </div>
             </td>
           <% end %>
+
+          <!-- ユーザー -->
           <td class="px-3 py-2"><%= p.user&.name %></td>
+
+          <!-- いいね/利用 -->
           <td class="px-3 py-2 text-right tabular-nums"><%= p.like_count %></td>
           <td class="px-3 py-2 text-right tabular-nums"><%= p.use_count %></td>
+
+          <!-- 作成日 -->
           <td class="px-3 py-2"><%= l(p.created_at, format: :short) %></td>
+
+          <!-- 操作（詳細/編集/削除） -->
           <td class="px-3 py-2">
             <div class="flex flex-wrap gap-2">
               <%= link_to "詳細", [:admin, p], class: "text-sky-700 hover:underline" %>
@@ -136,11 +193,15 @@
     </tbody>
   </table>
 
+  <!-- データなし表示 -->
   <% if @pre_codes.blank? %>
     <div class="p-6 text-center text-sm text-slate-500">該当するデータが見つかりませんでした。</div>
   <% end %>
 </div>
 
+<!-- =======================
+     5) ページネーション
+======================= -->
 <div class="mt-6">
   <%= paginate @pre_codes %>
 </div>

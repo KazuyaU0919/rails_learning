@@ -1,12 +1,32 @@
+# =========================================================
+# File: config/storage.yml
+# ---------------------------------------------------------
+# 目的:
+#   Active Storage（ファイルアップロード）の保存先設定。
+#   テスト・ローカル・クラウド（AWS/GCS/Azure）などのサービスを定義。
+#
+# 注意:
+#   - Rails.credentials でクラウドキーを安全に管理。
+#   - コメントアウトされたブロックを参考に拡張可能。
+# =========================================================
+
+# =======================
+# テスト環境
+# =======================
 test:
   service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
 
+# =======================
+# 開発/ローカル環境
+# =======================
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
-# Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+# =======================
+# AWS S3 設定例
+# =======================
 # amazon:
 #   service: S3
 #   access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
@@ -14,20 +34,27 @@ local:
 #   region: us-east-1
 #   bucket: your_own_bucket-<%= Rails.env %>
 
-# Remember not to checkin your GCS keyfile to a repository
+# =======================
+# Google Cloud Storage 設定例
+# =======================
 # google:
 #   service: GCS
 #   project: your_project
 #   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
 #   bucket: your_own_bucket-<%= Rails.env %>
 
-# Use bin/rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
+# =======================
+# Microsoft Azure Storage 設定例
+# =======================
 # microsoft:
 #   service: AzureStorage
 #   storage_account_name: your_account_name
 #   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
 #   container: your_container_name-<%= Rails.env %>
 
+# =======================
+# ミラー構成（複数サービスに同時保存する例）
+# =======================
 # mirror:
 #   service: Mirror
 #   primary: local

@@ -1,7 +1,28 @@
-<!-- app/views/admin/editor_permissions/index.html.erb -->
+<!-- =========================================================
+  View: Admin / EditorPermissions 一覧
+  File: app/views/admin/editor_permissions/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 編集権限(EditorPermission)の一覧・検索・操作を提供
+  構成:
+    1) パンくず
+    2) タイトル / 新規・一括付与アクション
+    3) フィルタフォーム（User / Target type / Role）
+    4) 一覧テーブル（詳細/編集/削除）
+    5) ページネーション
+  注意:
+    - 機能は変更せず、整形とコメントのみ追加
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_editor_permissions %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル + 主要アクション
+======================= -->
 <h1 class="text-2xl font-bold mb-6">Editor Permissions</h1>
 
 <div class="flex flex-wrap gap-3 mb-4">
@@ -9,6 +30,11 @@
   <%= link_to "⇅ 一括付与", bulk_new_admin_editor_permissions_path, class: "px-3 py-2 rounded ring-1 ring-slate-300 bg-white" %>
 </div>
 
+<!-- =======================
+     3) フィルタフォーム
+     - User / Target type / Role で絞り込み
+     - リセットで全件に戻す
+======================= -->
 <%= form_with url: admin_editor_permissions_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-12 gap-3 items-end mb-5" do %>
   <div class="md:col-span-5">
     <label class="block text-sm text-slate-600 mb-1">User</label>
@@ -19,6 +45,7 @@
       <% end %>
     </select>
   </div>
+
   <div class="md:col-span-3">
     <label class="block text-sm text-slate-600 mb-1">Target type</label>
     <select name="target_type" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
@@ -28,6 +55,7 @@
       <% end %>
     </select>
   </div>
+
   <div class="md:col-span-2">
     <label class="block text-sm text-slate-600 mb-1">Role</label>
     <select name="role" class="w-full rounded ring-1 ring-slate-300 px-3 py-2">
@@ -37,15 +65,21 @@
       <% end %>
     </select>
   </div>
+
   <div class="md:col-span-2">
     <button class="w-full rounded bg-slate-900 text-white px-3 py-2">絞り込み</button>
   </div>
+
   <div class="md:col-span-0">
     <%= link_to "リセット", admin_editor_permissions_path,
         class: "rounded ring-1 ring-slate-300 px-4 py-2 bg-white" %>
   </div>
 <% end %>
 
+<!-- =======================
+     4) 一覧テーブル
+     - User / Target / Role / 作成日時 / 操作（詳細・編集・削除）
+======================= -->
 <div class="overflow-x-auto rounded border bg-white">
   <table class="min-w-full text-sm">
     <thead class="bg-slate-50 text-slate-600">
@@ -82,4 +116,7 @@
   </table>
 </div>
 
+<!-- =======================
+     5) ページネーション
+======================= -->
 <div class="mt-4"><%= paginate @perms if respond_to?(:paginate) %></div>

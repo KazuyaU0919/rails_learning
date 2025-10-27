@@ -1,11 +1,24 @@
-# app/controllers/admin/quiz_sections_controller.rb
+# ============================================================
+# 管理: クイズセクション (QuizSection)
+# ------------------------------------------------------------
+# ・クイズごとの章（セクション）管理
+# ・CRUD実装のみ（単純構造）
+# ============================================================
 class Admin::QuizSectionsController < Admin::BaseController
   layout "admin"
 
+  # =======================
+  # 一覧
+  # =======================
   def index
-    @sections = QuizSection.includes(:quiz).order(updated_at: :desc).page(params[:page])
+    @sections = QuizSection.includes(:quiz)
+                           .order(updated_at: :desc)
+                           .page(params[:page])
   end
 
+  # =======================
+  # 新規作成・編集
+  # =======================
   def new    = @section = QuizSection.new
   def edit   = @section = QuizSection.find(params[:id])
 
@@ -27,6 +40,9 @@ class Admin::QuizSectionsController < Admin::BaseController
     end
   end
 
+  # =======================
+  # 削除
+  # =======================
   def destroy
     QuizSection.find(params[:id]).destroy
     redirect_to admin_quiz_sections_path, notice: "削除しました"
@@ -34,7 +50,11 @@ class Admin::QuizSectionsController < Admin::BaseController
 
   private
 
+  # =======================
+  # Strong Parameters
+  # =======================
   def section_params
-    params.require(:quiz_section).permit(:quiz_id, :heading, :is_free, :position, :book_section_id)
+    params.require(:quiz_section)
+          .permit(:quiz_id, :heading, :is_free, :position, :book_section_id)
   end
 end

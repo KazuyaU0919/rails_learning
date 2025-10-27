@@ -1,12 +1,34 @@
-<!-- app/views/static_pages/contact.html.erb -->
-<%# パンくず %>
+<!-- =========================================================
+  Page: お問い合わせ
+  File: app/views/static_pages/contact.html.erb
+  ---------------------------------------------------------
+  目的 / 用途：
+    ・外部（Google フォーム）にホストした問い合わせフォームを
+      安全に iframe 埋め込みで表示するページ。
+    ・URL は環境変数 GOOGLE_FORM_URL から取得（未設定時はダミー）。
+  非機能メモ：
+    ・出力は iframe のみ。サーバ側では問い合わせ内容を保持しない設計。
+    ・sandbox は使わず、referrerpolicy/allowfullscreen/height を明示。
+========================================================= -->
+
+<!-- =======================
+     パンくず
+======================= -->
 <% breadcrumb :root %>
 <% breadcrumb :contact %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     ページタイトル
+======================= -->
 <% content_for :title, "お問い合わせ" %>
 <h1 class="mx-auto max-w-3xl text-2xl font-bold mb-4">お問い合わせ</h1>
 
+<!-- =======================
+     お問い合わせフォーム（埋め込み）
+     - 高さは反応しづらいのでブレークポイント別に固定高を付与
+     - URL は ENV['GOOGLE_FORM_URL'] を使用（既定ダミーあり）
+======================= -->
 <div class="mx-auto max-w-3xl bg-white rounded-xl shadow p-4 overflow-hidden">
   <iframe
     src="<%= ENV.fetch('GOOGLE_FORM_URL', 'https://example.com/dummy-form') %>"

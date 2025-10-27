@@ -1,9 +1,27 @@
+# =========================================================
+# File: config/cache.yml
+# ---------------------------------------------------------
+# 目的:
+#   Rails.cache のストア/オプションを環境別に定義する。
+#
+# ポイント:
+#   - ERB が使えるので、サイズや期限は Ruby の数値表現で記述可能。
+#   - namespace に環境名を入れて環境間のキー衝突を防止。
+#
+# 構成:
+#   1) default アンカー … 各環境で共通となる store_options を定義
+#   2) development / test … default を継承
+#   3) production … default を継承しつつ DB 名だけ追加（cache）
+# =========================================================
+
 default: &default
   store_options:
-    # Cap age of oldest cache entry to fulfill retention policies
-    # max_age: <%= 60.days.to_i %>
-    max_size: <%= 256.megabytes %>
-    namespace: <%= Rails.env %>
+    # =======================
+    # ストアオプション
+    # =======================
+    # max_age: <%= 60.days.to_i %>    # 例: 保持期間を上限で制御したい場合に使用（現状はコメントアウト）
+    max_size: <%= 256.megabytes %>    # キャッシュ全体のメモリ上限（LRU で追い出し）
+    namespace: <%= Rails.env %>       # 環境名を名前空間にして衝突を回避
 
 development:
   <<: *default
@@ -12,5 +30,6 @@ test:
   <<: *default
 
 production:
+  # 本番は cache 用 DB（database.yml の "cache"）を使う前提のメタ情報
   database: cache
   <<: *default

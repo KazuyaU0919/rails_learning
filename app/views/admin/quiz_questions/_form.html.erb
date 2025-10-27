@@ -1,8 +1,31 @@
+<!-- =========================================================
+  Partial: Admin / QuizQuestions フォーム
+  File: app/views/admin/quiz_questions/_form.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 新規作成/編集で共通利用するフォーム
+  構成:
+    1) form_with（URL/HTTPメソッドは新規/編集で切替）
+    2) バリデーションエラー表示
+    3) Quiz / Section 選択
+    4) 問題文（Quill）
+    5) 選択肢1〜4
+    6) 正解 / 位置
+    7) 解説（Quill）
+    8) 送信/戻るボタン
+  注意:
+    - 画面動作は変えず、コメントと並べ替えのみ
+========================================================= -->
+
 <%= form_with model: @question,
               url: (@question.new_record? ? admin_quiz_questions_path : admin_quiz_question_path(@question)),
               method: (@question.new_record? ? :post : :patch),
               local: true,
               class: "space-y-4" do |f| %>
+
+  <!-- =======================
+       2) バリデーションエラー
+  ======================= -->
   <% if @question.errors.any? %>
     <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
       <p><strong><%= @question.errors.count %></strong> 件のエラーがあります：</p>
@@ -12,6 +35,11 @@
     </div>
   <% end %>
 
+  <!-- =======================
+       3) Quiz / Section 選択
+       - Quiz: クイズ本体
+       - Section: クイズ内のセクション（見出し）
+  ======================= -->
   <div>
     <%= f.label :quiz_id, "Quiz", class: "block text-sm text-slate-600" %>
     <%= f.collection_select :quiz_id, Quiz.order(:position), :id, :title,
@@ -26,7 +54,10 @@
           {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
   </div>
 
-  <!-- ▼ 問題文（Quill） -->
+  <!-- =======================
+       4) 問題文（Quill）
+       - quill-field Stimulus で editor ↔ hidden を同期
+  ======================= -->
   <div>
     <%= f.label :question, "問題文（最大2000文字）", class: "block text-sm text-slate-600 mb-1" %>
     <div data-controller="quill-field"
@@ -38,6 +69,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       5) 選択肢1〜4
+  ======================= -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     <div>
       <%= f.label :choice1, "選択肢1", class: "block text-sm text-slate-600" %>
@@ -57,6 +91,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       6) 正解 / 位置
+  ======================= -->
   <div class="grid grid-cols-2 gap-3">
     <div>
       <%= f.label :correct_choice, "正解（1..4）", class: "block text-sm text-slate-600" %>
@@ -68,7 +105,9 @@
     </div>
   </div>
 
-  <!-- ▼ 解説（Quill） -->
+  <!-- =======================
+       7) 解説（Quill）
+  ======================= -->
   <div>
     <%= f.label :explanation, "解説（最大2000文字）", class: "block text-sm text-slate-600 mb-1" %>
     <div data-controller="quill-field"
@@ -80,6 +119,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       8) 送信 / 戻る
+  ======================= -->
   <div>
     <%= f.submit (@question.new_record? ? "作成する" : "更新する"),
           class: "px-4 py-2 rounded bg-slate-900 text-white" %>

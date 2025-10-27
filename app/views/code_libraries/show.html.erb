@@ -1,17 +1,26 @@
-<%# app/views/code_libraries/show.html.erb %>
+<!-- =========================================================
+  画面: Code Library 詳細
+  ---------------------------------------------------------
+  ・PreCode の内容/タグ/コード/解答を表示
+  ・「Xでシェア」「URLコピー」「利用する」ボタンあり
+  ・Stimulus: share / reveal / code-view
+========================================================= -->
+
+<!-- パンくず -->
 <% breadcrumb :code_libraries %>
 <% breadcrumb :code_library, @pre_code %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- ページ <title> -->
 <% content_for :title, @pre_code.title %>
 
-<%# 先に一度だけ計算して使い回す %>
-<% current_like      = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id)       : nil %>
-<% current_bookmark  = logged_in? ? @pre_code.bookmarks.find_by(user_id: current_user.id)   : nil %>
+<!-- ログインユーザー視点の現在ステータス（1回だけ取得して使い回し） -->
+<% current_like      = logged_in? ? @pre_code.likes.find_by(user_id: current_user.id)     : nil %>
+<% current_bookmark  = logged_in? ? @pre_code.bookmarks.find_by(user_id: current_user.id) : nil %>
 
 <div class="mx-auto w-full max-w-2xl space-y-8">
 
-  <%# ===== 右上：いいね & ブックマーク ===== %>
+  <!-- 右上: いいね／ブックマーク -->
   <div class="flex justify-end">
     <%= render "code_libraries/actions",
           pre_code: @pre_code,
@@ -19,7 +28,7 @@
           current_bookmark: current_bookmark %>
   </div>
 
-  <%# ===== 右上：Xシェア＆URLコピー ===== %>
+  <!-- 右上: Xシェア／URLコピー -->
   <div class="flex justify-end gap-2 mb-2"
       data-controller="share"
       data-share-url-value="<%= code_library_url(@pre_code) %>">
@@ -37,7 +46,7 @@
     </button>
   </div>
 
-  <%# ===== 登録名 ===== %>
+  <!-- ===== 登録名 ===== -->
   <section class="-mt-4">
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
@@ -45,7 +54,7 @@
     </div>
   </section>
 
-  <%# ===== タグ ===== %>
+  <!-- ===== タグ ===== -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">タグ</h2>
     <div class="mt-1">
@@ -53,7 +62,7 @@
     </div>
   </section>
 
-  <%# ===== 説明 ===== %>
+  <!-- ===== 説明 ===== -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">コードの説明</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
@@ -61,7 +70,7 @@
     </div>
   </section>
 
-  <%# ===== ヒント ===== %>
+  <!-- ===== ヒント（reveal で開閉） ===== -->
   <% if @pre_code.hint.present? %>
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
@@ -79,7 +88,7 @@
     </section>
   <% end %>
 
-  <%# ===== 登録コード ===== %>
+  <!-- ===== 登録コード（読み取り専用 CodeMirror） ===== -->
   <section>
     <div class="flex items-baseline justify-between">
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録コード</h2>
@@ -96,7 +105,7 @@
     </div>
   </section>
 
-  <%# ===== 解答 ===== %>
+  <!-- ===== 解答 / 解答コード（reveal で開閉） ===== -->
   <% if @pre_code.answer.present? || @pre_code.answer_code.present? %>
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
@@ -106,6 +115,7 @@
       </div>
 
       <% if @pre_code.answer.present? %>
+        <!-- 解答（HTML） -->
         <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
             data-reveal-target="content">
           <%= sanitize(@pre_code.answer,
@@ -115,6 +125,7 @@
       <% end %>
 
       <% if @pre_code.answer_code.present? %>
+        <!-- 解答コード（CodeMirror） -->
         <div class="hidden" data-reveal-target="content">
           <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
           <div data-controller="code-view" data-code-view-theme-value="light"
@@ -127,7 +138,7 @@
     </section>
   <% end %>
 
-  <%# ===== 最下部：中央に「このデータを利用する」 ===== %>
+  <!-- ===== フッタ: 利用ボタン（エディタへ遷移） ===== -->
   <div class="-mt-2 text-center">
     <%= button_to "このデータを利用する",
           used_codes_path(pre_code_id: @pre_code.id,

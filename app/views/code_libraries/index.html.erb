@@ -1,29 +1,38 @@
-<%# app/views/code_libraries/index.html.erb %>
+<!-- =========================================================
+  画面: Code Library 一覧ページ
+  ---------------------------------------------------------
+  ・他ユーザーのPreCodeを閲覧／検索／ブックマーク／いいね
+  ・ブックマークONフィルタやタグ検索に対応
+  ・Stimulus: reveal / autocomplete 使用
+========================================================= -->
+
+<!-- ===== パンくず + ページタイトル ===== -->
 <% breadcrumb :code_libraries %>
 <%= render "shared/breadcrumbs" %>
-
-<%# ページ <title> 用 %>
 <% content_for :title, "Code Library" %>
 
-<%# ===== ヘッダーブロック ===== %>
+<!-- =======================
+     ヘッダーブロック
+     ======================= -->
 <div class="mb-6">
   <div class="text-center">
     <h1 class="text-2xl font-semibold">Code Library</h1>
     <p class="mt-1 text-sm text-slate-500">~ 初期データ閲覧機能 ~</p>
   </div>
 
-  <!-- 🔰 初めての方へ -->
+  <!-- 🔰 初めての方へ（revealで開閉） -->
   <section
     class="-mt-2 mb-2"
     data-controller="reveal"
     data-reveal-open-label-value="🔰 初めての方へ"
     data-reveal-close-label-value="🔰 説明を閉じる">
+
     <div class="flex justify-end">
-      <button type="button"
-              class="btn-toggle"
-              data-reveal-target="button"
-              data-action="reveal#toggle">🔰 初めての方へ</button>
+      <button type="button" class="btn-toggle"
+              data-reveal-target="button" data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
+
+    <!-- 説明ブロック -->
     <div class="hidden mt-2" data-reveal-target="content">
       <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
 💻 Code Library機能へようこそ！！
@@ -109,11 +118,15 @@ Rubyの標準メソッドを効率的に学習しましょう！
     </div>
   </section>
 
+  <!-- =======================
+       検索フォーム
+       ======================= -->
   <div class="mt-4">
     <div class="flex gap-2 justify-end">
       <%= search_form_for @q, url: code_libraries_path, method: :get,
             html: { class: "flex gap-2" } do |f| %>
 
+        <!-- オートコンプリート検索 -->
         <div data-controller="autocomplete"
             data-autocomplete-list-url-value="<%= code_libraries_path %>"
             data-autocomplete-sort-value="<%= params[:sort].presence || 'popular' %>">
@@ -125,27 +138,27 @@ Rubyの標準メソッドを効率的に学習しましょう！
                   autocomplete_target: "input",
                   action: "input->autocomplete#onInput focus->autocomplete#onFocus blur->autocomplete#onBlur"
                 } %>
-
-          <!-- dropdown panel -->
+          <!-- 候補リスト -->
           <div data-autocomplete-target="panel"
               class="hidden mt-1 w-full max-w-[20rem] rounded border border-slate-200 bg-white shadow-md"></div>
         </div>
 
+        <!-- 並び替えセレクト -->
         <%= select_tag :sort,
               options_for_select([["人気順","popular"],["利用数順","used"],["新着順","newest"]],
                                 params[:sort].presence || "popular"),
               class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
 
-        <%= f.submit "検索",
-              class: "btn-solid-red" %>
+        <%= f.submit "検索", class: "btn-solid-red" %>
       <% end %>
     </div>
 
-    <%# Code Library 向けのタグ検索（送り先を指定） %>
+    <!-- タグ検索 -->
     <div class="flex mt-2 justify-end">
       <%= render "shared/tag_filter", url: code_libraries_path %>
     </div>
 
+    <!-- ブックマークフィルタ & 使い方ボタン -->
     <div class="flex mt-2 justify-end gap-2">
       <% keep = request.query_parameters.except(:only_bookmarked, :page) %>
       <% on = params[:only_bookmarked].present? %>
@@ -155,26 +168,29 @@ Rubyの標準メソッドを効率的に学習しましょう！
             url,
             class: "px-3 py-2 rounded #{on ? 'bg-blue-600 text-white' : 'ring-1 ring-slate-300'}" %>
 
-      <%= link_to "使い方", help_path,
-            class: "btn-solid-red" %>
+      <%= link_to "使い方", help_path, class: "btn-solid-red" %>
     </div>
   </div>
 </div>
 
-<%# ===== 一覧 ===== %>
+<!-- =======================
+     一覧ブロック
+     ======================= -->
 <% if @pre_codes.blank? %>
   <p class="text-slate-500">該当するデータがありません。</p>
 <% else %>
   <ul class="space-y-3 -mt-2">
     <% @pre_codes.each do |pc| %>
       <li class="relative border rounded-xl p-4 group">
-        <%# 透明の全体リンク（カード全面） %>
+
+        <!-- 透明の全体リンク -->
         <%= link_to code_library_path(pc),
               class: "absolute inset-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300",
               "aria-label": "#{pc.title} の詳細" do %>
         <% end %>
 
         <div class="flex justify-between">
+          <!-- 左：タイトル・説明・タグ -->
           <div class="flex-1 pr-4">
             <div class="font-semibold flex items-center gap-2">
               <%= pc.title %>
@@ -183,7 +199,7 @@ Rubyの標準メソッドを効率的に学習しましょう！
               <% end %>
             </div>
 
-            <%# タイトルの下に「静的」タグピルを表示（リンクなし・ネスト事故回避） %>
+            <!-- タグピル -->
             <div class="mt-2">
               <%= render "shared/tag_pills_static", record: pc %>
             </div>
@@ -191,12 +207,13 @@ Rubyの標準メソッドを効率的に学習しましょう！
             <p class="text-sm text-slate-500 mt-2"><%= truncate(pc.description, length: 100) %></p>
           </div>
 
+          <!-- 右：メトリクス -->
           <div class="shrink-0">
             <%= render "metrics", pre_code: pc %>
           </div>
         </div>
 
-        <%# 下段：アクション（透明リンクを拾わないように） %>
+        <!-- 下段：アクション -->
         <div class="mt-3 flex items-center gap-2 pointer-events-none">
           <div class="pointer-events-auto z-20">
             <%= render "actions",
@@ -209,6 +226,7 @@ Rubyの標準メソッドを効率的に学習しましょう！
     <% end %>
   </ul>
 
+  <!-- ページネーション -->
   <div class="mt-6">
     <%= paginate @pre_codes, params: request.query_parameters %>
   </div>

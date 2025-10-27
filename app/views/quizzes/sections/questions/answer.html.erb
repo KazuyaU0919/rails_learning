@@ -1,17 +1,38 @@
+<!-- =========================================================
+  Page: クイズ > セクション > 問題 回答結果（単問）
+  File: app/views/quizzes/sections/questions/answer.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・直前に選択した回答の正誤判定と解説を表示する。
+    ・次の問題があれば遷移、なければセクション結果へ。
+  実装メモ：
+    ・params[:choice] と @question.correct_choice を比較して正誤を決定。
+    ・解説は rich_html 経由でサニタイズして表示。
+========================================================= -->
+
+<!-- =======================
+     パンくず / 共通UI
+======================= -->
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
 <% breadcrumb :quiz_section_public, @quiz, @section %>
 <% breadcrumb :quiz_question_answer_page, @quiz, @section, @question %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     判定 / 表示本体
+======================= -->
 <div class="mx-auto w-full max-w-3xl pt-2 px-4 md:px-6 lg:px-8" data-controller="code-highlight">
   <% correct = (params[:choice].to_i == @question.correct_choice) %>
   <div class="rounded ring-1 ring-slate-200 p-4 space-y-3 bg-white">
+    <!-- 正誤ヘッダ -->
     <p class="<%= correct ? 'text-emerald-700' : 'text-red-700' %> font-semibold text-3xl text-center">
       <%= correct ? "正解！" : "不正解…" %>
     </p>
+    <!-- 正解表示 -->
     <p class="mt-1 text-lg font-semibold text-center">正解：<%= @question.public_send("choice#{@question.correct_choice}") %></p>
 
+    <!-- 解説 -->
     <div class="mt-3 p-3 rounded bg-slate-50">
       <h3 class="text-xl font-semibold mb-1">解説</h3>
       <article class="content-body prose break-all md:break-words">
@@ -19,6 +40,7 @@
       </article>
     </div>
 
+    <!-- 次へ（次問 or 結果） -->
     <div class="mt-4 flex justify-end">
       <% if @next_q %>
         <%= link_to "NEXT ＞",
@@ -32,6 +54,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       編集導線（権限ありのときのみ）
+  ======================= -->
   <% if can_edit?(@question) %>
     <div class="flex justify-end my-3">
       <%= link_to "この問題を編集", edit_quiz_section_question_path(@quiz, @section, @question),

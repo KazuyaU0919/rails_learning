@@ -1,24 +1,41 @@
-<%# app/views/books/index.html.erb %>
+<!-- =========================================================
+  画面: Rails Books 一覧
+  ---------------------------------------------------------
+  ・パンくず／タイトル／ガイダンス（🔰 初めての方へ）
+  ・本カード一覧（_book 部分）をレンダリング
+  ・「reveal」コントローラでガイダンスを開閉
+========================================================= -->
+
+<!-- ===== パンくず ===== -->
 <% breadcrumb :books %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- ===== ページ見出し ===== -->
 <div class="mb-6 text-center">
   <h1 class="text-2xl font-semibold">Rails Books</h1>
   <p class="mt-1 text-sm text-slate-500">~ Railsを知るための教科書 ~</p>
 </div>
 
-<!-- 🔰 初めての方へ -->
+<!-- =========================================================
+  🔰 初めての方へ（reveal で開閉）
+  ・右上のトグルボタンで本文（<pre>）を開閉
+  ・長文のため pre + whitespace-pre-wrap で折り返し表示
+========================================================= -->
 <section
   class="-mt-2 mb-4"
   data-controller="reveal"
   data-reveal-open-label-value="🔰 初めての方へ"
   data-reveal-close-label-value="🔰 説明を閉じる">
+
+  <!-- トグルボタン -->
   <div class="flex justify-end">
     <button type="button"
             class="btn-toggle"
             data-reveal-target="button"
             data-action="reveal#toggle">🔰 初めての方へ</button>
   </div>
+
+  <!-- 本文（初期は hidden） -->
   <div class="hidden mt-2" data-reveal-target="content">
     <pre class="whitespace-pre-wrap leading-relaxed text-slate-700 bg-white ring-1 ring-slate-200 rounded-lg p-4 text-[15px]">
 📚 Rails Booksへようこそ！！
@@ -73,6 +90,10 @@ Rails Booksと連動しているクイズ機能で理解した内容を復習す
   </div>
 </section>
 
+<!-- =========================================================
+  本一覧（_book 部分テンプレート）
+  ・divide + border + bg でカード風リスト
+========================================================= -->
 <ul class="divide-y divide-slate-200 rounded-lg border bg-white">
   <%= render partial: "book", collection: @books, as: :book %>
 </ul>

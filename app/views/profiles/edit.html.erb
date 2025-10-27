@@ -1,4 +1,10 @@
-<!-- app/views/profiles/edit.html.erb -->
+<!-- =========================================================
+  Page: プロフィール編集
+  ---------------------------------------------------------
+  ・ユーザー情報の編集画面（名前変更 / パスワード変更 / 外部連携 / セキュリティ）
+  ・パンくずリストあり
+========================================================= -->
+
 <% breadcrumb :profile %>
 <% breadcrumb :profile_edit %>
 <%= render "shared/breadcrumbs" %>
@@ -7,15 +13,16 @@
   <% content_for :title, "プロフィール編集" %>
   <h1 class="text-xl font-semibold mb-4">プロフィール編集</h1>
 
-  <!-- 🔰 初めての方へ -->
+  <!-- =========================================================
+       🔰 初めての方へ（折りたたみ式説明）
+  ========================================================= -->
   <section
     class="-mt-2 mb-4"
     data-controller="reveal"
     data-reveal-open-label-value="🔰 初めての方へ"
     data-reveal-close-label-value="🔰 説明を閉じる">
     <div class="flex justify-end">
-      <button type="button"
-              class="btn-toggle"
+      <button type="button" class="btn-toggle"
               data-reveal-target="button"
               data-action="reveal#toggle">🔰 初めての方へ</button>
     </div>
@@ -34,7 +41,9 @@
     </div>
   </section>
 
-  <!-- セクション1：プロフィール -->
+  <!-- =========================================================
+       セクション1：プロフィール情報編集
+  ========================================================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">プロフィール</h2>
     <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
@@ -52,9 +61,11 @@
     </div>
   </section>
 
-  <!-- セクション2：パスワード -->
+  <!-- =========================================================
+       セクション2：パスワード設定・変更
+  ========================================================= -->
   <% if current_user.has_password? %>
-    <!-- 既存：パスワード変更 -->
+    <!-- 既存パスワードあり：変更フォーム -->
     <section>
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード変更</h2>
       <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
@@ -80,13 +91,13 @@
       </div>
     </section>
   <% else %>
-    <!-- 新規：パスワード未設定ユーザー向け “パスワード新規作成” -->
+    <!-- 外部認証ユーザー向け：パスワード新規作成 -->
     <section>
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">パスワード新規作成</h2>
       <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4 space-y-3">
         <p class="text-sm text-slate-500 text-center">
-          ユーザーは外部認証でアカウント作成をしたため、パスワードが設定されておりません。<br>
-          以下のフォームからパスワードを新規作成してください。
+          外部認証で登録したためパスワードが未設定です。<br>
+          以下から新規作成してください。
         </p>
 
         <%= form_with url: password_setup_profile_path, method: :post, local: true, class: "space-y-3" do %>
@@ -106,7 +117,9 @@
     </section>
   <% end %>
 
-  <!-- セクション3：外部連携 -->
+  <!-- =========================================================
+       セクション3：外部連携（OAuth）
+  ========================================================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">外部連携</h2>
     <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">
@@ -114,6 +127,9 @@
     </div>
   </section>
 
+  <!-- =========================================================
+       セクション4：セキュリティ操作
+  ========================================================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">セキュリティ</h2>
     <div class="mt-2 rounded-xl bg-white ring-1 ring-slate-200 p-4">

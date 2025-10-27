@@ -1,14 +1,41 @@
+<!-- =========================================================
+  View: Admin / Dashboard
+  File: app/views/admin/dashboards/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 管理画面トップのメトリクス表示（Books / Sections の件数）
+  構成:
+    1) パンくず
+    2) ページタイトル（content_for :title）
+    3) 見出し
+    4) KPI カード
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_root %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) ページ <title>（レイアウトで使用）
+======================= -->
 <% content_for :title, "Dashboard" %>
+
+<!-- =======================
+     3) 見出し
+======================= -->
 <h1 class="text-2xl font-semibold mb-4">Dashboard</h1>
 
+<!-- =======================
+     4) KPI カード（Books / Sections）
+======================= -->
 <div class="grid sm:grid-cols-2 gap-4">
   <div class="rounded-xl ring-1 ring-slate-200 p-4 bg-white">
     <div class="text-slate-500 text-sm">Books</div>
     <div class="text-3xl font-bold"><%= number_with_delimiter(@books_count) %></div>
   </div>
+
   <div class="rounded-xl ring-1 ring-slate-200 p-4 bg-white">
     <div class="text-slate-500 text-sm">Sections</div>
     <div class="text-3xl font-bold"><%= number_with_delimiter(@sections_count) %></div>

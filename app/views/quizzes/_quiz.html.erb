@@ -1,10 +1,20 @@
-<%# app/views/quizzes/_quiz.html.erb %>
+<!-- =========================================================
+  Partial: クイズ行（一覧用）
+  File: app/views/quizzes/_quiz.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・クイズ一覧の1行を描画するためのパーシャル
+    ・タイトル／説明（80字トランケート）／セクション数を表示
+  受け取り：
+    ・local: quiz
+========================================================= -->
 
 <li>
   <%= link_to quiz_path(quiz),
     class: "block px-4 py-3 rounded-lg border bg-white hover:bg-slate-50 focus:bg-slate-50
             flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-slate-300" do %>
 
+    <!-- 左：タイトル & 説明（短縮表示） -->
     <div>
       <h3 class="font-semibold text-slate-900"><%= quiz.title %></h3>
       <p class="text-slate-500 text-sm">
@@ -12,6 +22,7 @@
       </p>
     </div>
 
+    <!-- 右：セクション数（アイコン付き） -->
     <div class="text-xs text-slate-500">
       <span class="inline-flex items-center gap-1">
         <%= heroicon "document-text", variant: :outline, options: { class: "w-4 h-4" } %>

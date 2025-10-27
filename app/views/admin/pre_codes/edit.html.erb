@@ -1,7 +1,30 @@
+<!-- =========================================================
+  View: Admin / PreCodes 編集
+  File: app/views/admin/pre_codes/edit.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 既存の PreCode を編集する（共通フォーム _form を再利用）
+  構成:
+    1) パンくず
+    2) タイトル（content_for :title も設定）
+    3) フォーム（pre_codes/_form を admin 名前空間で利用）
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_pre_codes %>
 <% breadcrumb :admin_pre_code_edit, @pre_code %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <% content_for :title, "PreCode編集" %>
 <h1 class="text-xl font-semibold mb-4">PreCode編集</h1>
+
+<!-- =======================
+     3) フォーム
+     - namespace: :admin を渡して URL/スコープを管理側に
+======================= -->
 <%= render "pre_codes/form", pre_code: @pre_code, namespace: :admin %>

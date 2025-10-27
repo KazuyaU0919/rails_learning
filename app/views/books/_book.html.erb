@@ -1,15 +1,26 @@
-<%# app/views/books/_book.html.erb %>
+<!-- =========================================================
+  部分テンプレート: 1冊分のカード行
+  ---------------------------------------------------------
+  ・キャッシュ対象: book
+  ・右側：セクション数（book_sections_count）を表示
+  ・全体が本詳細ページへのリンク
+========================================================= -->
 <% cache(book) do %>
   <li>
+    <!-- =======================
+         本カード（リンク全体）
+         ======================= -->
     <%= link_to book_path(book),
       class: "block px-4 py-3 rounded-lg border bg-white hover:bg-slate-50 focus:bg-slate-50
               flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-slate-300" do %>
 
+      <!-- 左：タイトル／説明 -->
       <div>
         <h3 class="font-semibold text-slate-900"><%= book.title %></h3>
         <p class="text-slate-500 text-sm"><%= truncate(book.description, length: 80) %></p>
       </div>
 
+      <!-- 右：セクション数（アイコン付き） -->
       <div class="text-xs text-slate-500">
         <span class="inline-flex items-center gap-1">
           <%= heroicon "document-text", variant: :outline, options: { class: "w-4 h-4" } %>

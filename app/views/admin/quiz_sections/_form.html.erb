@@ -1,31 +1,69 @@
-<!-- app/views/admin/quiz_sections/_form.html.erb -->
+<!-- =========================================================
+  Partial: Admin / QuizSections フォーム
+  File: app/views/admin/quiz_sections/_form.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 新規作成・編集で共通利用するフォーム。
+  構成:
+    1) form_with（新規/編集でURLとHTTPメソッドを切替）
+    2) 基本属性入力（Quiz / Position / FREE / 見出し）
+    3) 関連（任意）: Rails Books の対応セクション
+    4) 送信ボタン
+  注意:
+    - 機能・見た目は変えず、整理とコメントの追加のみ。
+========================================================= -->
+
+<!-- =======================
+     1) form_with
+     - @section.new_record? の真偽で URL / method を切替
+======================= -->
 <%= form_with model: @section,
               url: (@section.new_record? ? admin_quiz_sections_path : admin_quiz_section_path(@section)),
               method: (@section.new_record? ? :post : :patch) do |f| %>
+
   <div class="grid gap-6">
+    <!-- =======================
+         2) 基本属性: Quiz
+         - セクションが属する Quiz を選択
+    ======================= -->
     <div>
       <%= f.label :quiz_id, "クイズ", class: "block font-semibold" %>
       <%= f.collection_select :quiz_id, Quiz.order(:title), :id, :title,
             {}, class: "w-80 rounded border px-3 py-2" %>
     </div>
 
+    <!-- =======================
+         2) 基本属性: 並び順 / FREE
+         - position: セクションの表示順
+         - is_free: 無料公開フラグ
+    ======================= -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <%= f.label :position, class: "block font-semibold" %>
         <%= f.number_field :position, min: 1, class: "w-40 rounded border px-3 py-2" %>
       </div>
+
       <div class="flex items-center gap-2">
         <%= f.check_box :is_free, class: "h-5 w-5" %>
         <%= f.label :is_free, "無料公開", class: "font-semibold" %>
       </div>
     </div>
 
+    <!-- =======================
+         2) 基本属性: 見出し
+         - セクションのタイトル文字列
+    ======================= -->
     <div>
       <%= f.label :heading, class: "block font-semibold" %>
-      <%= f.text_field :heading, class: "w-full md:w-[36rem] rounded border px-3 py-2" %>
+      <%= f.text_field :heading, class: "w/full md:w-[36rem] rounded border px-3 py-2" %>
     </div>
 
-    <!-- ★ 対応テキスト（任意） -->
+    <!-- =======================
+         3) 関連（任意）: Rails Books セクション
+         - book_section_id を設定すると、受験結果ページから
+           対応する書籍セクションへ誘導できる
+         - UI: 本タイトル / セクション見出し（位置）
+    ======================= -->
     <div>
       <%= f.label :book_section_id, "対応するRails Booksセクション（任意）", class: "block font-semibold" %>
       <% book_options = BookSection
@@ -38,6 +76,10 @@
       <p class="text-xs text-slate-500">※設定すると結果ページに「Rails Booksへ」ボタンが表示されます。</p>
     </div>
 
+    <!-- =======================
+         4) 送信ボタン
+         - 新規作成/更新どちらでも共通
+    ======================= -->
     <div class="pt-2">
       <%= f.submit(@section.new_record? ? "作成する" : "更新する",
             class: "inline-flex items-center rounded bg-slate-900 px-5 py-2.5 text-white hover:bg-slate-800") %>

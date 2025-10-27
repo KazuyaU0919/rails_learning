@@ -1,7 +1,27 @@
-<!-- app/views/admin/quizzes/index.html.erb -->
+<!-- =========================================================
+  View: Admin / Quizzes 一覧
+  File: app/views/admin/quizzes/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 管理者向けに Quiz レコードを一覧表示し、CRUD 操作の導線を提供する。
+  構成:
+    1) パンくず
+    2) タイトル + 新規作成ボタン
+    3) 一覧テーブル（ID / 位置 / タイトル / 更新日時 / 操作）
+    4) ページネーション
+  注意:
+    - 機能を変更せず、並び順とコメントのみ最適化。
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_quizzes %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル + 新規作成ボタン
+======================= -->
 <h1 class="text-xl font-bold mb-4">Quizzes</h1>
 
 <div class="mb-3">
@@ -9,6 +29,10 @@
         class: "px-3 py-2 rounded bg-slate-900 text-white" %>
 </div>
 
+<!-- =======================
+     3) 一覧テーブル
+     - 行末の操作リンクから編集/削除へ遷移
+======================= -->
 <table class="w-full text-sm border rounded overflow-hidden">
   <thead class="bg-slate-50">
     <tr>
@@ -37,4 +61,7 @@
   </tbody>
 </table>
 
+<!-- =======================
+     4) ページネーション
+======================= -->
 <div class="mt-4"><%= paginate @quizzes if respond_to?(:paginate) %></div>

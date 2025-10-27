@@ -1,3 +1,12 @@
+<!-- =========================================================
+  Page: 新規登録
+  ---------------------------------------------------------
+  ・ユーザー名 / メール / パスワード / 確認
+  ・送信ボタン（赤）とログインページ導線
+  ・外部ログインの共通パーシャルも表示
+========================================================= -->
+
+<!-- <title> 用 -->
 <% content_for :title, "新規登録" %>
 
 <div class="flex justify-center items-center min-h-screen bg-slate-50 px-4">
@@ -5,7 +14,11 @@
 
     <h1 class="text-2xl font-bold text-center">新規登録</h1>
 
+    <!-- =======================
+         新規登録フォーム
+         ======================= -->
     <%= form_with url: users_path, scope: :user, class: "space-y-4" do |f| %>
+      <!-- ユーザー名 -->
       <div>
         <%= f.label :name, "ユーザー名", class: "block text-sm mb-1" %>
         <%= f.text_field :name,
@@ -13,6 +26,7 @@
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
       </div>
 
+      <!-- メールアドレス -->
       <div>
         <%= f.label :email, "メールアドレス", class: "block text-sm mb-1" %>
         <%= f.email_field :email,
@@ -20,6 +34,7 @@
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
       </div>
 
+      <!-- パスワード -->
       <div>
         <%= f.label :password, "パスワード", class: "block text-sm mb-1" %>
         <%= f.password_field :password,
@@ -27,6 +42,7 @@
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
       </div>
 
+      <!-- パスワード確認 -->
       <div>
         <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm mb-1" %>
         <%= f.password_field :password_confirmation,
@@ -34,18 +50,18 @@
               class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
       </div>
 
-      <!-- 主ボタン：赤 (#CC0000) -->
+      <!-- 送信ボタン（赤） -->
       <%= f.submit "新規登録",
             class: "w-full rounded-xl py-2 text-white bg-[#CC0000] hover:bg-[#BB0000] active:bg-[#AA0000]" %>
     <% end %>
 
-    <!-- ログインページへの導線：青 & 近づける（余白を mt-2 に） -->
+    <!-- 補助リンク：ログインページへ -->
     <div class="flex justify-end text-sm -mt-3">
       <%= link_to "ログインページへ", new_session_path,
             class: "text-blue-600 hover:underline" %>
     </div>
 
-    <!-- ここから下は既存の外部ログイン（そのまま） -->
+    <!-- 区切り線（外部ログイン） -->
     <div class="relative my-4">
       <div class="absolute inset-0 flex items-center">
         <div class="w-full border-t border-gray-300"></div>
@@ -55,6 +71,7 @@
       </div>
     </div>
 
+    <!-- 外部ログインボタン（共通パーシャル） -->
     <div class="space-y-2">
       <%= render "shared/oauth_buttons" %>
     </div>

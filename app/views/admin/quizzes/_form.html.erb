@@ -1,9 +1,32 @@
-<!-- app/views/admin/quizzes/_form.html.erb -->
+<!-- =========================================================
+  Partial: Admin / Quizzes フォーム
+  File: app/views/admin/quizzes/_form.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 新規作成と編集で共通のフォーム。
+  構成:
+    1) form_with（新規/編集でURLとHTTPメソッドを切替）
+    2) バリデーションエラー表示
+    3) 基本属性入力（タイトル / 説明 / 位置）
+    4) 送信 + 一覧戻り導線
+  補足:
+    - フロントの装飾クラスは既存のまま。
+    - ここではコメント追加と並び整理のみで機能は変更しない。
+========================================================= -->
+
+<!-- =======================
+     1) form_with
+======================= -->
 <%= form_with model: @quiz,
               url: (@quiz.new_record? ? admin_quizzes_path : admin_quiz_path(@quiz)),
               method: (@quiz.new_record? ? :post : :patch),
               local: true,
               class: "space-y-4" do |f| %>
+
+  <!-- =======================
+       2) バリデーションエラー表示
+       - full_messages を列挙
+  ======================= -->
   <% if @quiz.errors.any? %>
     <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
       <p><strong><%= @quiz.errors.count %></strong> 件のエラーがあります：</p>
@@ -13,22 +36,35 @@
     </div>
   <% end %>
 
+  <!-- =======================
+       3) 基本属性: タイトル
+  ======================= -->
   <div>
     <%= f.label :title, class: "block text-sm text-slate-600" %>
     <%= f.text_field :title, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
   </div>
 
+  <!-- =======================
+       3) 基本属性: 説明
+  ======================= -->
   <div>
     <%= f.label :description, class: "block text-sm text-slate-600" %>
     <%= f.text_area :description, rows: 3, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
   </div>
 
+  <!-- =======================
+       3) 基本属性: 位置（表示順）
+       - 数値は 1.. の昇順想定
+  ======================= -->
   <div>
     <%= f.label :position, class: "block text-sm text-slate-600" %>
     <%= f.number_field :position, min: 1, step: 1,
           class: "w-40 rounded ring-1 ring-slate-300 px-3 py-2" %>
   </div>
 
+  <!-- =======================
+       4) 送信 + 一覧に戻る
+  ======================= -->
   <div>
     <%= f.submit (@quiz.new_record? ? "作成する" : "更新する"),
           class: "px-4 py-2 rounded bg-slate-900 text-white" %>

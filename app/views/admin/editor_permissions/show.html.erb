@@ -1,11 +1,36 @@
-<!-- app/views/admin/editor_permissions/show.html.erb -->
+<!-- =========================================================
+  View: Admin / EditorPermissions 詳細
+  File: app/views/admin/editor_permissions/show.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 個別の編集権限の詳細情報を表示
+    - 編集 / 削除 / 一覧へ戻る の操作を提供
+  構成:
+    1) パンくず
+    2) タイトル
+    3) 概要カード（User / Target / Role / 作成/更新）
+    4) 操作カード（編集 / 削除 / 戻る）
+  注意:
+    - @editor_permission と @perm が混在しているので元のまま保持
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_editor_permissions %>
 <% breadcrumb :admin_editor_permission, @editor_permission %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <h1 class="text-2xl font-bold mb-6">権限の詳細</h1>
 
+<!-- =======================
+     3) 詳細カード群
+======================= -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <!-- 概要 -->
   <div class="rounded border bg-white">
     <div class="px-4 py-3 border-b font-semibold">概要</div>
     <div class="px-4 py-3 text-sm grid grid-cols-3 gap-2 items-center">
@@ -21,6 +46,7 @@
     </div>
   </div>
 
+  <!-- 操作 -->
   <div class="rounded border bg-white">
     <div class="px-4 py-3 border-b font-semibold">操作</div>
     <div class="px-4 py-3 flex flex-wrap gap-3">

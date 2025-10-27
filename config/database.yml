@@ -1,4 +1,17 @@
-# config/database.yml
+# =========================================================
+# File: config/database.yml
+# ---------------------------------------------------------
+# 目的:
+#   ActiveRecord の接続設定。環境ごとに DB を切り替える。
+#
+# ポイント:
+#   - 既定(default)を各環境が継承。
+#   - dev/test は個別の DB 名・ホスト・認証を ENV から読込（デフォルト値あり）。
+#   - production はマルチ DB（primary/cable/queue/cache）を DATABASE_URL で統一。
+#
+# 注意:
+#   - いずれの値も変更していない（整列と説明の追加のみ）。
+# =========================================================
 
 default: &default
   adapter: postgresql
@@ -20,6 +33,9 @@ test:
   password: <%= ENV.fetch("DB_PASSWORD", "password") %>
 
 production:
+  # =======================
+  # 本番: マルチ DB 構成
+  # =======================
   primary: &prod
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>

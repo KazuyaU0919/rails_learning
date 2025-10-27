@@ -1,7 +1,28 @@
-<!-- app/views/admin/editor_permissions/new.html.erb -->
+<!-- =========================================================
+  View: Admin / EditorPermissions 新規作成
+  File: app/views/admin/editor_permissions/new.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 新しい編集権限を付与するフォーム画面
+  構成:
+    1) パンくず
+    2) タイトル
+    3) フォーム（_form 部分テンプレート）
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_editor_permissions %>
 <% breadcrumb :new_admin_editor_permission %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル
+======================= -->
 <h1 class="text-2xl font-bold mb-6">編集権限を付与</h1>
+
+<!-- =======================
+     3) フォーム呼び出し
+======================= -->
 <%= render "form" %>

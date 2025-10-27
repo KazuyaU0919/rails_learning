@@ -1,3 +1,20 @@
+<!-- =========================================================
+  Page: クイズ > セクション > 問題 編集
+  File: app/views/quizzes/sections/questions/edit.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・既存の問題（@question）を編集し、更新する。
+  画面構成：
+    1) パンくず / 見出し
+    2) フォーム（楽観ロック、問題文、選択肢1〜4、正解、解説）
+  実装メモ：
+    ・Quillを使うリッチテキスト入力（問題文・解説）は hidden_field と連携。
+    ・lock_version を hidden で送信し、楽観ロックを担保。
+========================================================= -->
+
+<!-- =======================
+     パンくず / 共通UI
+======================= -->
 <!-- app/views/quizzes/sections/questions/edit.html.erb -->
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
@@ -5,14 +22,23 @@
 <% breadcrumb :quiz_question_edit, @quiz, @section, @question %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     見出し / タイトル
+======================= -->
 <% content_for :title, "問題を編集" %>
 <h1 class="text-xl font-semibold mb-4"><%= @quiz.title %> / <%= @section.heading %> / Q<%= @question.position %> を編集</h1>
 
+<!-- =======================
+     編集フォーム
+     - PATCH /quiz/:quiz_id/sections/:section_id/questions/:id
+     - Quill + hidden_field の組み合わせ（文字数制限あり）
+======================= -->
 <%= form_with model: @question,
               url: quiz_section_question_path(@quiz, @section, @question),
               method: :patch,
               local: true,
               class: "space-y-4" do |f| %>
+  <!-- 楽観ロック -->
   <%= f.hidden_field :lock_version %>
 
   <!-- ▼ 問題文（Quill） -->
@@ -27,6 +53,7 @@
     </div>
   </div>
 
+  <!-- ▼ 選択肢 1〜4 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     <div><%= f.label :choice1 %><%= f.text_field :choice1, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
     <div><%= f.label :choice2 %><%= f.text_field :choice2, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
@@ -34,6 +61,7 @@
     <div><%= f.label :choice4 %><%= f.text_field :choice4, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %></div>
   </div>
 
+  <!-- ▼ 正解番号（1..4） -->
   <div class="grid grid-cols-2 gap-3">
     <div>
       <%= f.label :correct_choice, "正解(1..4)" %>
@@ -53,6 +81,7 @@
     </div>
   </div>
 
+  <!-- 送信ボタン -->
   <div class="mt-6 flex justify-center">
     <%= f.submit "更新する", class: "btn-solid-red--wide" %>
   </div>

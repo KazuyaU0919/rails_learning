@@ -1,14 +1,26 @@
-<!-- app/views/code_libraries/_actions.html.erb -->
-<%# locals: pre_code:, current_like:, current_bookmark: %>
+<!-- =========================================================
+  部分テンプレート: Code Library 用のアクションボタン群
+  ---------------------------------------------------------
+  ・主に「いいね ❤️」「ブックマーク 🔖」を制御
+  ・Turbo Stream 対応で動的に更新される領域
+  ・locals:
+      - pre_code: 対象のPreCode
+      - current_like: 現在のログインユーザーのLikeレコード（存在時はいいね済）
+      - current_bookmark: 現在のログインユーザーのBookmarkレコード（存在時は保存済）
+========================================================= -->
 
-<%# === local が渡ってこないケースでも nil を入れて落ちないように === %>
+<%# === ローカル変数が渡ってこない場合に nil を補填 === %>
 <% current_like     = local_assigns.fetch(:current_like, nil) %>
 <% current_bookmark = local_assigns.fetch(:current_bookmark, nil) %>
 
 <div id="<%= dom_id(pre_code, :actions) %>" class="flex gap-2">
   <% if logged_in? %>
-    <%# === いいね === %>
+
+    <!-- =======================
+         ❤️ いいねボタン
+         ======================= -->
     <% if current_like %>
+      <!-- いいね済み：赤色のハートで削除可能 -->
       <%= button_to like_path(current_like),
           method: :delete,
           form: { data: { turbo_stream: true } },
@@ -17,6 +29,7 @@
         <%= pre_code.like_count %>
       <% end %>
     <% else %>
+      <!-- 未いいね：アウトラインのハートで登録可能 -->
       <%= button_to likes_path(pre_code_id: pre_code.id),
           method: :post,
           form: { data: { turbo_stream: true } },
@@ -26,8 +39,11 @@
       <% end %>
     <% end %>
 
-    <%# === ブックマーク === %>
+    <!-- =======================
+         🔖 ブックマークボタン
+         ======================= -->
     <% if current_bookmark %>
+      <!-- 保存済み：青色で削除可能 -->
       <%= button_to bookmark_path(current_bookmark),
           method: :delete,
           form: { data: { turbo_stream: true } },
@@ -36,6 +52,7 @@
         保存済み
       <% end %>
     <% else %>
+      <!-- 未保存：枠線ボタンで登録可能 -->
       <%= button_to bookmarks_path(pre_code_id: pre_code.id),
           method: :post,
           form: { data: { turbo_stream: true } },

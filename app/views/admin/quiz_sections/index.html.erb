@@ -1,6 +1,28 @@
+<!-- =========================================================
+  View: Admin / QuizSections 一覧
+  File: app/views/admin/quiz_sections/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - クイズの「セクション（小見出し単位）」を一覧表示し、
+      作成・更新・削除の導線を提供する管理画面。
+  構成:
+    1) パンくず
+    2) 見出し + 新規作成ボタン
+    3) 一覧テーブル（ID / Quiz / 見出し / FREE / 位置 / 更新日 / 操作）
+    4) ページネーション
+  注意:
+    - 機能は変更せず、コードの並びとコメントのみ最適化。
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_quiz_sections %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) 見出し + 新規作成ボタン
+======================= -->
 <h1 class="text-xl font-bold mb-4">Quiz Sections</h1>
 
 <div class="mb-3">
@@ -8,6 +30,10 @@
         class: "px-3 py-2 rounded bg-slate-900 text-white" %>
 </div>
 
+<!-- =======================
+     3) 一覧テーブル
+     - 各レコードの概要と操作（編集/削除）への導線
+======================= -->
 <table class="w-full text-sm border rounded overflow-hidden">
   <thead class="bg-slate-50">
     <tr>
@@ -20,6 +46,7 @@
       <th class="p-2 w-40"></th>
     </tr>
   </thead>
+
   <tbody>
     <% @sections.each do |s| %>
       <tr class="border-t">
@@ -40,4 +67,7 @@
   </tbody>
 </table>
 
+<!-- =======================
+     4) ページネーション
+======================= -->
 <div class="mt-4"><%= paginate @sections if respond_to?(:paginate) %></div>

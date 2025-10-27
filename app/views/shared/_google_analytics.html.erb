@@ -1,22 +1,44 @@
-<%# Google Analytics (gtag.js) - 本番かつ GA_MEASUREMENT_ID があるときだけ有効化 %>
+<!-- =========================================================
+  Partial: Google Analytics (gtag.js)
+  File: app/views/shared/_google_analytics.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・GA_MEASUREMENT_ID が設定されている本番環境でのみ、
+      Google Analytics（GA4）を自動埋め込み。
+  備考：
+    ・SPA / Turbo に対応するため page_view は手動送信。
+    ・CSP対応：nonce属性を付与。
+========================================================= -->
+
+<!-- =======================
+     本番かつ GA_MEASUREMENT_ID が存在する場合のみ
+======================= -->
 <% if Rails.env.production? && ENV["GA_MEASUREMENT_ID"].present? %>
   <% ga_id = ENV["GA_MEASUREMENT_ID"] %>
 
-  <!-- Global site tag (gtag.js) -->
+  <!-- =======================
+       gtag.js 読み込みスクリプト
+  ======================= -->
   <script async
           src="https://www.googletagmanager.com/gtag/js?id=<%= ERB::Util.url_encode(ga_id) %>"
           nonce="<%= content_security_policy_nonce %>"></script>
 
+  <!-- =======================
+       初期化スクリプト
+       - dataLayer の準備
+       - 自動 page_view をOFF
+       - Turbo対応 page_view送信関数
+  ======================= -->
   <script nonce="<%= content_security_policy_nonce %>">
-    // dataLayer の初期化
+    // dataLayer 初期化
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
 
-    // 初期の自動 page_view はオフ（SPA/Turbo で自前送信するため）
+    // 初期設定
+    gtag('js', new Date());
     gtag('config', '<%= ga_id %>', { 'send_page_view': false });
 
-    // ページ表示イベントを明示送信（タイトル/URL/クエリ含む）
+    // ページ表示イベント送信用関数
     function sendPageView() {
       gtag('event', 'page_view', {
         page_title:   document.title,
@@ -25,9 +47,10 @@
       });
     }
 
-    // Turbo あり: 画面遷移ごとに送信
+    // Turbo利用時：turbo:loadごとに送信
     document.addEventListener('turbo:load', sendPageView);
-    // 念のため（Turbo 不使用ページ向け）
+
+    // Turbo未使用環境では DOMContentLoaded に対応
     if (!window.Turbo) {
       document.addEventListener('DOMContentLoaded', sendPageView);
     }

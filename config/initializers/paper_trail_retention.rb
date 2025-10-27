@@ -1,7 +1,19 @@
+# =========================================================
+# File: config/initializers/paper_trail_retention.rb
+# ---------------------------------------------------------
+# 目的:
+#   PaperTrail のバージョン保持ポリシーをアプリ設定に集約。
+#   （実際の削除/クリーンアップ処理はタスクやジョブ側でこの値を参照）
+#
+# 運用:
+#   - 環境変数で保持件数・保持日数・バッチサイズを制御できる。
+#   - ここでは「基準値」を配置するのみで、ロジックは変更しない。
+# =========================================================
+
 # config/initializers/paper_trail_retention.rb
 # PaperTrail の自動クリーンアップ設定
 Rails.application.configure do
-  config.x.versions.keep_per_item = ENV.fetch("VERSIONS_KEEP_PER_ITEM", 100).to_i       # 各 item の最大保持件数
-  config.x.versions.keep_days     = ENV.fetch("VERSIONS_KEEP_DAYS", 30).to_i            # 何日以内を保持するか
-  config.x.versions.cleanup_batch = ENV.fetch("VERSIONS_CLEANUP_BATCH", 1000).to_i      # 1回の削除件数
+  config.x.versions.keep_per_item = ENV.fetch("VERSIONS_KEEP_PER_ITEM", 100).to_i   # 各 item の最大保持件数
+  config.x.versions.keep_days     = ENV.fetch("VERSIONS_KEEP_DAYS", 30).to_i        # 何日以内を保持するか
+  config.x.versions.cleanup_batch = ENV.fetch("VERSIONS_CLEANUP_BATCH", 1000).to_i  # 1回の削除件数
 end

@@ -1,17 +1,30 @@
-<%# app/views/kaminari/_paginator.html.erb %>
+<!-- =========================================================
+  部分テンプレート: ページネーション全体の構造
+  ---------------------------------------------------------
+  Kaminari のメインテンプレート。
+  各ページリンク・最初/前/次/最後・省略(...) をまとめて描画。
+  HTML5 の nav 要素を用いてアクセシビリティも考慮。
+========================================================= -->
+
 <%= paginator.render do %>
   <nav class="inline-flex items-center gap-1" role="navigation" aria-label="pager">
+
+    <!-- 先頭・前ページ -->
     <%= first_page_tag unless current_page.first? %>
     <%= prev_page_tag  unless current_page.first? %>
 
+    <!-- ページ番号群 -->
     <% each_page do |page| %>
       <% if page.display_tag? %>
+        <!-- 表示対象ページ -->
         <%= page_tag page %>
       <% elsif !page.was_truncated? %>
+        <!-- 間を省略する「...」 -->
         <%= gap_tag %>
       <% end %>
     <% end %>
 
+    <!-- 次・末尾ページ -->
     <% unless current_page.out_of_range? %>
       <%= next_page_tag unless current_page.last? %>
       <%= last_page_tag unless current_page.last? %>

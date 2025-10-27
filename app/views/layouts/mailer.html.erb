@@ -1,6 +1,15 @@
+<!-- =========================================================
+  Layout: Mailer (HTML)
+  ---------------------------------------------------------
+  ・メール本文（HTML）の共通レイアウト
+  ・各メールテンプレートの HTML を yield で差し込む
+  ・CSS は基本インライン推奨（テンプレ側で定義）
+========================================================= -->
+
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- メールクライアント互換性のための meta -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
       /* Email styles need to be inline */

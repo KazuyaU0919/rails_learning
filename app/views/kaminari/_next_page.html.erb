@@ -1,10 +1,21 @@
-<% base = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
+<!-- =========================================================
+  部分テンプレート: 次のページリンク
+  ---------------------------------------------------------
+  「次へ」ボタンを生成する。
+  ・最後のページでは押せないように非活性表示。
+========================================================= -->
+
+<!-- 共通クラス定義 -->
+<% base     = "px-3 py-1 rounded ring-1 ring-slate-300 hover:bg-slate-50" %>
 <% disabled = "px-3 py-1 rounded ring-1 ring-slate-200 text-slate-300 cursor-default" %>
 
+<!-- 表示ロジック -->
 <% if current_page.last? %>
+  <!-- 現在が最後のページ → 非活性 -->
   <span class="<%= disabled %>" aria-disabled="true">
     <%= t("views.pagination.next") %>
   </span>
 <% else %>
+  <!-- 次ページへのリンク -->
   <%= link_to t("views.pagination.next"), url, rel: "next", class: base %>
 <% end %>

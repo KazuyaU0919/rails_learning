@@ -1,13 +1,32 @@
+<!-- =========================================================
+  Page: PreCode 詳細画面（自分のデータ）
+  ---------------------------------------------------------
+  ・登録名 / タグ / 説明 / コード / 解答（問題モード時）を表示
+  ・XシェアやURLコピーの導線あり
+  ・右下に編集/削除リンク
+========================================================= -->
+
+<!-- 実務上の nil ケア：@code が入ってくる場合の受け口を確保 -->
 <% @pre_code ||= @code %>
+
+<!-- =======================
+     パンくずナビ
+======================= -->
 <% breadcrumb :pre_codes %>
 <% breadcrumb :pre_code, @pre_code %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     ページ <title>
+======================= -->
 <% content_for :title, @pre_code.title %>
 
 <div class="mx-auto w-full max-w-2xl space-y-8">
 
-  <!-- 右上：Xシェア＆URLコピー -->
+  <!-- =======================
+       右上：Xシェア＆URLコピー
+       data-controller="share" に現在ページURLを渡す
+======================= -->
   <div class="flex justify-end gap-2 mb-2"
       data-controller="share"
       data-share-url-value="<%= code_library_url(@pre_code) %>">
@@ -25,7 +44,9 @@
     </button>
   </div>
 
-  <!-- 登録名 -->
+  <!-- =======================
+       登録名
+======================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録名</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
@@ -33,7 +54,10 @@
     </div>
   </section>
 
-  <!-- タグ -->
+  <!-- =======================
+       タグ
+       ※ ネストされたリンク事故を避けるため、静的ピルを使用
+======================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">タグ</h2>
     <div class="mt-1 flex flex-wrap">
@@ -41,7 +65,9 @@
     </div>
   </section>
 
-  <!-- コードの説明 -->
+  <!-- =======================
+       コードの説明
+======================= -->
   <section>
     <h2 class="text-sm font-semibold tracking-wider text-slate-500">コードの説明</h2>
     <div class="mt-1 rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3">
@@ -49,7 +75,9 @@
     </div>
   </section>
 
-  <!-- ヒント -->
+  <!-- =======================
+       ヒント（問題モードの場合に出現）
+======================= -->
   <% if @pre_code.hint.present? %>
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
@@ -58,6 +86,7 @@
                 data-reveal-target="button" data-action="reveal#toggle">表示する</button>
       </div>
 
+      <!-- reveal で開閉される本文（HTMLは sanitize で許可リスト制御） -->
       <div class="hidden rounded-xl ring-1 ring-slate-300 bg-white px-4 py-3"
           data-reveal-target="content">
         <%= sanitize(@pre_code.hint,
@@ -67,7 +96,10 @@
     </section>
   <% end %>
 
-  <!-- 登録コード + 最終更新 -->
+  <!-- =======================
+       登録コード + 最終更新
+       CodeMirror（閲覧専用）で見やすく表示
+======================= -->
   <section>
     <div class="flex items-baseline justify-between">
       <h2 class="text-sm font-semibold tracking-wider text-slate-500">登録コード</h2>
@@ -76,7 +108,7 @@
       </p>
     </div>
 
-    <!-- CodeMirror（閲覧専用） -->
+    <!-- CodeMirror（閲覧専用テーマ） -->
     <style>
       .cm-editor, .cm-scroller { background: transparent !important; }
     </style>
@@ -90,7 +122,11 @@
     </div>
   </section>
 
-  <!-- 解答 -->
+  <!-- =======================
+       解答（問題モードで answer/answer_code が存在する場合）
+       ・本文（HTML許可リスト）
+       ・解答コード（CodeMirror）
+======================= -->
   <% if @pre_code.answer.present? || @pre_code.answer_code.present? %>
     <section data-controller="reveal" class="space-y-2">
       <div class="flex items-baseline justify-between">
@@ -121,7 +157,10 @@
     </section>
   <% end %>
 
-  <!-- === 利用ボタン（中央固定・カウントなし） === -->
+  <!-- =======================
+       利用ボタン（エディタ画面へ遷移）
+       ※ Code Library 側の「このデータを利用する」（カウントあり）と差別化して、ここはシンプル導線
+======================= -->
   <section class="-mt-2">
     <div class="items-center flex justify-center">
       <%= link_to "このデータを利用する",
@@ -130,7 +169,9 @@
     </div>
   </section>
 
-  <!-- 操作（右下寄せ） -->
+  <!-- =======================
+       右下：編集/削除アクション
+======================= -->
   <div class="-mt-2 flex justify-end space-x-3">
     <%= link_to "編集", edit_pre_code_path(@pre_code),
           class: "btn-change is-edit" %>

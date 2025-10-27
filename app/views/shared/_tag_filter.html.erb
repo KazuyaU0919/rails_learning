@@ -1,53 +1,97 @@
-<!-- app/views/shared/_tag_filter.html.erb -->
+<!-- =========================================================
+  Partial: タグフィルター（検索用ピッカー + 送信フォーム）
+  File: app/views/shared/_tag_filter.html.erb
+  ---------------------------------------------------------
+  目的:
+    ・人気タグ一覧のモーダルから複数タグを選択し、一覧画面を絞り込む。
+  備考:
+    ・Stimulus controller "tag-picker" を使用（target/values は data 属性）。
+    ・hidden input に params[:tags] を詰めて GET 送信（一覧の絞り込み）。
+========================================================= -->
+
+<!-- =======================
+     スコープ: 送信先 URL 決定
+     - 呼び出し側から :url がなければ pre_codes_path を使う
+======================= -->
 <% target_url = local_assigns[:url] || pre_codes_path %>
 
-<div data-controller="tag-picker"
-     data-tag-picker-fetch-url-value="/tags/popular.json"
-     data-tag-picker-mode-value="filter"
-     class="ml-auto flex items-center gap-2">
-
+<!-- =======================
+     スコープ: タグピッカー（表示エリア + 送信フォーム）
+======================= -->
+<div
+  data-controller="tag-picker"
+  data-tag-picker-fetch-url-value="/tags/popular.json"
+  data-tag-picker-mode-value="filter"
+  class="ml-auto flex items-center gap-2"
+>
+  <!-- 選択済みタグのピル表示エリア（Stimulus が埋める） -->
   <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
 
+  <!-- 絞り込み送信フォーム（GET） -->
   <%= form_with url: target_url, method: :get, local: true, html: { class: "mb-0 flex gap-2 items-center" } do %>
-    <input type="hidden" name="tags" value="<%= params[:tags].to_s %>"
-           data-tag-picker-target="hiddenInput">
+    <!-- 選択されたタグ群（カンマ区切り文字列） -->
+    <input
+      type="hidden"
+      name="tags"
+      value="<%= params[:tags].to_s %>"
+      data-tag-picker-target="hiddenInput"
+    >
 
-    <button type="button" class="btn-bg-white"
-            data-action="tag-picker#open">
+    <!-- ピッカー起動 -->
+    <button type="button" class="btn-bg-white" data-action="tag-picker#open">
       タグを選ぶ
     </button>
 
+    <!-- 送信（検索） -->
     <button type="submit" class="btn-solid-red">
       検索
     </button>
   <% end %>
 
-  <!-- ピッカーモーダル -->
-  <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
-       data-tag-picker-target="container">
+  <!-- =======================
+       モーダル: タグ選択パネル
+       - 入力で絞り込み
+       - リストは Stimulus 側が描画
+  ======================= -->
+  <div
+    class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
+    data-tag-picker-target="container"
+  >
     <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
-      <!-- 右上 ×（Heroicon） -->
-      <button type="button"
-              class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
-              data-action="tag-picker#close" aria-label="閉じる">
+      <!-- 右上の閉じるボタン -->
+      <button
+        type="button"
+        class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+        data-action="tag-picker#close"
+        aria-label="閉じる"
+      >
         <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
       </button>
 
+      <!-- タイトル -->
       <div class="mb-3">
         <h3 class="font-semibold">タグを選択（検索）</h3>
       </div>
 
-      <input type="text" placeholder="タグ名で絞り込み"
-             class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
-             data-tag-picker-target="query"
-             data-action="input->tag-picker#queryInput">
+      <!-- テキスト入力による絞り込み -->
+      <input
+        type="text"
+        placeholder="タグ名で絞り込み"
+        class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
+        data-tag-picker-target="query"
+        data-action="input->tag-picker#queryInput"
+      >
 
+      <!-- タグ一覧（スクロールエリア） -->
       <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
 
+      <!-- 下部の閉じるボタン -->
       <div class="mt-4 flex justify-center">
-        <button type="button"
-                class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
-                data-action="tag-picker#close">
+        <button
+          type="button"
+          class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
+          data-action="tag-picker#close"
+        >
           閉じる
         </button>
       </div>
@@ -55,4 +99,7 @@
   </div>
 </div>
 
+<!-- =======================
+     補助ノード（オートコンプリート提案などに利用可）
+======================= -->
 <div id="tag-suggest" class="hidden"></div>

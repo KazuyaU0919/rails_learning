@@ -1,11 +1,28 @@
-<%# app/views/shared/_breadcrumbs.html.erb %>
+<!-- =========================================================
+  Partial: パンくずリスト（Breadcrumbs）
+  File: app/views/shared/_breadcrumbs.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・現在のページ階層を表示し、ユーザーが上位ページに戻れるようにする。
+  備考：
+    ・`breadcrumbs` ヘルパーが配列を返す前提。
+    ・現在ページはリンク化しない。
+========================================================= -->
+
+<!-- =======================
+     パンくずナビゲーション表示
+======================= -->
 <% if breadcrumbs.any? %>
   <nav class="mb-4 text-sm text-slate-500" aria-label="Breadcrumb">
     <ol class="flex flex-wrap gap-1 items-center">
+
+      <!-- 各パンくず要素を順番に描画 -->
       <% breadcrumbs.each_with_index do |crumb, i| %>
         <li class="inline-flex items-center">
+
+          <!-- URLが存在する場合のみリンク表示 -->
           <% if crumb.url.present? %>
-            <%# 現在ページだけリンクにしない場合はこちら %>
+            <!-- 現在ページはリンクにしない -->
             <%= link_to_unless_current crumb.text, crumb.url, class: "hover:underline" do %>
               <span class="text-slate-700"><%= crumb.text %></span>
             <% end %>
@@ -13,11 +30,13 @@
             <span class="text-slate-700"><%= crumb.text %></span>
           <% end %>
 
+          <!-- 区切り記号（›）を最終項目以外に表示 -->
           <% unless i == breadcrumbs.size - 1 %>
             <span class="px-1 select-none">›</span>
           <% end %>
         </li>
       <% end %>
+
     </ol>
   </nav>
 <% end %>

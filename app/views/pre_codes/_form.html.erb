@@ -1,14 +1,37 @@
-<!-- app/views/pre_codes/_form.html.erb -->
+<!-- =========================================================
+  Partial: PreCode 新規作成/編集フォーム
+  ---------------------------------------------------------
+  ・新規作成と編集を兼用（呼び出し元のコンテキストに依存）
+  ・問題モード（quiz_mode）を Stimulus で切替
+  ・タグ選択コンポーネント（tag-picker）を使用
+  ・本文/解答コードは CodeMirror（precode-body/code-view）で編集
+========================================================= -->
+
+<!-- =======================
+     バリデーションエラー出力
+======================= -->
 <%= render "shared/errors", object: pre_code %>
 
+<!-- =======================
+     フォームモデルの選択
+     ・admin 名称空間なら [:admin, pre_code]
+     ・通常は pre_code
+======================= -->
 <%
   admin_namespace = (local_assigns[:namespace] == :admin)
   form_model      = admin_namespace ? [:admin, pre_code] : pre_code
 %>
 
+<!-- =======================
+     フォーム本体
+======================= -->
 <%= form_with model: form_model, class: "space-y-6" do |f| %>
   <div data-controller="precode-mode" data-precode-mode-mode-value="normal" class="space-y-6">
 
+    <!-- ---------------------------------------
+         問題モードの ON/OFF（hidden 値 + トグル）
+         - :quiz_mode は boolean を文字列で送信（"false"/"true"）※既存仕様に準拠
+    ---------------------------------------- -->
     <%= f.hidden_field :quiz_mode, value: "false", data: { "precode-mode-target": "modeField" } %>
 
     <div class="flex items-center justify-end">
@@ -18,14 +41,20 @@
       </button>
     </div>
 
-    <!-- タイトル -->
+    <!-- ---------------------------------------
+         入力項目：タイトル
+    ---------------------------------------- -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500" data-precode-mode-target="titleLabel">登録名</label>
       <%= f.text_field :title, placeholder: "選択肢に表示する名前を入力してください",
             class: "w-full rounded-xl ring-1 ring-slate-300 px-3 py-2 focus:ring-slate-500" %>
     </div>
 
-    <!-- タグ（ピッカー + 新規作成） -->
+    <!-- ---------------------------------------
+         入力項目：タグ（既存選択 + 新規作成）
+         - tag-picker コンポーネントで UI/保存値を管理
+         - hidden の "tag_names" にカンマ区切りで渡す
+    ---------------------------------------- -->
     <div class="space-y-2"
          data-controller="tag-picker"
          data-tag-picker-fetch-url-value="/tags/popular.json"
@@ -33,12 +62,15 @@
          data-tag-picker-mode-value="assign">
       <label class="block text-sm font-semibold text-slate-500">タグ（最大10個）</label>
 
+      <!-- 選択済みのタグ表示エリア -->
       <div data-tag-picker-target="selectedArea" class="min-h-[1.75rem]"></div>
 
+      <!-- 送信用の hidden（name=tag_names） -->
       <input type="hidden" name="tag_names"
              value="<%= pre_code.tags.map(&:name).join(',') %>"
              data-tag-picker-target="hiddenInput">
 
+      <!-- 既存タグモーダル起動 / 新規タグ作成 -->
       <div class="flex gap-2 items-center">
         <button type="button" class="btn-toggle"
                 data-action="tag-picker#open">既存のタグを選ぶ</button>
@@ -51,29 +83,32 @@
       </div>
       <p class="text-sm text-red-600" data-tag-picker-target="createError"></p>
 
-      <!-- モーダル -->
+      <!-- 既存タグ選択モーダル本体 -->
       <div class="hidden fixed inset-0 z-50 grid place-items-center bg-black/40"
            data-tag-picker-target="container">
         <div class="relative w-11/12 max-w-2xl rounded-2xl bg-white p-5 shadow-lg text-slate-900">
-          <!-- 右上 ×（Heroicon） -->
+          <!-- 右上 × ボタン -->
           <button type="button"
                   class="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
                   data-action="tag-picker#close" aria-label="閉じる">
             <%= heroicon "x-mark", variant: :solid, options: { class: "w-6 h-6" } %>
           </button>
 
+          <!-- モーダル：タイトル -->
           <div class="mb-3">
             <h3 class="font-semibold">タグを選択</h3>
           </div>
 
+          <!-- モーダル：検索欄 -->
           <input type="text" placeholder="タグ名で絞り込み"
                  class="w-full rounded ring-1 ring-slate-300 px-3 py-2 mb-3"
                  data-tag-picker-target="query"
                  data-action="input->tag-picker#queryInput">
 
+          <!-- モーダル：タグ一覧（Ajaxで充填） -->
           <div data-tag-picker-target="list" class="max-h-[50vh] overflow-auto"></div>
 
-          <!-- 下部中央の閉じるボタン（ホバーで赤背景・白文字） -->
+          <!-- モーダル：閉じる -->
           <div class="mt-4 flex justify-center">
             <button type="button"
                     class="inline-flex items-center justify-center px-6 py-2 rounded-full ring-1 ring-[#CC0000] text-[#CC0000] bg-white hover:bg-[#CC0000] hover:text-white active:bg-[#FFD6FF] transition-colors"
@@ -85,7 +120,9 @@
       </div>
     </div>
 
-    <!-- 説明 -->
+    <!-- ---------------------------------------
+         入力項目：説明
+    ---------------------------------------- -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500" data-precode-mode-target="descLabel">コードの説明</label>
       <%= f.text_area :description, rows: 3, placeholder: "コード内容の説明を簡単に書いてください",
@@ -93,7 +130,9 @@
             data: { controller: "autosize", "autosize-target": "field", "autosize-min-rows-value": 3 } %>
     </div>
 
-    <!-- ヒント（問題モード） -->
+    <!-- ---------------------------------------
+         入力項目：ヒント（問題モード時のみ表示）
+    ---------------------------------------- -->
     <div data-precode-mode-target="quizBlock" class="space-y-2 hidden">
       <label class="block text-sm font-semibold text-slate-500">ヒント（任意）</label>
       <%= f.text_area :hint, rows: 3, placeholder: "ヒント本文（1000文字まで）",
@@ -101,7 +140,10 @@
             data: { controller: "autosize", "autosize-target": "field", "autosize-min-rows-value": 3 } %>
     </div>
 
-    <!-- 登録コード -->
+    <!-- ---------------------------------------
+         入力項目：登録コード
+         ・CodeMirror（precode-body）で編集
+    ---------------------------------------- -->
     <div class="space-y-2">
       <label class="block text-sm font-semibold text-slate-500">登録コード</label>
       <style>.cm-editor,.cm-scroller{background:transparent!important}</style>
@@ -112,7 +154,11 @@
       </div>
     </div>
 
-    <!-- 解答（問題モード） -->
+    <!-- ---------------------------------------
+         入力項目：解答（問題モード時のみ表示）
+         ・本文は textarea（autosize）
+         ・解答コードは CodeMirror（precode-body）
+    ---------------------------------------- -->
     <div data-precode-mode-target="quizBlock" class="space-y-2 hidden">
       <label class="block text-sm font-semibold text-slate-500">解答（必須）</label>
       <%= f.text_area :answer, rows: 4, placeholder: "解答本文（2000文字まで）",
@@ -131,6 +177,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       送信ボタン（中央寄せ）
+======================= -->
   <div class="flex justify-center">
     <%= f.submit (pre_code.new_record? ? "登録" : "更新"),
           class: "btn-solid-red--wide" %>

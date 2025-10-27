@@ -1,3 +1,19 @@
+<!-- =========================================================
+  Partial: Admin / Versions 値セル描画
+  File: app/views/admin/versions/_value_cell.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 変更前/後の値を型に応じて適切に整形して表示する。
+  ルール:
+    - 日付/時刻: ローカライズ
+    - 真偽/数値: そのまま表示
+    - nil: 薄色で 'nil'
+    - 文字列: HTML らしき内容は strip_tags して simple_format、
+              それ以外は pre で改行保持
+  注意:
+    - 分岐ロジックは既存通り。表示方法の意図をコメントで明確化。
+========================================================= -->
+
 <%# 値の見せ方をユースケース別に切替 %>
 <% case v %>
 <% when Time, Date, ActiveSupport::TimeWithZone %>
@@ -8,7 +24,7 @@
   <span class="text-slate-400">nil</span>
 <% else %>
   <% str = v.to_s %>
-  <% if str.strip.start_with?("<") && str.include?("</") %>
+  <% if str.strip.start_with?("<") && str.includes?("</") rescue str.include?("</") %>
     <%= simple_format(h(strip_tags(str))) %>
   <% else %>
     <pre class="whitespace-pre-wrap"><%= str %></pre>

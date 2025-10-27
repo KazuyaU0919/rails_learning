@@ -1,13 +1,35 @@
-<!-- app/views/admin/editor_permissions/_form.html.erb -->
+<!-- =========================================================
+  Partial: Admin / EditorPermissions フォーム
+  File: app/views/admin/editor_permissions/_form.html.erb
+  ---------------------------------------------------------
+  目的:
+    - 編集権限の新規作成 / 更新フォーム
+  構成:
+    1) User 選択（選択ユーザーの権限を表示）
+    2) 権限入力ブロック（Target type / Target ID / Role）
+    3) Target プレビュー
+    4) 送信 / 戻る
+    5) 動的プレビュー・制御用スクリプト
+========================================================= -->
+
 <%= form_with model: @perm, url: @perm.new_record? ? admin_editor_permissions_path : admin_editor_permission_path(@perm),
               method: @perm.new_record? ? :post : :patch, local: true, class: "space-y-5" do |f| %>
+
+  <!-- =======================
+       1) User 選択
+       - 選択ユーザーが管理者/編集者なら入力ブロックを隠す
+  ======================= -->
   <div>
     <%= f.label :user_id, "User", class: "block text-sm text-slate-600 mb-1" %>
     <%= f.collection_select :user_id, User.order(:name), :id, :name, {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "editor_permission_user_id" %>
     <div id="user_role_notice" class="mt-2 text-sm"></div>
   </div>
 
-  <!-- 必要に応じて隠す -->
+  <!-- =======================
+       2) 権限入力ブロック
+       - Target type / Target ID / Role
+       - 必要に応じて非表示（User が admin/editor の場合）
+  ======================= -->
   <div id="perm_fields_block">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-4">
@@ -15,25 +37,36 @@
         <%= f.select :target_type, [["BookSection","BookSection"],["QuizQuestion","QuizQuestion"]],
                     {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "target_type" %>
       </div>
+
       <div class="lg:col-span-4">
         <%= f.label :target_id, "Target ID", class: "block text-sm text-slate-600 mb-1" %>
         <%= f.number_field :target_id, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2", id: "target_id" %>
       </div>
+
       <div class="lg:col-span-4">
         <%= f.label :role, "Role", class: "block text-sm text-slate-600 mb-1" %>
         <%= f.select :role, EditorPermission.roles.keys.map { |r| [r, r] }, {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
       </div>
     </div>
 
+    <!-- 3) Target プレビュー -->
     <div class="rounded border bg-slate-50 p-3 text-sm mt-2" id="target_preview">Target プレビュー: -</div>
   </div>
 
+  <!-- =======================
+       4) ボタン
+  ======================= -->
   <div class="flex gap-2">
     <%= f.submit @perm.new_record? ? "付与する" : "更新する", class: "px-4 py-2 rounded bg-slate-900 text-white" %>
     <%= link_to "一覧に戻る", admin_editor_permissions_path, class: "px-4 py-2 rounded ring-1 ring-slate-300 bg-white" %>
   </div>
 <% end %>
 
+<!-- =======================
+     5) 動的プレビュー・制御用スクリプト
+     - Target プレビュー取得
+     - User が admin/editor の場合は入力ブロックを隠す
+======================= -->
 <script>
   (function(){
     const typeEl  = document.getElementById("target_type");

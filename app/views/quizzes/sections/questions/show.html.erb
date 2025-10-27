@@ -1,15 +1,42 @@
+<!-- =========================================================
+  Page: クイズ > セクション > 問題（受験画面）
+  File: app/views/quizzes/sections/questions/show.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・クイズの単一問題を表示し、選択肢タップでそのまま回答送信する。
+  画面構成：
+    1) パンくず / 見出し（タイトルは content_for）
+    2) 問題カード（問題文のリッチ表示 + 選択肢ボタン）
+    3) 編集権限保持者向けの「問題を編集」導線
+  実装メモ：
+    ・選択肢は button_to で POST、フォーム送信直後に判定ページへ遷移。
+    ・問題文は rich_html でサニタイズされたリッチテキストを表示。
+========================================================= -->
+
+<!-- =======================
+     パンくず / 共通UI
+======================= -->
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
 <% breadcrumb :quiz_section_public, @quiz, @section %>
 <% breadcrumb :quiz_question, @quiz, @section, @question %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     タイトル / サブヘッダ
+======================= -->
 <div class="mx-auto w-full max-w-3xl pt-2 px-4 md:px-6 lg:px-8" data-controller="code-highlight">
   <% content_for :title, "#{@section.heading} - 問題" %>
   <p class="text-sm text-slate-500 mb-2">
     <%= link_to @quiz.title, quiz_path(@quiz) %> / <%= @section.heading %>
   </p>
 
+  <!-- =======================
+       問題カード
+       - Q番号
+       - 問題文（サニタイズ済みリッチテキスト）
+       - 4択ボタン（即時POST）
+  ======================= -->
   <div class="rounded ring-1 ring-slate-200 p-4 bg-white">
     <p class="text-slate-500 text-xl">Q<%= @question.position %></p>
 
@@ -32,6 +59,9 @@
     </div>
   </div>
 
+  <!-- =======================
+       編集導線（権限ありのときのみ）
+  ======================= -->
   <% if can_edit?(@question) %>
     <div class="flex justify-end my-3">
       <%= link_to "この問題を編集",

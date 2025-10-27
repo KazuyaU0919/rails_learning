@@ -1,6 +1,27 @@
+<!-- =========================================================
+  View: Admin / QuizQuestions 一覧
+  File: app/views/admin/quiz_questions/index.html.erb
+  ---------------------------------------------------------
+  目的:
+    - クイズ問題の一覧・作成/編集/削除への導線を提供
+  構成:
+    1) パンくず
+    2) タイトル + 新規作成ボタン
+    3) 一覧テーブル
+    4) ページネーション
+  注意:
+    - 機能変更は行わず、整形とコメントのみ追加
+========================================================= -->
+
+<!-- =======================
+     1) パンくず
+======================= -->
 <% breadcrumb :admin_quiz_questions %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- =======================
+     2) タイトル + 新規作成
+======================= -->
 <h1 class="text-xl font-bold mb-4">Quiz Questions</h1>
 
 <div class="mb-3">
@@ -8,6 +29,10 @@
         class: "px-3 py-2 rounded bg-slate-900 text-white" %>
 </div>
 
+<!-- =======================
+     3) 一覧テーブル
+     - ID / Quiz / Section / 問題文先頭 / 正解 / 位置 / 操作
+======================= -->
 <table class="w-full text-sm border rounded overflow-hidden">
   <thead class="bg-slate-50">
     <tr>
@@ -20,6 +45,7 @@
       <th class="p-2 w-40"></th>
     </tr>
   </thead>
+
   <tbody>
     <% @questions.each do |q| %>
       <tr class="border-t">
@@ -40,4 +66,7 @@
   </tbody>
 </table>
 
+<!-- =======================
+     4) ページネーション
+======================= -->
 <div class="mt-4"><%= paginate @questions if respond_to?(:paginate) %></div>

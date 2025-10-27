@@ -1,4 +1,10 @@
-<!-- app/views/likes/destroy.turbo_stream.erb -->
+<%# =========================================================
+   Turbo Stream: Likes#destroy
+   ---------------------------------------------------------
+   ・いいね削除後に、カード内のアクション領域とメトリクス表示を差し替え
+   ・create と同様、2か所を置換
+========================================================= %>
+
 <%= turbo_stream.replace dom_id(@pre_code, :actions) do %>
   <%= render "code_libraries/actions",
         pre_code: @pre_code,

@@ -1,20 +1,43 @@
-<!-- app/views/book_sections/edit.html.erb -->
+<!-- =========================================================
+  ビュー: BookSection 編集ページ
+  ---------------------------------------------------------
+  ・対象セクション（@section）をQuillエディタで編集。
+  ・パンくず・タイトル・フォームを表示。
+  ・Stimulusコントローラ "quill" がエディタ管理を担当。
+========================================================= -->
+
+<!-- ===== パンくずリスト ===== -->
 <% breadcrumb :books %>
 <% breadcrumb :book, @book %>
 <% breadcrumb :book_section_edit, @book, @section %>
 <%= render "shared/breadcrumbs" %>
 
+<!-- ===== ページタイトル ===== -->
 <% content_for :title, "セクション編集" %>
-<h1 class="text-xl font-semibold mb-4"><%= @book.title %> / <%= @section.heading %> を編集</h1>
+<h1 class="text-xl font-semibold mb-4">
+  <%= @book.title %> / <%= @section.heading %> を編集
+</h1>
 
+<!-- ===== 編集フォーム本体 ===== -->
 <%= form_with model: @section, url: book_section_path(@book, @section),
               method: :patch, data: { controller: "quill" } do |f| %>
+
+  <!-- 楽観ロック用バージョン番号 -->
   <%= f.hidden_field :lock_version %>
+
+  <!-- Quillエディタ領域 -->
   <div class="space-y-2">
     <%= f.label :content, class: "block text-sm text-slate-600" %>
-    <div id="quill-editor" class="bg-white rounded min-h-[18rem] mb-6 ql-container ql-snow"></div>
+
+    <!-- 実際のQuill本体 -->
+    <div id="quill-editor"
+         class="bg-white rounded min-h-[18rem] mb-6 ql-container ql-snow"></div>
+
+    <!-- hiddenにHTMLを埋め込んで送信 -->
     <%= f.hidden_field :content, id: "content_field", autocomplete: "off" %>
   </div>
+
+  <!-- 送信ボタン -->
   <div class="mt-6 flex justify-center">
     <%= f.submit "更新する", class: "btn-solid-red--wide" %>
   </div>

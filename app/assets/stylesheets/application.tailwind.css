@@ -1,18 +1,58 @@
+/* ============================================
+   app/assets/stylesheets/application.tailwind.css
+   目的:
+     - Tailwind のベースに、アプリ共通の見た目（本文/コード/ボタン等）を上書き・追加する。
+     - 既存機能の見た目を壊さないまま、読みやすさ・保守性を高める。
+
+   構成:
+     1) Tailwind 読み込み（@import / @plugin）
+     2) 本文レンダリング用（.content-body の見出し/段落/リスト/引用/コード 等）
+     3) Quill（エディタ）関連の上書き
+     4) UI コンポーネント群（@layer components）
+        - .btn-dark（濃色ボタン共通）
+        - Reveal 系トグルボタン（.btn-toggle）
+        - 既存テンプレ向けフォールバック（data-reveal）
+        - 変更系ボタン（.btn-change + バリアント）
+        - クイズ選択肢（.btn-choice）
+        - Pill 型ボタン（.btn-pill + バリアント）
+        - 白背景/黒文字ボタン（.btn-bg-white）
+        - 赤ベタボタン（.btn-solid-red / 幅広版）
+
+   注意:
+     - 値（色・余白・line-height など）は変更せず、並べ替えとコメントのみ追加。
+     - 同一セレクタの重複は無し（@layer 内の順序変更のみ）。
+   ============================================ */
+
+
+/* ============================================
+   1) Tailwind 読み込み
+   ============================================ */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* 本文レンダリング用。Tailwindのリセットを上書き */
+
+/* ============================================
+   2) 本文レンダリング（.content-body）
+   - Tailwind のリセットに対する上書きと装飾
+   - 主に MD/HTML 表示（閲覧側）で使用
+   ============================================ */
+
+/* 見出し */
 .content-body h1 { font-size: 1.75rem; font-weight: 700; margin: 1.25rem 0 .75rem; }
 .content-body h2 { font-size: 1.5rem;  font-weight: 700; margin: 1.25rem 0 .75rem; }
 .content-body h3 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 .5rem; }
 
-/* ★ 行間を 1.8 → 1.5 に詰める */
+/* 段落（行間は 1.8 → 1.5 に詰める） */
 .content-body p  { margin: 1rem 0; line-height: 1.5; }
+
+/* リンク */
 .content-body a  { color: #0369a1; text-decoration: underline; }
 
+/* リスト（ul/ol 共通の字下げ・行間） */
 .content-body ul { list-style: disc;    padding-left: 1.5rem; margin: 1rem 0; line-height: 1.5; }
 .content-body ol { list-style: decimal; padding-left: 1.5rem; margin: 1rem 0; line-height: 1.5; }
 
+/* 引用 */
 .content-body blockquote {
   border-left: 4px solid #e2e8f0; padding-left: 1rem; color: #475569; margin: 1rem 0; line-height: 1.5;
 }
@@ -27,7 +67,7 @@
   line-height: 1.45;
 }
 
-/* highlight.js が吐く .hljs に余白を少し */
+/* highlight.js の <code class="hljs"> に余白（pre 直下） */
 .content-body pre code.hljs {
   display: block;
   padding: 0;
@@ -41,10 +81,10 @@
   border-radius: .35rem;
 }
 
-/* Quill のコードブロック用クラス */
+/* Quill のコードブロック用クラス（本文表示側の配色合わせ） */
 .content-body pre.ql-syntax { background: #0f172a; }
 
-/* content-body 内の <hr> を見やすく */
+/* 区切り線（<hr>） */
 .content-body hr {
   border: 0;
   border-top: 1px solid #e5e7eb;
@@ -52,7 +92,30 @@
   width: 100%;
 }
 
-/* 共通ボタン */
+
+/* ============================================
+   3) Quill（エディタ）関連
+   ============================================ */
+
+/* ツールバーをスクロール固定 */
+.ql-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* ============================================
+   4) UI コンポーネント群（@layer components）
+   - Tailwind 推奨の拡張レイヤーで集約
+   ============================================ */
+
+/* -------------------------------
+   4-1) 濃色共通ボタン（.btn-dark）
+   用途: 主要アクションの強調用
+   ------------------------------- */
 .btn-dark{
   @apply inline-flex items-center justify-center
          rounded px-3 py-1 text-sm font-medium
@@ -63,19 +126,11 @@
          focus:outline-none focus:ring-2 focus:ring-slate-500;
 }
 
-/* Quill ツールバー固定 */
-.ql-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-}
 
-/* ===========================
-   Reveal系トグルボタンの共通クラス
-   （「🔰 初めての方へ」「表示/非表示」など）
-   =========================== */
+/* -------------------------------
+   4-2) Reveal 系トグルボタン（.btn-toggle）
+   用途: 「🔰 初めての方へ」「表示/非表示」等の開閉トグル
+   ------------------------------- */
 @layer components {
   .btn-toggle{
     @apply px-3 py-1 rounded text-sm ring-1 ring-slate-300 transition;
@@ -91,7 +146,12 @@
   }
 }
 
-/* 既存テンプレが残っていても hover だけは効かせたい場合の保険（任意） */
+
+/* -------------------------------
+   4-3) 既存テンプレ向けフォールバック
+   用途: data-reveal ターゲットボタンの hover だけ有効化したい場合の保険
+   （スタイル指定が分散していても最低限の挙動を担保）
+   ------------------------------- */
 button[data-reveal-target="button"] {
   @apply transition;
 }
@@ -105,15 +165,17 @@ button[data-reveal-target="button"]:focus-visible {
   @apply outline-none ring-2 ring-slate-400;
 }
 
-/* ===========================
-   変更系ボタン（アウトライン → ホバーで塗りつぶし）
-   - 共通: .btn-change
-   - 色バリアント: .is-edit（緑）, .is-delete（赤）
-   - 仕組み: CSSカスタムプロパティ --btnc / --btnc-active を色に使用
-   =========================== */
+
+/* -------------------------------
+   4-4) 変更系ボタン（.btn-change + バリアント）
+   仕様:
+     - アウトライン → hover で塗りつぶし
+     - 色は CSS カスタムプロパティ（--btnc / --btnc-active）で統一
+     - バリアント: .is-edit（緑）, .is-delete（赤）
+   ------------------------------- */
 @layer components {
   .btn-change{
-    /* ベース（形・余白・タイポ・アウトライン） */
+    /* 形・余白・タイポ・アウトライン */
     @apply inline-flex items-center justify-center
            rounded px-3 py-1 text-sm font-medium
            transition bg-white ring-1;
@@ -127,7 +189,7 @@ button[data-reveal-target="button"]:focus-visible {
     background-color: var(--btnc);
   }
   .btn-change:active{
-    /* ほんの少しだけ暗く */
+    /* ほんの少し暗く */
     background-color: var(--btnc-active, var(--btnc));
   }
   .btn-change:focus-visible{
@@ -136,22 +198,20 @@ button[data-reveal-target="button"]:focus-visible {
 
   /* === バリアント === */
   .btn-change.is-edit{
-    /* 画像指定の緑 */
     --btnc: #0E9970;
     --btnc-active: #0C8B66;
   }
   .btn-change.is-delete{
-    /* 既存UIの赤系に合わせた階調 */
     --btnc: #CC0000;
     --btnc-active: #BB0000;
   }
 }
 
-/* ===========================
-   クイズ機能の選択肢ボタン
-   =========================== */
+
+/* -------------------------------
+   4-5) クイズ機能の選択肢ボタン（.btn-choice）
+   ------------------------------- */
 @layer components {
-  /* 選択肢ボタン（プレーン→Hoverでわずかに強調） */
   .btn-choice{
     @apply rounded ring-1 ring-slate-300 bg-white
            px-4 py-3 text-sm transition
@@ -161,19 +221,21 @@ button[data-reveal-target="button"]:focus-visible {
   }
 }
 
-/* ===========================
-   Pill型アウトラインボタン（Next / 結果を見る）共通
-   ・見た目や余白、丸み、hover時の反転は共通
-   ・色だけを --btnc で差し替え
-   ・色の指定は .is-mint / .is-orange で付与（必要に応じて色クラスを追加）
-   =========================== */
+
+/* -------------------------------
+   4-6) Pill 型アウトラインボタン（.btn-pill）
+   仕様:
+     - 形/余白/反転の挙動は共通
+     - 色のみ --btnc で差し替え
+     - バリアント: .is-mint / .is-orange / .is-red
+   ------------------------------- */
 @layer components {
   .btn-pill{
-    /* 形・余白・タイポなどの共通部分 */
+    /* 共通レイアウト */
     @apply inline-flex items-center gap-2 rounded-full px-6 py-2
            text-sm font-semibold bg-white transition-colors
            focus:outline-none;
-    /* 色はカスタムプロパティで一元化（デフォルトは黒） */
+    /* 色（未指定時は黒） */
     border: 1px solid var(--btnc, #000);
     color: var(--btnc, #000);
   }
@@ -182,28 +244,27 @@ button[data-reveal-target="button"]:focus-visible {
     color: #fff;
   }
 
-  /* フォーカス見やすさ（色に合わせた外枠）。color-mixが未対応でも見えるように個別指定も下で用意 */
+  /* フォーカス外枠（color-mix 対応時） */
   .btn-pill:focus-visible{
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--btnc) 50%, transparent);
   }
 
-  /* === 色指定（必要に応じて増やせます） === */
-  .btn-pill.is-mint   { --btnc: #2ED6B5; } /* ミント系 */
-  .btn-pill.is-orange { --btnc: #FF8A5B; } /* 鮮やかなオレンジ */
-  .btn-pill.is-red   { --btnc: #CC0000; } /* ヘッダーと同じ赤（紅）*/
+  /* === 色バリアント === */
+  .btn-pill.is-mint   { --btnc: #2ED6B5; }
+  .btn-pill.is-orange { --btnc: #FF8A5B; }
+  .btn-pill.is-red    { --btnc: #CC0000; } /* ヘッダーと同系の赤 */
 
-  /* color-mix 非対応ブラウザ向けのフォールバック（半透明の外枠） */
+  /* color-mix 非対応向けフォールバック（半透明外枠） */
   .btn-pill.is-mint:focus-visible   { box-shadow: 0 0 0 2px rgba(46, 214, 181, .5); }
   .btn-pill.is-orange:focus-visible { box-shadow: 0 0 0 2px rgba(255, 138,  91, .5); }
   .btn-pill:active   { filter: brightness(.95); }
 }
 
-/* ===========================
-   白背景 黒文字ボタン（大）（共通）
-   - 既定: 白背景 / 黒文字 / 灰色リング
-   - hover: 黒背景 / 白文字 / 黒リング
-   - 用途: 「タグを選ぶ」「テーマ切替」など
-   =========================== */
+
+/* -------------------------------
+   4-7) 白背景/黒文字ボタン（.btn-bg-white）
+   用途: 「タグを選ぶ」「テーマ切替」など一般操作
+   ------------------------------- */
 @layer components {
   .btn-bg-white{
     @apply inline-flex items-center justify-center
@@ -223,13 +284,13 @@ button[data-reveal-target="button"]:focus-visible {
   }
 }
 
-/* ===========================
-   赤ベタボタン（共通）
-   - 既定: 赤背景 / 白文字
-   - hover: 少し暗い赤
-   - active: さらに暗い赤
-   - 用途: 検索/実行/リンク 等の通常幅
-   =========================== */
+
+/* -------------------------------
+   4-8) 赤ベタボタン（.btn-solid-red）
+   バリエーション:
+     - 通常幅（.btn-solid-red）
+     - 横長/大きめ（.btn-solid-red--wide）
+   ------------------------------- */
 @layer components {
   .btn-solid-red{
     @apply inline-flex items-center justify-center
@@ -239,7 +300,6 @@ button[data-reveal-target="button"]:focus-visible {
            focus:outline-none focus:ring-2 focus:ring-[#CC0000];
   }
 
-  /* 横長版（固定幅） */
   .btn-solid-red--wide{
     @apply inline-flex items-center justify-center
            w-64 rounded px-4 py-2 text-base font-medium
@@ -248,4 +308,3 @@ button[data-reveal-target="button"]:focus-visible {
            focus:outline-none focus:ring-2 focus:ring-[#CC0000];
   }
 }
-

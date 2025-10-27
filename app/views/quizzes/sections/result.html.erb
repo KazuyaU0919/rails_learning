@@ -1,10 +1,25 @@
-<%# app/views/quizzes/sections/result.html.erb %>
+<!-- =========================================================
+  Page: クイズ結果（セクション単位）
+  File: app/views/quizzes/sections/result.html.erb
+  ---------------------------------------------------------
+  目的：
+    ・特定セクションの解答結果（正解数／全体）を表示
+    ・正答率に応じたメッセージ＆画像、シェア、再挑戦や一覧へ戻る導線、
+      対応する教本セクションへの導線を提示
+========================================================= -->
+
+<!-- =======================
+     パンくずナビ
+======================= -->
 <% breadcrumb :quizzes %>
 <% breadcrumb :quiz, @quiz %>
 <% breadcrumb :quiz_section_result, @quiz, @section %>
 <%= render "shared/breadcrumbs" %>
 
 <div class="mx-auto w-full max-w-3xl pt-2 px-4 md:px-6 lg:px-8">
+  <!-- =======================
+       ページタイトル（結果）
+  ======================= -->
   <% content_for :title, "#{@section.heading} - 結果" %>
 
   <h1 class="text-2xl font-semibold mb-2"><%= @section.heading %> の結果</h1>
@@ -12,7 +27,11 @@
     <span class="font-bold"><%= @correct %> / <%= @total %>問 正解</span>
   </p>
 
-  <%# ===== 正答率に応じた 画像 + メッセージ ===== %>
+  <!-- =======================
+       正答率に応じたメッセージ＆画像
+       - @correct, @total から正答率を計算
+       - しきい値でメッセージと画像名を選択
+  ======================= -->
   <%
     percent = @total.to_i.positive? ? (@correct.to_f / @total) : 0.0
 
@@ -41,6 +60,11 @@
     </div>
   </div>
 
+  <!-- =======================
+       SNSシェア（X）
+       - Stimulus: share
+       - 結果のスコアを含む文言でシェア
+  ======================= -->
   <div class="flex justify-center mt-2"
       data-controller="share"
       data-share-url-value="<%= quizzes_url %>">
@@ -52,11 +76,17 @@
     </button>
   </div>
 
+  <!-- =======================
+       導線：一覧に戻る／再挑戦
+  ======================= -->
   <div class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
     <%= link_to "＜ セクション一覧へ戻る", quiz_path(@quiz), class: "btn-pill is-mint" %>
     <%= link_to "もう一度解く ＞", quiz_section_path(@quiz, @section), class: "btn-pill is-mint" %>
   </div>
 
+  <!-- =======================
+       対応する教本セクションへの導線（ある場合）
+  ======================= -->
   <% if @section.book_section.present? %>
     <div class="mt-3 p-5 rounded-xl ring-1 ring-slate-200 bg-white text-center">
       <p class="text-lg font-semibold mb-2">もう一度、テキストを読み直す？</p>
