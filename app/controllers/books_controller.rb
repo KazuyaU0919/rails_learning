@@ -1,6 +1,17 @@
-# app/controllers/books_controller.rb
+# ============================================================
+# BooksController
+# ------------------------------------------------------------
+# 教本（Book）の一覧・詳細表示を担当。
+# ------------------------------------------------------------
+# 主な責務：
+#   - Book 一覧（N+1回避 + 必要カラム絞り）
+#   - Book 詳細（目次付き）
+# ============================================================
+
 class BooksController < ApplicationController
-  # 一覧：本＋セクション数のN+1を防ぎつつ必要カラムに絞る
+  # =======================
+  # 一覧
+  # =======================
   def index
     @books = Book
       .select(:id, :title, :description, :updated_at, :book_sections_count)
@@ -9,9 +20,11 @@ class BooksController < ApplicationController
       .page(params[:page])
   end
 
-  # 詳細：目次も一緒に
+  # =======================
+  # 詳細
+  # =======================
   def show
     @book = Book.includes(:book_sections).find(params[:id])
-    @sections = @book.book_sections           # 既に order(:position) が効く
+    @sections = @book.book_sections           # order(:position) 既定
   end
 end
