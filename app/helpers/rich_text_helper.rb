@@ -1,7 +1,16 @@
-# app/helpers/rich_text_helper.rb
+# ============================================================
+# Helper: リッチテキスト表示
+# ------------------------------------------------------------
+# 目的:
+# - Quill 等のリッチHTMLをビューで安全に出力するための一点窓口。
+# - サニタイズロジックは RichTextSanitizer に委譲。
+# ============================================================
 module RichTextHelper
-  # ビューからはこれ一発でOK
-  # 例: <%= rich_html(@question.explanation) %>
+  # =======================
+  # HTMLサニタイズ一括適用
+  # -----------------------
+  # 例) <%= rich_html(@question.explanation) %>
+  # =======================
   def rich_html(html)
     RichTextSanitizer.call(html)
   end
