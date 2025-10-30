@@ -1,7 +1,13 @@
-# Be sure to restart your server when you modify this file.
+# =========================================================
+# File: config/initializers/assets.rb
+# ---------------------------------------------------------
+# 目的:
+#   - アセットパイプライン（Sprockets）の設定。
+#   - バージョン管理・ロードパス設定など。
+# =========================================================
 
-# Version of your assets, change this if you want to expire all your assets.
+# アセットのバージョン指定（キャッシュクリア用途）
 Rails.application.config.assets.version = "1.0"
 
-# Add additional assets to the asset load path.
+# 追加パスを設定する場合は以下を利用
 # Rails.application.config.assets.paths << Emoji.images_path
