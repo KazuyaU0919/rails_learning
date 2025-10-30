@@ -1,18 +1,34 @@
-// app/javascript/controllers/quill_field_controller.js
+// ============================================================
+// quill_field_controller.js
+// ------------------------------------------------------------
+// 目的：任意フォームの「表示用 div + hidden input」の組み合わせで
+//       Quill を初期化し、入力結果（HTML）を hidden に同期する。
+// 用途：data-controller="quill-field" の要素に対して、
+//       targets: editor(表示div), input(hidden) を指定して使う。
+// 特徴：
+//   - Divider(<hr>) Blot を一度だけ登録
+//   - 画像アップロードを ActiveStorage DirectUpload で実現
+//   - 最大文字数（テキストベース）制限をオプションで提供
+//     data-quill-field-max-length-value="2000" のように指定
+// ============================================================
+
 import { Controller } from "@hotwired/stimulus"
 import { DirectUpload } from "@rails/activestorage"
 
-// data-controller="quill-field"
-// data-quill-field-max-length-value="2000" などを想定
-// targets: editor(表示用div), input(hidden)
 export default class extends Controller {
+  // =======================
+  // ターゲット・値
+  // =======================
   static targets = ["editor", "input"]
   static values  = { placeholder: String, maxLength: Number }
 
+  // =======================
+  // ライフサイクル
+  // =======================
   connect() {
     if (!window.Quill || !this.hasEditorTarget || !this.hasInputTarget) return
 
-    // Divider(<hr>) を一度だけ登録
+    // ---- Divider(<hr>) を一度だけ登録 ----
     if (!window.__QL_DIVIDER_REGISTERED__) {
       const BlockEmbed = window.Quill.import("blots/block/embed")
       class Divider extends BlockEmbed {
@@ -23,7 +39,7 @@ export default class extends Controller {
       window.__QL_DIVIDER_REGISTERED__ = true
     }
 
-    // Quill 初期化
+    // ---- Quill 初期化 ----
     this.quill = new Quill(this.editorTarget, {
       theme: "snow",
       placeholder: this.placeholderValue || "本文を入力…",
@@ -39,7 +55,7 @@ export default class extends Controller {
       }
     })
 
-    // ツールバー拡張
+    // ---- ツールバー拡張 ----
     const toolbar = this.quill.getModule("toolbar")
     toolbar.addHandler("image",   () => this.handleImage())
     toolbar.addHandler("divider", () => this.handleDivider())
@@ -52,22 +68,23 @@ export default class extends Controller {
       btn.title = "横線を挿入"
     }
 
-    // 既存 HTML を流し込み（編集時）
+    // ---- 既存 HTML を流し込み（編集時）----
     if (this.inputTarget.value) {
       this.editorTarget.querySelector(".ql-editor").innerHTML = this.inputTarget.value
     }
 
-    // 入力と hidden 同期 & 2000 文字制限
+    // ---- 入力・同期・制限 ----
+    // text-change イベントで hidden に HTML を反映し、
+    // 必要ならテキスト長（\n 除去後）を maxLength で制限する。
     this.quill.on("text-change", (delta, oldDelta, source) => {
       // HTML を hidden へ
       this.inputTarget.value = this.editorTarget.querySelector(".ql-editor").innerHTML
 
-      // 文字数（改行含むテキスト長）を制限
+      // 文字数（改行末尾を除いたテキスト長）を制限
       if (this.hasMaxLengthValue && source === "user") {
         const textLen = this.quill.getText().replace(/\n+$/, "").length
         if (textLen > this.maxLengthValue) {
-          // 超えたぶんを削除（ざっくり：末尾から差分を戻す）
-          // 直近挿入長を推定して1文字だけ戻す（体感的に十分）
+          // 超過分をざっくり戻す：末尾から (len+1) 文字削除
           const len = textLen - this.maxLengthValue
           const endIndex = this.quill.getLength()
           this.quill.deleteText(endIndex - (len + 1), len + 1, "silent")
@@ -78,7 +95,11 @@ export default class extends Controller {
     })
   }
 
-  // <hr> 挿入
+  // =======================
+  // パブリック API（ツールバーから呼ばれる）
+  // =======================
+
+  // <hr> を挿入
   handleDivider() {
     const range = this.quill.getSelection(true) || { index: this.quill.getLength() }
     this.quill.insertEmbed(range.index, "divider", true, "user")
@@ -112,6 +133,9 @@ export default class extends Controller {
     }
   }
 
+  // =======================
+  // ユーティリティ
+  // =======================
   showToast(message) {
     const div = document.createElement("div")
     div.innerText = message

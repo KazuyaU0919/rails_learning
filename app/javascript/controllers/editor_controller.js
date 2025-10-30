@@ -1,7 +1,17 @@
-// app/javascript/controllers/editor_controller.js
+// ============================================================
+// editor_controller.js
+// ------------------------------------------------------------
+// Rails Learning の中心機能：コード実行エディタ。
+// CodeMirror + Judge0 API 経由で Ruby コードを実行できる。
+// さらに：
+// - localStorage に入力内容を自動保存（50ms デバウンス）
+// - ダーク/ライトテーマ切り替え
+// - PreCode の内容を /pre_codes/:id/body からロード
+// - Quizモードの上下パネル表示に対応
+// ============================================================
+
 import { Controller } from "@hotwired/stimulus"
 import axios from "axios"
-
 import { EditorState, Compartment } from "@codemirror/state"
 import { EditorView, lineNumbers } from "@codemirror/view"
 import { oneDark } from "@codemirror/theme-one-dark"
@@ -9,6 +19,9 @@ import { StreamLanguage, syntaxHighlighting, HighlightStyle } from "@codemirror/
 import { ruby } from "@codemirror/legacy-modes/mode/ruby"
 import { tags as t } from "@lezer/highlight"
 
+// =======================
+// Ruby ハイライト定義
+// =======================
 const rubyHighlight = HighlightStyle.define([
   { tag: t.comment,                       color: "#16a34a" },
   { tag: [t.string, t.special(t.string)], color: "#2563eb" },
@@ -19,19 +32,28 @@ const rubyHighlight = HighlightStyle.define([
 ])
 const rubyLang = StreamLanguage.define(ruby)
 
+// =======================
+// 定数設定
+// =======================
 const KEY = { code: "editor:code", theme: "editor:theme" }
-const SAVE_DELAY = 50
+const SAVE_DELAY = 50 // ローカル保存のデバウンス間隔(ms)
 
 export default class extends Controller {
+  // =======================
+  // ターゲット
+  // =======================
   static targets = [
     "mount", "output", "select",
-    // 問題モード（上：タイトル・問題文・ヒント）
+    // Quizモード関連
     "quizPanelTop", "quizTitle", "quizDesc", "quizHint",
-    // 問題モード（下：解答・解答コード）
     "quizPanelBottom", "quizAnswer", "quizAnswerCode"
   ]
 
-  connect () {
+  // =======================
+  // ライフサイクル
+  // =======================
+  connect() {
+    // ===== テーマ・エディタ設定 =====
     this.theme = localStorage.getItem(KEY.theme) === "dark" ? "dark" : "light"
     this.themeCompartment = new Compartment()
 
@@ -41,6 +63,7 @@ export default class extends Controller {
         lineNumbers(),
         rubyLang,
         syntaxHighlighting(rubyHighlight),
+        // 入力変化のたびに localStorage 保存
         EditorView.updateListener.of(v => {
           if (!v.docChanged) return
           clearTimeout(this._saveTimer)
@@ -55,21 +78,29 @@ export default class extends Controller {
     this.view = new EditorView({ state: this.state, parent: this.mountTarget })
     this.#applyContainerTheme()
 
+    // ローディングオーバーレイ（別コントローラ連携）
     this.loadingCtrl = this.application.getControllerForElementAndIdentifier(this.element, "loading")
 
+    // URLパラメータ pre_code_id があれば、その内容を読み込み
     const params = new URLSearchParams(window.location.search)
     const pid = params.get("pre_code_id")
     if (pid) this.#loadPreCodeBody(pid)
   }
 
-  disconnect () { this.view?.destroy() }
+  disconnect() { this.view?.destroy() }
 
-  async run (event) {
+  // =======================
+  // イベントハンドラ
+  // =======================
+
+  // コードを実行
+  async run(event) {
     const btn = event?.currentTarget || this.element.querySelector('[data-action="editor#run"]')
     btn?.setAttribute("disabled", "disabled")
     btn?.setAttribute("aria-disabled", "true")
     this.outputTarget.textContent = "実行中…"
 
+    // 実行本体
     const perform = async (signal) => {
       const code = this.view.state.doc.toString()
       const config = signal ? { signal } : undefined
@@ -94,13 +125,15 @@ export default class extends Controller {
     }
   }
 
-  async changeSelect () {
+  // セレクト変更時に指定 PreCode の内容をロード
+  async changeSelect() {
     const id = this.hasSelectTarget ? this.selectTarget.value : ""
     if (!id) return
     await this.#loadPreCodeBody(id)
   }
 
-  toggleTheme () {
+  // テーマ切り替え（ライト↔ダーク）
+  toggleTheme() {
     this.theme = this.theme === "dark" ? "light" : "dark"
     localStorage.setItem(KEY.theme, this.theme)
     this.view.dispatch({
@@ -109,57 +142,58 @@ export default class extends Controller {
     this.#applyContainerTheme()
   }
 
-  // ===== private =====
-  #applyContainerTheme () {
+  // =======================
+  // 内部処理
+  // =======================
+
+  // コンテナ背景の切り替え
+  #applyContainerTheme() {
     const el = this.mountTarget
     el.classList.remove("bg-white", "text-slate-900", "bg-[#0b0f19]", "text-white")
     if (this.theme === "dark") el.classList.add("bg-[#0b0f19]", "text-white")
     else el.classList.add("bg-white", "text-slate-900")
   }
 
-  async #loadPreCodeBody (id) {
+  // PreCode 本文・クイズ要素をロード
+  async #loadPreCodeBody(id) {
     try {
       const res  = await axios.get(`/pre_codes/${id}/body`)
       const data = res.data || {}
 
-      // エディタ本文
+      // --- エディタ本文 ---
       const body = data.body || ""
       this.view.dispatch({ changes: { from: 0, to: this.view.state.doc.length, insert: body } })
       localStorage.setItem(KEY.code, body)
 
-      // ===== 問題モードの描画 =====
+      // --- クイズモードの描画 ---
       if (data.is_quiz) {
-        // 上部
+        // 上部パネル（タイトル・問題文・ヒント）
         if (this.hasQuizPanelTopTarget) {
           this.quizPanelTopTarget.classList.remove("hidden")
           this.quizTitleTarget.innerHTML  = this.#safeHTML(data.title)
           this.quizDescTarget.innerHTML   = data.description_html || ""
           this.quizHintTarget.innerHTML   = data.hint_html || ""
         }
-        // 下部
+
+        // 下部パネル（解答文・コード表示）
         if (this.hasQuizPanelBottomTarget) {
           this.quizPanelBottomTarget.classList.remove("hidden")
           this.quizAnswerTarget.innerHTML = data.answer_html || ""
 
-          // 解答コード（code-view へ差し込み）
-          if (this.quizAnswerCodeTarget) {
-            // code-view コントローラを取得できれば set() で反映
-            const codeView = this.application.getControllerForElementAndIdentifier(
-              this.quizAnswerCodeTarget,
-              "code-view"
-            )
-            const text = data.answer_code || ""
-            if (codeView && typeof codeView.set === "function") {
-              codeView.set(text)
-            } else {
-              // まだ接続前の場合に備え textarea にも値を入れておく
-              const field = this.quizAnswerCodeTarget.querySelector("textarea")
-              if (field) field.value = text
-            }
+          // code-view コントローラが存在すれば set() で更新
+          const codeView = this.application.getControllerForElementAndIdentifier(
+            this.quizAnswerCodeTarget, "code-view"
+          )
+          const text = data.answer_code || ""
+          if (codeView && typeof codeView.set === "function") {
+            codeView.set(text)
+          } else {
+            const field = this.quizAnswerCodeTarget.querySelector("textarea")
+            if (field) field.value = text
           }
         }
       } else {
-        // 非クイズ：パネルを隠す
+        // --- 非クイズモード：全パネルを非表示 ---
         if (this.hasQuizPanelTopTarget) {
           this.quizPanelTopTarget.classList.add("hidden")
           this.quizTitleTarget.innerHTML = ""
@@ -171,23 +205,22 @@ export default class extends Controller {
           this.quizAnswerTarget.innerHTML = ""
           const field = this.quizAnswerCodeTarget?.querySelector("textarea")
           if (field) field.value = ""
-          // code-view が接続済なら空文字に
           const codeView = this.application.getControllerForElementAndIdentifier(
-            this.quizAnswerCodeTarget,
-            "code-view"
+            this.quizAnswerCodeTarget, "code-view"
           )
           if (codeView && typeof codeView.set === "function") codeView.set("")
         }
       }
 
-      // セレクトの選択状態を同期
+      // セレクトボックスの選択同期
       if (this.hasSelectTarget) this.selectTarget.value = String(id)
     } catch (e) {
       this.outputTarget.textContent = `Load Error: ${e}`
     }
   }
 
-  #safeHTML (text) {
+  // テキストを安全にHTML化（XSS防止）
+  #safeHTML(text) {
     const div = document.createElement("div")
     div.textContent = text ?? ""
     return div.innerHTML
