@@ -1,16 +1,35 @@
-# app/models/editor_permission.rb
+# ============================================================
+# EditorPermission
+# ------------------------------------------------------------
+# 一般ユーザーに対して、特定の対象（BookSection/QuizQuestion）の
+# “サブエディタ権限” を付与する中間モデル。
+# UI表示用のラベルメソッドやソフト参照（target_record）を提供。
+# ============================================================
+
 class EditorPermission < ApplicationRecord
+  # =======================
+  # 関連
+  # =======================
   belongs_to :user
 
+  # =======================
+  # 定数 / enum
+  # =======================
   VALID_TARGET_TYPES = %w[BookSection QuizQuestion].freeze
   enum :role, { sub_editor: 0 }, prefix: true
 
+  # =======================
+  # バリデーション
+  # =======================
   validates :target_type, presence: true, inclusion: { in: VALID_TARGET_TYPES }
   validates :target_id,   presence: true, numericality: { only_integer: true }
-  # ※ 厳格存在チェックはスペックがソフト参照を期待しているため外す
-  # validate  :target_must_exist
+  # ※ 正規の存在チェックは要件上ソフト参照のため行わない
 
-  # ---- 表示用ヘルパ ----
+  # =======================
+  # 表示ヘルパ
+  # =======================
+
+  # 参照先レコードの安全取得（存在しなければ nil）
   def target_record
     return nil if target_type.blank? || target_id.blank?
     return nil unless VALID_TARGET_TYPES.include?(target_type)
@@ -19,6 +38,7 @@ class EditorPermission < ApplicationRecord
     nil
   end
 
+  # 管理画面向けの見やすいラベルを生成
   def target_human_label
     rec  = target_record
     base = "#{target_type}##{target_id}"
@@ -40,7 +60,7 @@ class EditorPermission < ApplicationRecord
     end
   end
 
-  # 厳格存在チェック（必要になったら環境で有効化して使う）
+  # 厳格存在チェックを入れる場合の参考（現在は未使用）
   # private
   # def target_must_exist
   #   return if target_type.blank? || target_id.blank?
