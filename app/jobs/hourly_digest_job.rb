@@ -29,12 +29,14 @@ class HourlyDigestJob < ApplicationJob
   # PaperTrail 更新通知メール
   # =======================
   def send_edits_digest(window_start:, window_end:)
-    require "paper_trail/version"
+    # 必要なら下行のように gem 本体を明示的に require する（通常は不要）
+    # require "paper_trail"
 
     versions = PaperTrail::Version
                  .where(event: "update", created_at: window_start..window_end)
                  .where(item_type: %w[BookSection QuizQuestion])
                  .order(:created_at)
+
     return if versions.blank?
 
     edits = versions.map do |v|
@@ -69,7 +71,7 @@ class HourlyDigestJob < ApplicationJob
   # =======================
   def send_contact_digest(window_start:, window_end:)
     count = fetch_google_form_count(window_start:, window_end:)
-    return if count == 0
+    return if count.to_i == 0
     AdminDigestMailer.contact_digest(count:, window_start:, window_end:).deliver_now
   end
 

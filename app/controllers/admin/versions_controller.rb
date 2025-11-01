@@ -12,9 +12,6 @@
 # - 管理対象は ALLOWED_ITEM_TYPES でホワイトリスト化
 # - reify 時の JSON/YAML 差異・非許可クラスに安全に対応 (safe_reify/permit_yaml_classes!)
 # - ロールバック時は一時的に楽観ロックを解除 (toggle_lock) して保存整合を取りやすく
-#
-# ■ 注意
-# - ここでは「コメント追加と並び替え」のみ行い、挙動は変更していません。
 # ============================================================
 class Admin::VersionsController < Admin::BaseController
   layout "admin"
