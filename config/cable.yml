@@ -1,7 +1,20 @@
-# Async adapter only works within the same process, so for manually triggering cable updates from a console,
-# and seeing results in the browser, you must do so from the web console (running inside the dev process),
-# not a terminal started via bin/rails console! Add "console" to any action or any ERB template view
-# to make the web console appear.
+# =========================================================
+# File: config/cable.yml
+# ---------------------------------------------------------
+# 目的:
+#   Action Cable（WebSocket）のアダプタ/接続先設定。
+#   環境別に適切なアダプタを選定している。
+#
+# 環境方針:
+#   - development: async
+#       * 単一プロセス内で完結。開発用途に最小構成で向く。
+#   - test: test
+#       * テスト実行に適したダミーアダプタ。
+#   - production: solid_cable
+#       * DB バックエンドの Solid Cable を想定。
+#         書き込み先データベース名、ポーリング間隔、保持期間を設定。
+# =========================================================
+
 development:
   adapter: async
 

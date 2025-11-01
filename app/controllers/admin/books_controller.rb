@@ -1,6 +1,16 @@
+# app/controllers/admin/books_controller.rb
+# ============================================================
+# 管理: 書籍（Book）
+# ------------------------------------------------------------
+# ・基本 CRUD
+# ・一覧は position 昇順 / 更新降順で視認性向上
+# ============================================================
 class Admin::BooksController < Admin::BaseController
   layout "admin"
 
+  # =======================
+  # アクション
+  # =======================
   def index
     @books = Book.order(position: :asc, updated_at: :desc).page(params[:page])
   end
@@ -37,6 +47,10 @@ class Admin::BooksController < Admin::BaseController
   end
 
   private
+
+  # =======================
+  # Strong Parameters
+  # =======================
   def book_params
     params.require(:book).permit(:title, :description, :position)
   end

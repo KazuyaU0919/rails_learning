@@ -1,8 +1,19 @@
-# app/models/book.rb
+# ============================================================
+# Book
+# ------------------------------------------------------------
+# コンテンツ「書籍」のメタ情報（タイトル、説明、表示順など）を表す。
+# 子として複数の BookSection を持つ。
+# ============================================================
+
 class Book < ApplicationRecord
+  # =======================
+  # 関連
+  # =======================
   has_many :book_sections, -> { order(:position) }, dependent: :destroy
 
-  # タイトル100 / 説明1000 / 並び順は 1..9999 かつ一意
+  # =======================
+  # バリデーション
+  # =======================
   validates :title,       presence: true, length: { maximum: 100 }
   validates :description, presence: true, length: { maximum: 1000 }
   validates :position,
@@ -14,10 +25,14 @@ class Book < ApplicationRecord
            },
            uniqueness: true
 
+  # =======================
+  # コールバック
+  # =======================
   before_validation :set_default_position, on: :create
 
   private
 
+  # 連番付与（最大position+1）
   def set_default_position
     self.position ||= (Book.maximum(:position) || 0) + 1
   end

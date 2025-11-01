@@ -1,31 +1,44 @@
 # app/controllers/admin/pre_codes_controller.rb
+# ============================================================
+# 管理: PreCode（コード断片）
+# ------------------------------------------------------------
+# ・一覧/詳細/編集/削除
+# ・一覧検索は JOIN を最小限に抑え、preload で N+1 を回避
+# ・タイトル/説明/ユーザー/タグ（AND条件）でフィルタ
+# ・テキスト系（hint/answer）は一般側と同等に sanitize
+# ・タグは「カンマ/空白区切りの文字列」を受け取り find_or_create_by
+# ============================================================
 class Admin::PreCodesController < Admin::BaseController
   layout "admin"
   before_action :set_pre_code, only: %i[show edit update destroy]
 
-  # GET /admin/pre_codes
+  # =======================
+  # 一覧
+  # =======================
   def index
-    # JOIN させずに別クエリで読み込む（GROUP BY と相性が良い）
+    # preload で user/tags を先読み（JOIN は必要時のみ）
     rel  = PreCode.preload(:user, :tags)
     norm = ->(s) { s.to_s.unicode_normalize(:nfkc).downcase }
 
+    # --- タイトル部分一致 ---
     if params[:title].present?
       q = "%#{norm.(params[:title])}%"
       rel = rel.where("LOWER(pre_codes.title) LIKE ?", q)
     end
 
+    # --- 説明部分一致 ---
     if params[:description].present?
       q = "%#{norm.(params[:description])}%"
       rel = rel.where("LOWER(pre_codes.description) LIKE ?", q)
     end
 
+    # --- ユーザー名/メール部分一致（このときのみ JOIN） ---
     if params[:user].present?
       q = "%#{norm.(params[:user])}%"
-      # users 条件のときだけ JOIN。preload は維持されるのでN+1は出ない
       rel = rel.joins(:user).where("LOWER(users.name) LIKE ? OR LOWER(users.email) LIKE ?", q, q)
     end
 
-    # === タグ AND（一般側と同じ “tags（名前）” パラメータ） ===
+    # --- タグ AND フィルタ（一般側と同等の "tags" パラメータを解釈） ---
     if params[:tags].present? && PreCode.reflect_on_association(:tags)
       tag_keys  = parse_tags(params[:tags])
       norm_keys = tag_keys.map { |n| normalize_tag(n) }.uniq
@@ -35,7 +48,7 @@ class Admin::PreCodesController < Admin::BaseController
 
         rel =
           if tag_ids.any?
-            # GROUP/HAVING を使う枝では SELECT を pre_codes.* に固定して安全にする
+            # GROUP/HAVING 利用時は select("pre_codes.*") に固定して安全性を担保
             rel.joins(:tags)
                .where(tags: { id: tag_ids })
                .group("pre_codes.id")
@@ -47,6 +60,7 @@ class Admin::PreCodesController < Admin::BaseController
       end
     end
 
+    # --- 並び順 ---
     rel =
       case params[:sort]
       when "likes" then rel.order(like_count: :desc, created_at: :desc)
@@ -58,10 +72,17 @@ class Admin::PreCodesController < Admin::BaseController
     @pre_codes = rel.page(params[:page]).per(50)
   end
 
+  # =======================
+  # 詳細 / 編集
+  # =======================
   def show; end
   def edit; end
 
+  # =======================
+  # 更新
+  # =======================
   def update
+    # 画面の「問題モード」チェック（hidden 値）をそのまま受け取る
     @pre_code.quiz_mode = params.dig(:pre_code, :quiz_mode)
 
     attrs = pre_code_params_with_sanitized_text
@@ -74,6 +95,9 @@ class Admin::PreCodesController < Admin::BaseController
     end
   end
 
+  # =======================
+  # 削除
+  # =======================
   def destroy
     @pre_code.destroy!
     redirect_to admin_pre_codes_path(request.query_parameters), notice: "削除しました"
@@ -81,11 +105,16 @@ class Admin::PreCodesController < Admin::BaseController
 
   private
 
+  # =======================
+  # セットアップ
+  # =======================
   def set_pre_code
     @pre_code = PreCode.find(params[:id])
   end
 
-  # ===== Strong Params（一般側と合わせる） =====
+  # =======================
+  # Strong Parameters
+  # =======================
   def pre_code_params
     params.require(:pre_code).permit(
       :title, :description, :body,
@@ -94,7 +123,7 @@ class Admin::PreCodesController < Admin::BaseController
     )
   end
 
-  # テキスト系は保存前にサニタイズ（一般側と同等）
+  # テキスト系(hint/answer)の保存前 sanitize（一般側と同等の挙動）
   def pre_code_params_with_sanitized_text
     attrs = pre_code_params
 
@@ -116,7 +145,11 @@ class Admin::PreCodesController < Admin::BaseController
     attrs
   end
 
-  # ===== タグ関連（一般側と同等の「文字列」入力を受ける） =====
+  # =======================
+  # タグ置換（文字列 → find_or_create_by）
+  # -----------------------
+  # raw_names: "ruby, array" など。全角スペースも考慮し一意化。
+  # =======================
   def replace_tags(pre_code, raw_names)
     return if raw_names.nil?
 
@@ -130,7 +163,9 @@ class Admin::PreCodesController < Admin::BaseController
     pre_code.tags = new_tags
   end
 
-  # === 一覧検索用の補助（一般側と同等） ===
+  # =======================
+  # 検索ユーティリティ（一般側と合わせる）
+  # =======================
   def parse_tags(val)
     Array(val).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
   end

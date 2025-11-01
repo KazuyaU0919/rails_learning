@@ -1,31 +1,41 @@
-// app/javascript/application.js
+// ============================================================
+// application.js
+// ------------------------------------------------------------
+// 目的：Rails Learning 全体の JavaScript 初期化。
+// 機能：
+//   - Turbo, Stimulus, ActiveStorage のセットアップ
+//   - axios の共通設定（CSRF対策・JSON通信）
+// ============================================================
 
 import "@hotwired/turbo-rails"
 
-// Active Storage（DirectUpload 等を有効化）
+// =======================
+// Active Storage 設定
+// =======================
 import * as ActiveStorage from "@rails/activestorage"
 ActiveStorage.start()
 
+// =======================
+// Stimulus Controllers
+// =======================
 import "controllers"
 
-// HTTP 通信ライブラリ axios を利用
+// =======================
+// axios 設定
+// =======================
 import axios from "axios"
 
-// ===============================
-// CSRF対策 & JSONリクエスト設定
-// ===============================
-
-// Railsが出力するCSRFトークンを <meta> タグから取得
+// ------------------------------------------------------------
+// CSRF対策：Rails が meta タグで出力するトークンを axios に反映
+// ------------------------------------------------------------
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
-
-// CSRFトークンが存在する場合、axiosの共通ヘッダに追加
 if (token) {
   axios.defaults.headers.common["X-CSRF-Token"] = token
 }
 
-// Railsが期待するリクエスト種別を明示
+// ------------------------------------------------------------
+// Rails 互換ヘッダ & JSON通信設定
+// ------------------------------------------------------------
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest"
-
-// JSON形式で送受信することを明示
 axios.defaults.headers.common["Content-Type"] = "application/json"
 axios.defaults.headers.common["Accept"] = "application/json"

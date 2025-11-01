@@ -1,14 +1,26 @@
-# app/controllers/admin/quiz_questions_controller.rb
+# ============================================================
+# 管理: クイズ問題 (QuizQuestion)
+# ------------------------------------------------------------
+# ・CRUD操作（一覧・作成・更新・削除）
+# ・保存前に Quill のHTMLを RichTextSanitizer でサニタイズ
+# ・クイズやセクションとのリレーションを includes で最適化
+# ============================================================
 class Admin::QuizQuestionsController < Admin::BaseController
   layout "admin"
   before_action :set_question, only: %i[edit update destroy]
 
+  # =======================
+  # 一覧
+  # =======================
   def index
     @questions = QuizQuestion.includes(:quiz, :quiz_section)
                              .order(created_at: :desc)
                              .page(params[:page])
   end
 
+  # =======================
+  # 新規作成
+  # =======================
   def new
     @question = QuizQuestion.new
   end
@@ -22,6 +34,9 @@ class Admin::QuizQuestionsController < Admin::BaseController
     end
   end
 
+  # =======================
+  # 編集・更新
+  # =======================
   def edit; end
 
   def update
@@ -32,6 +47,9 @@ class Admin::QuizQuestionsController < Admin::BaseController
     end
   end
 
+  # =======================
+  # 削除
+  # =======================
   def destroy
     @question.destroy
     redirect_to admin_quiz_questions_path, notice: "削除しました"
@@ -39,18 +57,30 @@ class Admin::QuizQuestionsController < Admin::BaseController
 
   private
 
+  # =======================
+  # 共通セットアップ
+  # =======================
   def set_question
     @question = QuizQuestion.find(params[:id])
   end
 
+  # =======================
+  # Strong Parameters
+  # =======================
   def question_params
     params.require(:quiz_question).permit(
-      :quiz_id, :quiz_section_id, :question, :choice1, :choice2, :choice3, :choice4,
+      :quiz_id, :quiz_section_id,
+      :question, :choice1, :choice2, :choice3, :choice4,
       :correct_choice, :position, :explanation
     )
   end
 
-  # Quill の HTML を保存前に“同じ許可リスト”でサニタイズ
+  # =======================
+  # サニタイズ処理
+  # -----------------------
+  # QuillエディタのHTMLを安全なタグのみ残す。
+  # RichTextSanitizer.call で全フィールド統一処理。
+  # =======================
   def sanitized_params
     attrs = question_params.dup
     attrs[:question]    = RichTextSanitizer.call(attrs[:question])

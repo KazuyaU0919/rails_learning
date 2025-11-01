@@ -1,8 +1,31 @@
-# Be sure to restart your server when you modify this file.
+# =========================================================
+# File: config/initializers/filter_parameter_logging.rb
+# ---------------------------------------------------------
+# 目的:
+#   ログに出力されるパラメータのうち、機微情報（パスワード、トークン等）を
+#   マスクして情報漏洩のリスクを低減する。
+#
+# 運用:
+#   - 追加で隠したいキーがあれば、この配列にシンボル/文字列を加える。
+#   - "部分一致" もサポートされるため、:passw などは password 等にもマッチ。
+#
+# 参考:
+#   ActiveSupport::ParameterFilter のドキュメントを参照。
+# =========================================================
 
-# Configure parameters to be partially matched (e.g. passw matches password) and filtered from the log file.
-# Use this to limit dissemination of sensitive information.
-# See the ActiveSupport::ParameterFilter documentation for supported notations and behaviors.
 Rails.application.config.filter_parameters += [
-  :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :cvv, :cvc
+  # =======================
+  # 機微情報の代表例
+  # =======================
+  :passw,        # password / passwd 等を部分一致で包含
+  :email,        # メールアドレス
+  :secret,       # 汎用秘密値
+  :token,        # APIトークン・セッショントークン等
+  :_key,         # *_key 形式（APIキー等）
+  :crypt,        # 暗号化関連
+  :salt,         # ハッシュ用ソルト
+  :certificate,  # 証明書
+  :otp,          # ワンタイムパスワード
+  :ssn,          # 社会保障番号（海外向け）
+  :cvv, :cvc     # クレカのセキュリティコード
 ]

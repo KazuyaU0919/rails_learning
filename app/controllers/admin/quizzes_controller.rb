@@ -1,13 +1,25 @@
-# app/controllers/admin/quizzes_controller.rb
+# ============================================================
+# 管理: クイズ本体 (Quiz)
+# ------------------------------------------------------------
+# ・タイトル、説明、並び順を管理
+# ・基本 CRUD
+# ============================================================
 class Admin::QuizzesController < Admin::BaseController
   layout "admin"
 
+  # =======================
+  # 一覧
+  # =======================
   def index
-    @quizzes = Quiz.order(position: :asc, updated_at: :desc).page(params[:page])
+    @quizzes = Quiz.order(position: :asc, updated_at: :desc)
+                   .page(params[:page])
   end
 
-  def new    = @quiz = Quiz.new
-  def edit   = @quiz = Quiz.find(params[:id])
+  # =======================
+  # 新規作成・編集
+  # =======================
+  def new  = @quiz = Quiz.new
+  def edit = @quiz = Quiz.find(params[:id])
 
   def create
     @quiz = Quiz.new(quiz_params)
@@ -27,6 +39,9 @@ class Admin::QuizzesController < Admin::BaseController
     end
   end
 
+  # =======================
+  # 削除
+  # =======================
   def destroy
     Quiz.find(params[:id]).destroy
     redirect_to admin_quizzes_path, notice: "削除しました"
@@ -34,6 +49,9 @@ class Admin::QuizzesController < Admin::BaseController
 
   private
 
+  # =======================
+  # Strong Parameters
+  # =======================
   def quiz_params
     params.require(:quiz).permit(:title, :description, :position)
   end

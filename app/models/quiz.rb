@@ -1,8 +1,20 @@
-# app/models/quiz.rb
+# ============================================================
+# Quiz
+# ------------------------------------------------------------
+# クイズのメタ情報を表すモデル。セクション/問題を複数持つ。
+# 表示順は作成時に連番で自動付与。
+# ============================================================
+
 class Quiz < ApplicationRecord
+  # =======================
+  # 関連
+  # =======================
   has_many :quiz_sections, -> { order(:position) }, dependent: :destroy
   has_many :quiz_questions, dependent: :destroy
 
+  # =======================
+  # バリデーション
+  # =======================
   validates :title,       presence: true, length: { maximum: 100 }
   validates :description, presence: true, length: { maximum: 1000 }
   validates :position,
@@ -13,10 +25,14 @@ class Quiz < ApplicationRecord
              less_than_or_equal_to: 9_999
            }
 
+  # =======================
+  # コールバック
+  # =======================
   before_validation :set_default_position, on: :create
 
   private
 
+  # 連番付与（最大position+1）
   def set_default_position
     self.position ||= (Quiz.maximum(:position) || 0) + 1
   end

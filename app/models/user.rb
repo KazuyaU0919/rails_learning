@@ -1,5 +1,14 @@
-# app/models/user.rb
+# ============================================================
+# User
+# ------------------------------------------------------------
+# アプリケーションのユーザー。パスワード方式/外部認証の両対応。
+# Remember機能・凍結・編集権限の判定・各種関連を保持。
+# ============================================================
+
 class User < ApplicationRecord
+  # =======================
+  # 関連
+  # =======================
   has_many :pre_codes, dependent: :destroy
   has_many :likes,      dependent: :destroy
   has_many :used_codes, dependent: :destroy
@@ -8,9 +17,15 @@ class User < ApplicationRecord
   has_many :bookmarked_pre_codes, through: :bookmarks, source: :pre_code
   has_many :editor_permissions, dependent: :destroy
 
+  # =======================
+  # 認証
+  # =======================
   has_secure_password validations: false
   before_validation :normalize_email
 
+  # =======================
+  # バリデーション
+  # =======================
   validates :name, presence: true, length: { maximum: 50 }
 
   validates :email,
@@ -20,12 +35,14 @@ class User < ApplicationRecord
     uniqueness: { case_sensitive: false },
     if: :email_uniqueness_required?
 
-  # ---- パスワード検証を分離 ----
-  # ① 「必須」は従来どおり、パスワード方式のユーザーだけ
+  # パスワード必須判定は uses_password?（外部認証なしユーザー）に限定
   validates :password, presence: true, if: :password_required?
-  # ② 入力されたときは長さチェックを常に実行（外部認証ユーザーの初回設定も担保）
+  # 入力された場合にだけ長さチェック（初回セットも担保）
   validates :password, length: { minimum: 6, maximum: 19 }, allow_nil: true
 
+  # =======================
+  # スコープ
+  # =======================
   scope :search, ->(q) {
     if q.present?
       where("LOWER(name) LIKE :q OR LOWER(email) LIKE :q", q: "%#{q.to_s.downcase}%")
@@ -34,6 +51,9 @@ class User < ApplicationRecord
   scope :editors, -> { where(editor: true) }
   scope :banned,  -> { where.not(banned_at: nil) }
 
+  # =======================
+  # 便利メソッド（状態/権限）
+  # =======================
   def banned? = banned_at.present?
   def toggle_editor! = update!(editor: !editor)
 
@@ -45,6 +65,9 @@ class User < ApplicationRecord
     end
   end
 
+  # =======================
+  # パスワード再設定トークン
+  # =======================
   def generate_reset_token!
     self.reset_password_token   = SecureRandom.urlsafe_base64(32)
     self.reset_password_sent_at = Time.current
@@ -61,7 +84,9 @@ class User < ApplicationRecord
     update!(reset_password_token: nil, reset_password_sent_at: nil)
   end
 
-  # OmniAuth ユーザー作成/取得
+  # =======================
+  # OmniAuth（外部認証）補助
+  # =======================
   def self.find_or_create_from_omniauth(auth)
     authentication = Authentication.find_or_initialize_by(
       provider: auth.provider, uid: auth.uid
@@ -74,7 +99,7 @@ class User < ApplicationRecord
     user.name  ||= auth.dig(:info, :name).presence ||
                    auth.dig(:info, :nickname).presence || "User"
     user.email ||= auth.dig(:info, :email)
-    # ★ 16 文字に統一（上限 19）
+    # 16文字のランダム文字列をセット（上限19）
     user.password = SecureRandom.alphanumeric(16) if user.password_digest.blank?
     user.save!
 
@@ -86,6 +111,9 @@ class User < ApplicationRecord
     user
   end
 
+  # =======================
+  # Remember 機能
+  # =======================
   def self.new_remember_token = SecureRandom.urlsafe_base64(32)
 
   def self.digest(str)
@@ -115,9 +143,13 @@ class User < ApplicationRecord
     remember_created_at.blank? || remember_created_at < ttl.ago
   end
 
+  # =======================
+  # 関連ヘルパ
+  # =======================
   def bookmarked?(pre_code) = bookmarks.exists?(pre_code_id: pre_code.id)
   def bookmark_for(pre_code) = bookmarks.find_by(pre_code_id: pre_code.id)
 
+  # 編集権限（管理者/編集者/サブエディタ）
   def can_edit?(record)
     return false if record.nil?
     return true  if admin?
@@ -134,17 +166,20 @@ class User < ApplicationRecord
     :general
   end
 
-  # ❶ 外部連携の有無（＝従来の「パスワード方式ユーザか？」）
+  # ❶ 外部連携の有無（＝従来の「パスワード方式ユーザ」か？）
   def uses_password? = authentications.blank?
 
-  # ❷ パスワードがDBに存在するか（今回新設。画面表示やログイン判定はこちらを使う）
+  # ❷ パスワードがDBに存在するか（UI判定/表示用）
   def has_password? = password_digest.present?
 
   private
 
+  # =======================
+  # 内部ユーティリティ
+  # =======================
   def normalize_email = self.email = email.to_s.strip.downcase.presence
 
-  # 「必須」かどうかは “従来のパスワード方式ユーザ” のみ
+  # 「パスワード必須」判定（外部連携なし かつ 新規 or 入力あり）
   def password_required?
     uses_password? && (new_record? || password.present?)
   end
