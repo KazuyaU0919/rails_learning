@@ -29,13 +29,23 @@ class HourlyDigestJob < ApplicationJob
   # PaperTrail 更新通知メール
   # =======================
   def send_edits_digest(window_start:, window_end:)
-    # 必要なら下行のように gem 本体を明示的に require する（通常は不要）
-    # require "paper_trail"
+    require "paper_trail"
 
-    versions = PaperTrail::Version
-                 .where(event: "update", created_at: window_start..window_end)
-                 .where(item_type: %w[BookSection QuizQuestion])
-                 .order(:created_at)
+    # 予防線：クラス解決（PaperTrail::Version が無ければ ::Version を試す）
+    version_klass = if defined?(PaperTrail::Version)
+      PaperTrail::Version
+    elsif defined?(::Version)
+      ::Version
+    else
+      # どちらも無ければ処理不能なので静かに終了（ログにヒントを残す）
+      Rails.logger.warn("[HourlyDigestJob] Version model not found (PaperTrail::Version / ::Version). Skipped.")
+      return
+    end
+
+    versions = version_klass
+                .where(event: "update", created_at: window_start..window_end)
+                .where(item_type: %w[BookSection QuizQuestion])
+                .order(:created_at)
 
     return if versions.blank?
 
