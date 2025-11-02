@@ -2,13 +2,8 @@
 # PasswordResetsController
 # ------------------------------------------------------------
 # パスワード再設定フロー（メール送信 → トークンから再設定）。
-# - new / create : ゲスト専用（外部連携の無いユーザーのみ対象）
+# - new / create : ゲスト専用（ユーザーの有無は秘匿）
 # - edit / update: トークン保持者であればログイン有無に関係なく可
-# ------------------------------------------------------------
-# ポイント
-# - メール送信は「該当メールが存在する場合のみ送る」だが、存在を秘匿する応答文
-# - 再設定成功時は Remember トークンもすべて無効化
-# - 背景色を薄グレーにするための view 用フラグ（use_gray_bg）
 # ============================================================
 
 class PasswordResetsController < ApplicationController
@@ -26,21 +21,33 @@ class PasswordResetsController < ApplicationController
   def new; end
 
   # =======================
-  # メール送信
+  # メール送信（公開フォーム）
+  # -----------------------
+  # 仕様:
+  # - 入力メールに一致するユーザーがいれば、外部連携の有無に関わらず送信。
+  # - 応答メッセージはユーザーの有無を秘匿。
+  # - dev/test では「非送信理由」を info ログに出す（prod は秘匿）。
   # =======================
   def create
-    # 通常ユーザー（外部連携なし）のみを対象にした「パスワード忘れた？」導線
-    user = User.where.missing(:authentications).find_by(email: params[:email])
+    email = params[:email].to_s.strip.downcase
+    user  = User.find_by(email: email)
+
     if user
-      user.generate_reset_token!
-      UserMailer.reset_password(user).deliver_later
+      user.generate_reset_token!                  # トークン発行
+      UserMailer.reset_password(user).deliver_later # 非同期送信（dev は inline）
+      Rails.logger.info("[PasswordResets] enqueued reset mail user_id=#{user.id} uses_password=#{user.uses_password?}")
+    else
+      Rails.logger.info("[PasswordResets] no user for email=#{email} (mail not sent)") unless Rails.env.production?
     end
+
     # ユーザー存在の有無は秘匿する応答
     redirect_to root_path, notice: "該当メールへパスワード再設定用のメールを送信しました（該当メールが存在する場合）"
   end
 
   # =======================
   # 再設定フォーム
+  # -----------------------
+  # - @user: トークンで対象ユーザーを特定（期限切れは弾く）
   # =======================
   def edit
     @user = User.find_by(reset_password_token: params[:id]) # :id = token
@@ -51,6 +58,8 @@ class PasswordResetsController < ApplicationController
 
   # =======================
   # 再設定実行
+  # -----------------------
+  # - 成功時: トークン破棄 & Remember 全無効化 & セッション/クッキー掃除
   # =======================
   def update
     @user = User.find_by(reset_password_token: params[:id])
@@ -58,9 +67,8 @@ class PasswordResetsController < ApplicationController
       return redirect_to new_password_reset_path, alert: "トークンが無効です"
     end
 
-    # トークン保持者なら（外部認証ユーザー含め）誰でも更新可
     if @user.update(password_params)
-      # 使用済トークンの破棄 & Remember情報の無効化
+      # 使用済トークンの破棄 & Remember情報の無効化（他端末ログアウト）
       @user.clear_reset_token!
       @user.revoke_all_remember!
       cookies.delete(:remember_me, same_site: :lax, secure: Rails.env.production?)
