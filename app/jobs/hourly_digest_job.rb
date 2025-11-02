@@ -27,27 +27,50 @@ class HourlyDigestJob < ApplicationJob
 
   # =======================
   # PaperTrail 更新通知メール
+  # -----------------------
+  # - PaperTrail::Version が未解決でも落ちないようにフォールバックする
+  # - versions テーブルが無い/空でも安全にスキップ
   # =======================
   def send_edits_digest(window_start:, window_end:)
-    require "paper_trail"
-
-    # 予防線：クラス解決（PaperTrail::Version が無ければ ::Version を試す）
-    version_klass = if defined?(PaperTrail::Version)
-      PaperTrail::Version
-    elsif defined?(::Version)
-      ::Version
-    else
-      # どちらも無ければ処理不能なので静かに終了（ログにヒントを残す）
-      Rails.logger.warn("[HourlyDigestJob] Version model not found (PaperTrail::Version / ::Version). Skipped.")
+    # 可能なら gem を先に明示ロード（環境によっては不要だが安全側）
+    begin
+      require "paper_trail"
+    rescue LoadError
+      Rails.logger.info("[HourlyDigestJob] paper_trail gem not loadable. Skipped edits digest.")
       return
     end
 
+    # ① テーブルが存在しないならスキップ（初期導入直後など）
+    unless ActiveRecord::Base.connection.data_source_exists?(:versions)
+      Rails.logger.info("[HourlyDigestJob] versions table not found. Skipped edits digest.")
+      return
+    end
+
+    # ② 利用する Version クラスの決定
+    version_klass =
+      if defined?(PaperTrail::Version)
+        PaperTrail::Version
+      elsif Object.const_defined?(:Version)
+        ::Version
+      else
+        # 匿名モデルでフォールバック（定数未解決でも versions を読める）
+        Class.new(ActiveRecord::Base) do
+          self.table_name = "versions"
+          # STI 無効化（item_type をそのまま文字列として扱う）
+          self.inheritance_column = :_type_disabled
+        end
+      end
+
+    # ③ 対象期間の update のみ収集（対象モデルはホワイトリスト）
     versions = version_klass
                 .where(event: "update", created_at: window_start..window_end)
                 .where(item_type: %w[BookSection QuizQuestion])
                 .order(:created_at)
 
-    return if versions.blank?
+    if versions.blank?
+      Rails.logger.info("[HourlyDigestJob] no edits in window (#{window_start}..#{window_end}).")
+      return
+    end
 
     edits = versions.map do |v|
       user  = user_from_whodunnit(v.whodunnit)
@@ -56,9 +79,12 @@ class HourlyDigestJob < ApplicationJob
     end
 
     AdminDigestMailer.edits_digest(edits:, window_start:, window_end:).deliver_now
+  rescue => e
+    # どんな例外でもジョブ全体を落とさない
+    Rails.logger.error("[HourlyDigestJob] edits digest failed: #{e.class}: #{e.message}")
   end
 
-  # 操作者ユーザーを whodunnit から取得
+  # 操作者ユーザーを whodunnit から取得（数字IDのみサポート）
   def user_from_whodunnit(whodunnit)
     uid = whodunnit.to_s
     return nil if uid.blank? || uid !~ /\A\d+\z/
@@ -78,11 +104,18 @@ class HourlyDigestJob < ApplicationJob
 
   # =======================
   # Googleフォーム集計通知メール
+  # -----------------------
+  # count が 0 / 取得不可なら送信しない（静かに終了）
   # =======================
   def send_contact_digest(window_start:, window_end:)
     count = fetch_google_form_count(window_start:, window_end:)
-    return if count.to_i == 0
+    if count.to_i <= 0
+      Rails.logger.info("[HourlyDigestJob] no contacts in window (#{window_start}..#{window_end}).")
+      return
+    end
     AdminDigestMailer.contact_digest(count:, window_start:, window_end:).deliver_now
+  rescue => e
+    Rails.logger.error("[HourlyDigestJob] contact digest failed: #{e.class}: #{e.message}")
   end
 
   # Googleフォームの集計結果取得
@@ -95,6 +128,7 @@ class HourlyDigestJob < ApplicationJob
     uri = URI.parse(url)
     res = Net::HTTP.get_response(uri)
     return nil unless res.is_a?(Net::HTTPSuccess)
+
     json = JSON.parse(res.body) rescue {}
     (json["count"] || json[:count]).to_i
   rescue
