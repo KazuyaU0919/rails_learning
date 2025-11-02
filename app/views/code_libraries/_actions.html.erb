@@ -1,9 +1,13 @@
 <!-- app/views/code_libraries/_actions.html.erb -->
 <%# locals: pre_code:, current_like:, current_bookmark: %>
 
-<%# === local が渡ってこないケースでも nil を入れて落ちないように === %>
+<%# === 呼び出し側が渡し忘れても落ちない & なるべく正確に表示する === %>
 <% current_like     = local_assigns.fetch(:current_like, nil) %>
 <% current_bookmark = local_assigns.fetch(:current_bookmark, nil) %>
+<% if logged_in? %>
+  <% current_like     ||= pre_code.likes.find_by(user_id: current_user.id) %>
+  <% current_bookmark ||= pre_code.bookmarks.find_by(user_id: current_user.id) %>
+<% end %>
 
 <div id="<%= dom_id(pre_code, :actions) %>" class="flex gap-2">
   <% if logged_in? %>
