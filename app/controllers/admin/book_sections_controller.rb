@@ -6,6 +6,7 @@
 # ・保存前: content をホワイトリストで sanitize
 # ・保存後: 本文中の ActiveStorage signed_id を元に画像を attach / prune
 #   - 「prune: true」のとき、本文から参照が外れた画像を自動削除します
+# ・一覧: Ransack で Book.title / BookSection.heading を検索
 # ============================================================
 class Admin::BookSectionsController < Admin::BaseController
   layout "admin"
@@ -14,8 +15,15 @@ class Admin::BookSectionsController < Admin::BaseController
   # アクション
   # =======================
   def index
-    # N+1防止のため book を preload。更新降順で管理しやすく。
-    @sections = BookSection.includes(:book).order(updated_at: :desc).page(params[:page])
+    # ransack 検索オブジェクト（Book のタイトルと heading）
+    base = BookSection.includes(:book)
+    @q = base.ransack(params[:q])
+
+    # 検索結果 + 並び順 + ページネーション
+    @sections = @q.result
+                  .includes(:book)
+                  .order(updated_at: :desc)
+                  .page(params[:page])
   end
 
   def new
@@ -73,10 +81,6 @@ class Admin::BookSectionsController < Admin::BaseController
 
   # =======================
   # 本文 -> 画像アタッチ
-  # -----------------------
-  # Quill 等が生成する URL から ActiveStorage の signed_id を抽出
-  # /rails/active_storage/blobs/redirect/:signed_id/:filename
-  # /rails/active_storage/representations/... にも対応
   # =======================
   SIGNED_ID_IMG_SRC =
     %r{/rails/active_storage/(?:blobs|representations)(?:/redirect)?/([A-Za-z0-9_\-=]+)}.freeze

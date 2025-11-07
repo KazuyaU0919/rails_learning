@@ -30,6 +30,19 @@ class Quiz < ApplicationRecord
   # =======================
   before_validation :set_default_position, on: :create
 
+  # =======================
+  # Ransack 設定（検索許可）
+  # -----------------------
+  # 管理画面の検索で許可する属性/関連をホワイトリスト化
+  # =======================
+  def self.ransackable_attributes(_auth = nil)
+    %w[title]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[quiz_sections quiz_questions]
+  end
+
   private
 
   # 連番付与（最大position+1）

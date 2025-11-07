@@ -42,4 +42,17 @@ class QuizQuestion < ApplicationRecord
   def editable_attributes
     %i[question choice1 choice2 choice3 choice4 correct_choice explanation]
   end
+
+  # =======================
+  # Ransack 設定（検索許可）
+  # -----------------------
+  # quizzes.title / quiz_sections.heading での検索に必要
+  # =======================
+  def self.ransackable_attributes(_auth = nil)
+    %w[question position correct_choice created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[quiz quiz_section]
+  end
 end

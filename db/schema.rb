@@ -10,29 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_050218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
+    t.string "content_type"
     t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -43,11 +43,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "authentications", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
     t.string "provider", null: false
     t.string "uid", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["provider", "uid"], name: "index_authentications_on_provider_and_uid", unique: true
     t.index ["user_id", "provider"], name: "index_authentications_on_user_id_and_provider", unique: true
     t.index ["user_id"], name: "index_authentications_on_user_id"
@@ -55,14 +55,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
 
   create_table "book_sections", force: :cascade do |t|
     t.bigint "book_id", null: false
-    t.string "heading", limit: 50, null: false
     t.text "content", null: false
-    t.boolean "is_free", default: false, null: false
-    t.integer "position", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "heading", limit: 100, null: false
+    t.boolean "is_free", default: false, null: false
     t.integer "lock_version", default: 0, null: false
+    t.integer "position", null: false
     t.bigint "quiz_section_id"
+    t.datetime "updated_at", null: false
     t.index ["book_id", "position"], name: "index_book_sections_on_book_id_and_position", unique: true
     t.index ["book_id"], name: "index_book_sections_on_book_id"
     t.index ["quiz_section_id"], name: "index_book_sections_on_quiz_section_id"
@@ -71,53 +71,53 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "bookmarks", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "pre_code_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "pre_code_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["pre_code_id"], name: "index_bookmarks_on_pre_code_id"
     t.index ["user_id", "pre_code_id"], name: "index_bookmarks_on_user_id_and_pre_code_id", unique: true
     t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "books", force: :cascade do |t|
-    t.string "title", limit: 100, null: false
-    t.text "description", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "book_sections_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
     t.integer "position", null: false
+    t.string "title", limit: 100, null: false
+    t.datetime "updated_at", null: false
     t.index ["position"], name: "index_books_on_position", unique: true
     t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "books_position_range_chk"
     t.check_constraint "char_length(description) <= 1000", name: "books_description_len_chk"
   end
 
   create_table "editor_permissions", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "target_type", null: false
-    t.bigint "target_id", null: false
-    t.integer "role", default: 0, null: false
     t.datetime "created_at", null: false
+    t.integer "role", default: 0, null: false
+    t.bigint "target_id", null: false
+    t.string "target_type", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["target_type", "target_id"], name: "index_editor_permissions_on_target_type_and_target_id"
     t.index ["user_id", "target_type", "target_id"], name: "index_editor_permissions_on_user_and_target", unique: true
     t.index ["user_id"], name: "index_editor_permissions_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "pre_code_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "pre_code_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["pre_code_id"], name: "index_likes_on_pre_code_id"
     t.index ["user_id", "pre_code_id"], name: "index_likes_on_user_id_and_pre_code_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
   create_table "pre_code_taggings", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.bigint "pre_code_id", null: false
     t.bigint "tag_id", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["pre_code_id", "tag_id"], name: "index_pre_code_taggings_on_pre_code_id_and_tag_id", unique: true
     t.index ["pre_code_id"], name: "index_pre_code_taggings_on_pre_code_id"
@@ -125,17 +125,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "pre_codes", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "title", limit: 50, null: false
-    t.text "description"
-    t.text "body", null: false
-    t.integer "like_count", default: 0, null: false
-    t.integer "use_count", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "hint"
     t.text "answer"
     t.text "answer_code"
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.text "hint"
+    t.integer "like_count", default: 0, null: false
+    t.string "title", limit: 50, null: false
+    t.datetime "updated_at", null: false
+    t.integer "use_count", default: 0, null: false
+    t.bigint "user_id", null: false
     t.index ["title"], name: "index_pre_codes_on_title"
     t.index ["user_id", "created_at"], name: "index_pre_codes_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_pre_codes_on_user_id"
@@ -147,19 +147,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "quiz_questions", force: :cascade do |t|
-    t.bigint "quiz_id", null: false
-    t.bigint "quiz_section_id", null: false
-    t.text "question", null: false
     t.string "choice1", limit: 100, null: false
     t.string "choice2", limit: 100, null: false
     t.string "choice3", limit: 100, null: false
     t.string "choice4", limit: 100, null: false
     t.integer "correct_choice", null: false
-    t.text "explanation", null: false
-    t.integer "position", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text "explanation", null: false
     t.integer "lock_version", default: 0, null: false
+    t.integer "position", null: false
+    t.text "question", null: false
+    t.bigint "quiz_id", null: false
+    t.bigint "quiz_section_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["quiz_id"], name: "index_quiz_questions_on_quiz_id"
     t.index ["quiz_section_id", "position"], name: "index_quiz_questions_on_quiz_section_id_and_position"
     t.index ["quiz_section_id"], name: "index_quiz_questions_on_quiz_section_id"
@@ -169,13 +169,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "quiz_sections", force: :cascade do |t|
-    t.bigint "quiz_id", null: false
+    t.bigint "book_section_id"
+    t.datetime "created_at", null: false
     t.string "heading", limit: 100, null: false
     t.boolean "is_free", default: false, null: false
     t.integer "position", null: false
-    t.datetime "created_at", null: false
+    t.bigint "quiz_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "book_section_id"
     t.index ["book_section_id"], name: "index_quiz_sections_on_book_section_id"
     t.index ["quiz_id", "position"], name: "index_quiz_sections_on_quiz_id_and_position"
     t.index ["quiz_id"], name: "index_quiz_sections_on_quiz_id"
@@ -183,10 +183,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "quizzes", force: :cascade do |t|
-    t.string "title", limit: 100, null: false
+    t.datetime "created_at", null: false
     t.text "description", null: false
     t.integer "position", null: false
-    t.datetime "created_at", null: false
+    t.string "title", limit: 100, null: false
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_quizzes_on_position"
     t.check_constraint "\"position\" > 0 AND \"position\" <= 9999", name: "quizzes_position_range_chk"
@@ -194,23 +194,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "solid_cache_entries", id: false, force: :cascade do |t|
-    t.binary "key", null: false
-    t.binary "value", null: false
-    t.datetime "created_at", null: false
-    t.bigint "key_hash", null: false
     t.integer "byte_size", null: false
+    t.datetime "created_at", null: false
+    t.binary "key", null: false
+    t.bigint "key_hash", null: false
+    t.binary "value", null: false
     t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
     t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
     t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
   end
 
   create_table "tags", force: :cascade do |t|
+    t.string "color", limit: 7
+    t.datetime "created_at", null: false
     t.string "name", limit: 30, null: false
     t.string "name_norm", limit: 60, null: false
     t.string "slug", limit: 80, null: false
-    t.string "color", limit: 7
     t.integer "taggings_count", default: 0, null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "zero_since"
     t.index ["name_norm"], name: "index_tags_on_name_norm", unique: true
@@ -221,11 +221,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "used_codes", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "pre_code_id", null: false
-    t.datetime "used_at", null: false
     t.datetime "created_at", null: false
+    t.bigint "pre_code_id", null: false
     t.datetime "updated_at", null: false
+    t.datetime "used_at", null: false
+    t.bigint "user_id", null: false
     t.index ["pre_code_id", "created_at"], name: "index_used_codes_on_pre_code_id_and_created_at"
     t.index ["pre_code_id"], name: "index_used_codes_on_pre_code_id"
     t.index ["user_id", "pre_code_id"], name: "index_used_codes_on_user_id_and_pre_code_id"
@@ -233,32 +233,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_180431) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name", limit: 50, null: false
-    t.string "email", limit: 255
-    t.string "password_digest"
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
     t.boolean "admin", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "editor", default: false, null: false
-    t.datetime "banned_at"
     t.string "ban_reason"
+    t.datetime "banned_at"
+    t.datetime "created_at", null: false
+    t.boolean "editor", default: false, null: false
+    t.string "email", limit: 255
     t.datetime "last_login_at"
-    t.string "remember_digest"
+    t.string "name", limit: 50, null: false
+    t.string "password_digest"
     t.datetime "remember_created_at"
+    t.string "remember_digest"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "updated_at", null: false
     t.index "lower((email)::text)", name: "index_users_on_lower_email_unique", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token_unique", unique: true
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
-    t.bigint "item_id", null: false
-    t.string "event", null: false
-    t.string "whodunnit"
-    t.text "object"
     t.datetime "created_at"
+    t.string "event", null: false
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.text "object"
     t.text "object_changes"
+    t.string "whodunnit"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
