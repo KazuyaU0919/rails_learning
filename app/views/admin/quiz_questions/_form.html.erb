@@ -2,7 +2,9 @@
               url: (@question.new_record? ? admin_quiz_questions_path : admin_quiz_question_path(@question)),
               method: (@question.new_record? ? :post : :patch),
               local: true,
-              class: "space-y-4" do |f| %>
+              class: "space-y-4",
+              data: { controller: "quiz-form" } do |f| %>
+
   <% if @question.errors.any? %>
     <div class="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
       <p><strong><%= @question.errors.count %></strong> 件のエラーがあります：</p>
@@ -12,18 +14,24 @@
     </div>
   <% end %>
 
+  <!-- Quiz 選択（変更で Section を絞り込み） -->
   <div>
     <%= f.label :quiz_id, "Quiz", class: "block text-sm text-slate-600" %>
     <%= f.collection_select :quiz_id, Quiz.order(:position), :id, :title,
-          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2",
-          data: { controller: "quiz-form" } %>
+          {},
+          class: "w-full rounded ring-1 ring-slate-300 px-3 py-2",
+          data: { "quiz-form-target": "quiz", action: "change->quiz-form#onQuizChange" } %>
   </div>
 
+  <!-- Section 選択（初期表示時も quiz に合わせて置換される） -->
   <div>
     <%= f.label :quiz_section_id, "Section", class: "block text-sm text-slate-600" %>
-    <%= f.collection_select :quiz_section_id, QuizSection.includes(:quiz).order("quizzes.position, quiz_sections.position"),
+    <%= f.collection_select :quiz_section_id,
+          QuizSection.includes(:quiz).order("quizzes.position, quiz_sections.position"),
           :id, ->(s){ "[#{s.quiz.title}] #{s.heading}" },
-          {}, class: "w-full rounded ring-1 ring-slate-300 px-3 py-2" %>
+          {},
+          class: "w-full rounded ring-1 ring-slate-300 px-3 py-2",
+          data: { "quiz-form-target": "section" } %>
   </div>
 
   <!-- ▼ 問題文（Quill） -->

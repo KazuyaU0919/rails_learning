@@ -37,4 +37,17 @@ class QuizSection < ApplicationRecord
   # =======================
   def previous = quiz.quiz_sections.where("position < ?", position).order(position: :desc).first
   def next     = quiz.quiz_sections.where("position > ?", position).order(position: :asc).first
+
+  # =======================
+  # Ransack 設定（検索許可）
+  # -----------------------
+  # quizzes.title / quiz_sections.heading での検索に必要
+  # =======================
+  def self.ransackable_attributes(_auth = nil)
+    %w[heading position created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[quiz book_section quiz_questions]
+  end
 end

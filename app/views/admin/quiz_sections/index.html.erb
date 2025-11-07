@@ -3,9 +3,19 @@
 
 <h1 class="text-xl font-bold mb-4">Quiz Sections</h1>
 
-<div class="mb-3">
+<div class="mb-3 flex items-center justify-between gap-3">
   <%= link_to "＋ 新規作成", new_admin_quiz_section_path,
         class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+
+  <!-- ▼ 検索フォーム（Quiz.title / heading） -->
+  <%= search_form_for @q, url: admin_quiz_sections_path, method: :get, html: { class: "flex gap-2" } do |f| %>
+    <%= f.search_field :quiz_title_cont, placeholder: "Quizタイトル", class: "px-3 py-2 rounded ring-1 ring-slate-300 w-52" %>
+    <%= f.search_field :heading_cont,    placeholder: "Section見出し", class: "px-3 py-2 rounded ring-1 ring-slate-300 w-56" %>
+    <%= f.submit "検索", class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+    <% if params[:q].present? %>
+      <%= link_to "クリア", admin_quiz_sections_path, class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
+    <% end %>
+  <% end %>
 </div>
 
 <table class="w-full text-sm border rounded overflow-hidden">

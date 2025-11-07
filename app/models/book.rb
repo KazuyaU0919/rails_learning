@@ -30,6 +30,17 @@ class Book < ApplicationRecord
   # =======================
   before_validation :set_default_position, on: :create
 
+  # =======================
+  # Ransack 許可
+  # =======================
+  def self.ransackable_attributes(_auth = nil)
+    %w[title]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[book_sections]
+  end
+
   private
 
   # 連番付与（最大position+1）

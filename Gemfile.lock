@@ -514,7 +514,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt
   bootsnap
-  brakeman
+  brakeman (~> 7.1.1)
   bullet
   capybara
   debug

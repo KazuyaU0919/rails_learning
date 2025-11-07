@@ -2,8 +2,21 @@
 <%= render "shared/breadcrumbs" %>
 
 <h1 class="text-2xl font-semibold mb-4">Sections</h1>
-<div class="mb-4">
+
+<div class="mb-4 flex items-center justify-between gap-3">
   <%= link_to "新規作成", new_admin_book_section_path, class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+
+  <!-- ▼ 検索フォーム（Book.title / heading） -->
+  <div>
+    <%= search_form_for @q, url: admin_book_sections_path, method: :get, html: { class: "flex gap-2" } do |f| %>
+      <%= f.search_field :book_title_cont,  placeholder: "Bookタイトルを含む",  class: "px-3 py-2 rounded ring-1 ring-slate-300 w-56" %>
+      <%= f.search_field :heading_cont,     placeholder: "セクション見出しを含む", class: "px-3 py-2 rounded ring-1 ring-slate-300 w-64" %>
+      <%= f.submit "検索", class: "px-3 py-2 rounded bg-slate-900 text-white" %>
+      <% if params[:q].present? %>
+        <%= link_to "クリア", admin_book_sections_path, class: "px-3 py-2 rounded ring-1 ring-slate-300" %>
+      <% end %>
+    <% end %>
+  </div>
 </div>
 
 <table class="w-full text-left border bg-white">
@@ -33,3 +46,6 @@
     <% end %>
   </tbody>
 </table>
+
+<!-- ▼ ページネーション -->
+<div class="mt-4"><%= paginate @sections if respond_to?(:paginate) %></div>

@@ -4,6 +4,7 @@
 # ・CRUD操作（一覧・作成・更新・削除）
 # ・保存前に Quill のHTMLを RichTextSanitizer でサニタイズ
 # ・クイズやセクションとのリレーションを includes で最適化
+# ・一覧は Ransack で quizzes.title / quiz_sections.heading を検索
 # ============================================================
 class Admin::QuizQuestionsController < Admin::BaseController
   layout "admin"
@@ -13,9 +14,12 @@ class Admin::QuizQuestionsController < Admin::BaseController
   # 一覧
   # =======================
   def index
-    @questions = QuizQuestion.includes(:quiz, :quiz_section)
-                             .order(created_at: :desc)
-                             .page(params[:page])
+    base = QuizQuestion.includes(:quiz, :quiz_section)
+    @q = base.ransack(params[:q])
+    @questions = @q.result
+                   .includes(:quiz, :quiz_section)
+                   .order(created_at: :desc)
+                   .page(params[:page])
   end
 
   # =======================

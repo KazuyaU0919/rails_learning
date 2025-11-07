@@ -20,7 +20,7 @@ class BookSection < ApplicationRecord
   # =======================
   # バリデーション
   # =======================
-  validates :heading, presence: true, length: { maximum: 50 }
+  validates :heading, presence: true, length: { maximum: 100 }
   validates :content, presence: true, length: { maximum: 30_000 }
   validates :position,
            presence: true,
@@ -54,6 +54,19 @@ class BookSection < ApplicationRecord
   # =======================
   def editable_attributes
     %i[content]
+  end
+
+  # =======================
+  # Ransack 許可
+  # -----------------------
+  # 管理画面の検索で使うカラム・関連をホワイトリスト化
+  # =======================
+  def self.ransackable_attributes(_auth = nil)
+    %w[heading position created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth = nil)
+    %w[book]
   end
 
   private

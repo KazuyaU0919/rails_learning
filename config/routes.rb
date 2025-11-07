@@ -69,10 +69,6 @@ Rails.application.routes.draw do
 
   # 管理画面
   namespace :admin do
-    get "editor_permissions/index"
-    get "editor_permissions/new"
-    get "editor_permissions/create"
-    get "editor_permissions/destroy"
     root "dashboards#index"
 
     resource  :session,   only: %i[new create destroy]
@@ -80,7 +76,10 @@ Rails.application.routes.draw do
     resources :book_sections, except: %i[show]
     resources :pre_codes, only: %i[index show edit update destroy]
     resources :quizzes
-    resources :quiz_sections
+    resources :quiz_sections do
+      # 依存ドロップダウン用
+      collection { get :options }
+    end
     resources :quiz_questions
 
     resources :users, only: [ :index, :destroy ] do
