@@ -37,6 +37,13 @@ export default class extends Controller {
       window.__QL_DIVIDER_REGISTERED__ = true
     }
 
+    // ---- quill-better-table の登録 ----
+    // CDN で読み込んだ場合は window.QuillBetterTable に入っている
+    if (window.QuillBetterTable && !window.__QL_BETTER_TABLE_REGISTERED__) {
+      window.Quill.register({ 'modules/better-table': window.QuillBetterTable }, true)
+      window.__QL_BETTER_TABLE_REGISTERED__ = true
+    }
+
     // ---- Quill 初期化 ----
     this.quill = new Quill(editorEl, {
       theme: "snow",
@@ -46,12 +53,20 @@ export default class extends Controller {
           [{ header: [1, 2, 3, false] }],
           ["bold", "italic", "underline"],
           [{ list: "ordered" }, { list: "bullet" }],
-          // 色 & 背景色
           [{ color: [] }, { background: [] }],
-          // 区切り線（フル幅）
           ["divider"],
-          ["link", "blockquote", "code-block", "image", "clean"]
-        ]
+          ["link", "blockquote", "code-block", "image", "clean"],
+          [{ table: "insert" }],
+          ["table-insert-row", "table-insert-column", "table-delete-row", "table-delete-column", "table-merge-cells"]
+        ],
+        // better-table のオプション
+        "better-table": {
+          operationMenu: {
+            items: {
+              unmergeCells: { text: "セル結合を解除" }
+            }
+          }
+        }
       }
     })
 
@@ -60,7 +75,11 @@ export default class extends Controller {
     toolbar.addHandler("image",   () => this.handleImage())
     toolbar.addHandler("divider", () => this.handleDivider())
 
-    // Divider ボタンを目立つ記号に（最初の初期化時のみ空のはず）
+    // 表操作ハンドラ
+    toolbar.addHandler("table", () => this.handleInsertTable())
+    this.installTableButtons()
+
+    // Divider ボタンを見やすく
     const dividerBtn = document.querySelector(".ql-toolbar button.ql-divider")
     if (dividerBtn && !dividerBtn.innerHTML.trim()) {
       dividerBtn.innerHTML = "—"
@@ -68,22 +87,63 @@ export default class extends Controller {
       dividerBtn.title = "横線を挿入"
     }
 
-    // ---- 既存 HTML を読み込む（編集モード時） ----
+    // 既存HTMLを読み込む（編集モード）
     if (hiddenEl.value) {
       editorEl.querySelector(".ql-editor").innerHTML = hiddenEl.value
     }
 
-    // ---- 入力 → hidden 同期 ----
+    // 入力 → hidden 同期
     this.quill.on("text-change", () => {
       hiddenEl.value = editorEl.querySelector(".ql-editor").innerHTML
     })
   }
 
-  // =======================
-  // パブリック API（ツールバーから呼ばれる）
-  // =======================
+  // ========== 表ツール ==========
+  installTableButtons() {
+    const tb = document.querySelector(".ql-toolbar")
 
-  // 区切り線（<hr>）を現在カーソル位置に挿入
+    const mkBtn = (cls, title, text) => {
+      const b = document.createElement("button")
+      b.type = "button"
+      b.className = `ql-${cls}`
+      b.title = title
+      b.innerText = text
+      tb.appendChild(b)
+      b.addEventListener("click", (e) => {
+        e.preventDefault()
+        this.handleTableAction(cls)
+      })
+    }
+
+    // ボタンをツールバーの末尾に追加（必要なら並び替えてね）
+    mkBtn("table-insert-row", "行を追加", "＋行")
+    mkBtn("table-insert-column", "列を追加", "＋列")
+    mkBtn("table-delete-row", "行を削除", "－行")
+    mkBtn("table-delete-column", "列を削除", "－列")
+    mkBtn("table-merge-cells", "セル結合/解除", "結合")
+  }
+
+  handleInsertTable() {
+    const mod = this.quill.getModule("better-table")
+    if (!mod) return
+    const rows = parseInt(prompt("行数を入力（例: 3）", "3") || "0", 10)
+    const cols = parseInt(prompt("列数を入力（例: 3）", "3") || "0", 10)
+    if (rows > 0 && cols > 0) mod.insertTable(rows, cols)
+  }
+
+  handleTableAction(kind) {
+    const mod = this.quill.getModule("better-table")
+    if (!mod) return
+    switch (kind) {
+      case "table-insert-row":    mod.insertRowBelow(); break
+      case "table-insert-column": mod.insertColumnRight(); break
+      case "table-delete-row":    mod.deleteRow(); break
+      case "table-delete-column": mod.deleteColumn(); break
+      case "table-merge-cells":   mod.mergeOrUnmergeCells(); break
+    }
+  }
+
+  // ========== 既存のボタン ==========
   handleDivider() {
     const range = this.quill.getSelection(true) || { index: this.quill.getLength() }
     this.quill.insertEmbed(range.index, "divider", true, "user")
@@ -124,10 +184,7 @@ export default class extends Controller {
           // 直近で挿入した画像を query して style を当てる
           const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
           const img = this.quill.root.querySelector(`img[src="${esc(url)}"]`)
-          if (img) {
-            img.style.width = `${pct}%`
-            img.style.height = "auto"
-          }
+          if (img) { img.style.width = `${pct}%`; img.style.height = "auto" }
         }
 
         // hidden に現在の HTML を保存（フォーム送信で DB へ）
