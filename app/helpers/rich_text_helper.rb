@@ -1,17 +1,15 @@
 # ============================================================
-# Helper: リッチテキスト表示
+# Helper: RichTextHelper
 # ------------------------------------------------------------
 # 目的:
-# - Quill 等のリッチHTMLをビューで安全に出力するための一点窓口。
-# - サニタイズロジックは RichTextSanitizer に委譲。
+#   - 保存済みの本文HTMLを「再サニタイズ」したうえで安全に描画する。
+#   - .html_safe を直接使わず、必ず RichTextSanitizer を通した結果だけを可視化。
+# 使い方:
+#   <%= rich_html(@section.content) %>
 # ============================================================
 module RichTextHelper
-  # =======================
-  # HTMLサニタイズ一括適用
-  # -----------------------
-  # 例) <%= rich_html(@question.explanation) %>
-  # =======================
   def rich_html(html)
-    RichTextSanitizer.call(html)
+    # もう一度ホワイトリスト方式でクリーンにしてから描画
+    RichTextSanitizer.call(html).html_safe
   end
 end

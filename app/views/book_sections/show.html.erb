@@ -22,7 +22,7 @@
 
   <!-- ★ ここがハイライト対象（content-body） -->
   <article class="content-body prose break-all md:break-words">
-    <%= render_section_content(@section) %>
+    <%= rich_html(@section.content) %>
   </article>
 
   <!-- ===== シェア & クイズ遷移ボタン ===== -->
