@@ -20,7 +20,7 @@ Rails.application.configure do
   # ================================
   # ファイル保存
   # ================================
-  config.active_storage.service = :local
+  config.active_storage.service = :production
 
   # ================================
   # SSL / リダイレクト
