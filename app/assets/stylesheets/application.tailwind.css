@@ -88,23 +88,6 @@
   width: 100%;
 }
 
-/* Quill本文の表の最低限の見た目 */
-.ql-editor table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-}
-.ql-editor th,
-.ql-editor td {
-  border: 1px solid #e5e7eb; /* slate-200 */
-  padding: 8px;
-  vertical-align: top;
-}
-.ql-editor thead th {
-  background: #f8fafc; /* slate-50 */
-  font-weight: 600;
-}
-
 
 /* ============================================
    3) Quill（エディタ）関連

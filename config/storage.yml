@@ -3,7 +3,11 @@
 # ---------------------------------------------------------
 # 目的:
 #   Active Storage（ファイルアップロード）の保存先設定。
-#   Render の Persistent Disk を利用して画像を永続化。
+#   テスト・ローカル・クラウド（AWS/GCS/Azure）などのサービスを定義。
+#
+# 注意:
+#   - Rails.credentials でクラウドキーを安全に管理。
+#   - コメントアウトされたブロックを参考に拡張可能。
 # =========================================================
 
 # =======================
@@ -19,11 +23,3 @@ test:
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
-
-# =======================
-# 本番（Render）環境
-# =======================
-production:
-  service: Disk
-  # Persistent Disk を /rails/storage にマウントし、環境変数で参照
-  root: <%= ENV.fetch("RAILS_STORAGE_ROOT", Rails.root.join("storage")) %>
