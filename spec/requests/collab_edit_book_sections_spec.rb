@@ -68,7 +68,7 @@ RSpec.describe "Collaborative edit: BookSection", type: :request do
       }
       follow_redirect!
       expect(response.body).to include("<p>a</p>")
-      expect(response.body).not_to include(%(<script>alert(1)</script>))
+      expect(response.body).not_to include("<script>")
     end
 
     it "position 等は更新できない（一般編集者）" do
