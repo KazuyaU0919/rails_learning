@@ -98,3 +98,11 @@ Rails初学者が「理解・記憶・実践」を一貫して体験できる、
 | バックエンド | Ruby on Rails |
 | インフラ | Render |
 | DB | PostgreSQL |
+
+
+## ◾️画面遷移図
+[画面遷移図](https://www.figma.com/design/aPtCngAfP7REV32cS6smZi/Rails-Learning-%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3?node-id=3-80&t=bG1kgcSXOAaYH7y7-1 "Rails Learning 画面遷移図")
+
+
+## ◾️ER図
+[ER図](https://drive.google.com/file/d/1eqie976NHKZW6O_UAqLDR22xhw1o771g/view?usp=sharing "Rails Learning ER図")
