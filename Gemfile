@@ -71,7 +71,6 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  # CIで「古いバージョン注意」が出ていたので更新（7.1.1 -> 7.1.2）
   gem "brakeman", "~> 7.1.2", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
