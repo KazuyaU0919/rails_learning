@@ -155,7 +155,7 @@ GEM
     heroicon-rails (0.2.9)
       activesupport (>= 7.0.8)
       nokogiri (>= 1.14.3)
-    httparty (0.23.2)
+    httparty (0.24.0)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -230,7 +230,7 @@ GEM
     minitest (6.0.1)
       prism (~> 1.5)
     msgpack (1.8.0)
-    multi_xml (0.8.1)
+    multi_xml (0.8.0)
       bigdecimal (>= 3.1, < 5)
     net-http (0.6.0)
       uri
