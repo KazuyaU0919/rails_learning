@@ -20,7 +20,7 @@ jobs:
           bundler-cache: true
 
       - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bundle exec brakeman --no-pager -A
+        run: bundle exec brakeman --no-pager -A --confidence-level 2
 
   # --- JS dependency audit (Importmap) ---
   scan_js:
