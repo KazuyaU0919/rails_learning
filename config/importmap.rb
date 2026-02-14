@@ -46,4 +46,4 @@ pin "@codemirror/legacy-modes/mode/ruby",
 # ダークテーマ
 pin "@codemirror/theme-one-dark", to: "https://esm.sh/@codemirror/theme-one-dark@6"
 # ハイライト (tags / HighlightStyle の提供元)
-pin "@lezer/highlight", to: "https://esm.sh/@lezer/highlight@1/es2022/highlight.mjs"
+pin "@lezer/highlight", to: "https://esm.sh/@lezer/highlight@1.2.3"
