@@ -21,7 +21,7 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 # ================================
 
 # axios (HTTP 通信ライブラリ)
-pin "axios", to: "https://cdn.jsdelivr.net/npm/axios@1.13.5/+esm"
+pin "axios", to: "https://cdn.jsdelivr.net/npm/axios@1.12.0/+esm"
 
 # ================================
 # CodeMirror 6 minimal set
@@ -46,4 +46,4 @@ pin "@codemirror/legacy-modes/mode/ruby",
 # ダークテーマ
 pin "@codemirror/theme-one-dark", to: "https://esm.sh/@codemirror/theme-one-dark@6"
 # ハイライト (tags / HighlightStyle の提供元)
-pin "@lezer/highlight", to: "https://esm.sh/@lezer/highlight@1/es2022/highlight.mjs"
+pin "@lezer/highlight", to: "https://esm.sh/@lezer/highlight@1.2.3"
